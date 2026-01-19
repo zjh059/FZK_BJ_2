@@ -6,3 +6,23 @@
 新项目执行清单
 1.创建开发日志||清单
 2.上传到gitee源代码管理
+
+子项目执行清单
+1.Prism Unity 8.1.97
+2.ReactiveUI最新版本(当前为22.3.1)
+3.ReactiveUIFody  最新版本(19.5.41)
+4.Metro
+
+5.创建Views文件夹
+6.创建ViewModels文件夹
+7.创建XXXView.xaml窗体||用户控件
+8.创建XXXViewModel.cs
+
+
+主窗体:
+删掉MainWindow.Xaml
+修改App.xaml和app.xaml.cs中的Application为PrismApplication
+调整格式,改<PrismApplication.Resources></PrismApplication.Resources>为   
+			<Application.Resources></Application.Resources>
+删除 StartupUri="MainWindow.xaml"
+调试,成功
