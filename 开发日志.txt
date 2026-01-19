@@ -1,11 +1,41 @@
 ﻿
+新程序开发清单
+1.创建WPF程序项目公司名称.Shell
+	创建开发日志||清单.txt(文本文件)
+	上传到gitee源代码管理
+	常用指令:
+			# 1. 初始化仓库（如果还没初始化）git init
+			# 2. 配置用户信息（如果还没配置）
+										git config --global user.name "sun-fuxing"
+										git config --global user.email "你的邮箱"
+			# 3. 添加远程仓库
+										git remote add origin https://gitee.com/sun-fuxing/visual-alignment-motion-control-system.git
+			# 4. 设置主分支
+										git branch -M main
+			# 5. 添加文件
+										git add .
+			# 6. 提交
+										git commit -m "Initial commit"
+			# 7. 推送
+										git push -u origin main
+
+2.主窗体:
+删掉MainWindow.Xaml
+修改App.xaml和app.xaml.cs中的Application为PrismApplication
+调整格式,改<PrismApplication.Resources></PrismApplication.Resources>为   
+			<Application.Resources></Application.Resources>
+删除 StartupUri="MainWindow.xaml"
+调试,成功
+
+3.创建Common文件夹-->Log项目
+	安装NlLog的Nuget包,最新版(当前为6.0.7)注意框架是否匹配
+
+
+
 ✨───────────────────────────────────────────────────────────✨  
 💫 菩提本无树,明镜亦非台 | 本来无一物,何处惹尘埃 💫  
 ✨───────────────────────────────────────────────────────────✨
 
-新项目执行清单
-1.创建开发日志||清单
-2.上传到gitee源代码管理
 
 子项目执行清单
 1.Prism Unity 8.1.97
@@ -19,10 +49,3 @@
 8.创建XXXViewModel.cs
 
 
-主窗体:
-删掉MainWindow.Xaml
-修改App.xaml和app.xaml.cs中的Application为PrismApplication
-调整格式,改<PrismApplication.Resources></PrismApplication.Resources>为   
-			<Application.Resources></Application.Resources>
-删除 StartupUri="MainWindow.xaml"
-调试,成功

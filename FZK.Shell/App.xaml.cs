@@ -1,4 +1,5 @@
-﻿using FZK.Shell.Views;
+﻿using FZK.Logger;
+using FZK.Shell.Views;
 using Prism.Ioc;
 using Prism.Unity;
 using System;
@@ -24,6 +25,18 @@ namespace FZK.Shell
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
           
+        }
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            Logs.LogInfo("启动应用程序");
+        }
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+
+            Logs.LogInfo("关闭应用程序");
+
         }
     }
 }
