@@ -1,6 +1,8 @@
-﻿using FZK.Logger;
+﻿using FZK.Core;
+using FZK.Logger;
 using FZK.Shell.Views;
 using Prism.Ioc;
+using Prism.Modularity;
 using Prism.Unity;
 using System;
 using System.Collections.Generic;
@@ -17,11 +19,38 @@ namespace FZK.Shell
     /// </summary>
     public partial class App : PrismApplication
     {
+        public App()
+        {
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+            {
+                Logs.LogError((Exception)e.ExceptionObject);
+            };
+
+            Current.DispatcherUnhandledException += (s, e) =>
+            {
+                Logs.LogError(e.Exception);
+            };
+
+            TaskScheduler.UnobservedTaskException += (s, e) =>
+            {
+                Logs.LogError(e.Exception);
+            };
+        }
         protected override Window CreateShell()
         {
             return new ShellView();
         }
-
+        protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
+        {
+            moduleCatalog.AddModule<CoreModule>();
+        }
+        protected override IModuleCatalog CreateModuleCatalog()
+        {
+            return new DirectoryModuleCatalog()
+            {
+                ModulePath = @"./"
+            };
+        }
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
           

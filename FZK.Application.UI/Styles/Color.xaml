@@ -1,0 +1,7 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <LinearGradientBrush x:Key="FZK.Login.Background.Color">
+        <GradientStop Color="#03D8DE" Offset="0"/>
+        <GradientStop Color="#F704FE" Offset="1"/>
+    </LinearGradientBrush>
+</ResourceDictionary>

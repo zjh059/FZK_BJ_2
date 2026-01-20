@@ -1,0 +1,18 @@
+﻿Sqlite数据库相关知识:
+
+shell主项目和sqlite项目同步进行
+
+/*  
+ *  第1步 安装 EntityFramework 6.4.4
+ *  第2步 安装 sqlite.codefirst 1.7.0.34 
+ *  第3步 安装 System.Data.Sqlite 1.0.118
+ *  第4步 创建ApplicationDbContext和User表实体
+ *  第5步 App.Config配置连接字符串
+ *  第6步 (关键)  <provider invariantName="System.Data.SQLite" type="System.Data.SQLite.EF6.SQLiteProviderServices, System.Data.SQLite.EF6" />
+    第7步 
+
+    <connectionStrings>
+		<add name="SqliteDbContext" connectionString="data source=.\sqlite.db" providerName="System.Data.SQLite.EF6" />
+	</connectionStrings>
+
+ */

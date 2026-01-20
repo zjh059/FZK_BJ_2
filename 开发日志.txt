@@ -15,9 +15,9 @@
 			# 5. 添加文件
 										git add .
 			# 6. 提交
-										git commit -m "Initial commit"
+										git commit -m "添加日志模块"
 			# 7. 推送
-										git push -u origin main
+										git push origin master
 
 2.主窗体:
 删掉MainWindow.Xaml
@@ -29,8 +29,21 @@
 
 3.创建Common文件夹-->Log项目
 	安装NlLog的Nuget包,最新版(当前为6.0.7)注意框架是否匹配
+	添加NLog.config到主项目
+	主项目引用Logger项目
+4.创建Common->Company.Core项目
+	IConfig接口-->管理类-->配置信息管理
+	Helper-->Json文件读取
+	Enum类
+	App域/子线程/应用程序等的异常捕获
+	创建Models-->Names类,定义区域名称和模块名称
 
+5.创建Application.UI项目(WPF 用户控件库)
+	安装MahApps主题包
+	安装MahApps.ICon包
+	修改主窗体父类Window-->MetroWindow
 
+6.创建Login登录模块
 
 ✨───────────────────────────────────────────────────────────✨  
 💫 菩提本无树,明镜亦非台 | 本来无一物,何处惹尘埃 💫  
@@ -38,14 +51,77 @@
 
 
 子项目执行清单
-1.Prism Unity 8.1.97
-2.ReactiveUI最新版本(当前为22.3.1)
-3.ReactiveUIFody  最新版本(19.5.41)
-4.Metro
+1.安装Nuget包
+	Prism Unity 8.1.97
+	Prism Wpf 8.1.97
+	ReactiveUI最新版本(当前为22.3.1)
+	ReactiveUIFody  最新版本(19.5.41)
+	ReactiveUI.WPF最新版本19.5.41
+	
+Designer也需要安装
+	安装MahApps主题包
+	安装MahApps.ICon包
+	
+
 
 5.创建Views文件夹
 6.创建ViewModels文件夹
 7.创建XXXView.xaml窗体||用户控件
+	         xmlns:prism="http://prismlibrary.com/"             
+			 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+			 prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+					    <i:Interaction.Triggers>
+					        <i:EventTrigger EventName="Loaded">
+					            <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
+					        </i:EventTrigger>
+					    </i:Interaction.Triggers>
 8.创建XXXViewModel.cs
+9.创建Module文件
+	继承IModule接口
+	实现接口
+	  public void OnInitialized(IContainerProvider containerProvider)
+        {
+            
+        }
 
+        public void RegisterTypes(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.RegisterForNavigation<LoginView>();
+        }
+
+添加项目引用
+Logger
+UI
+Share
+Core
+
+
+:: 1. 创建目录：适配Debug/Release路径
+md "$(SolutionDir)FZK.Shell\bin\$(Configuration)\" 2>nul
+
+:: 2. 复制DLL：同样适配Debug/Release路径
+xcopy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)FZK.Shell\bin\$(Configuration)" /S
+xcopy /Y "$(TargetDir)$(ProjectName)\dll\*.dll" "$(SolutionDir)FZK.Shell\bin\$(Configuration)" /S 2>nul
+xcopy /Y "$(ProjectDir)bin\$(Configuration)\dll\*.dll" "$(SolutionDir)FZK.Shell\bin\$(Configuration)"\ /S 2>nul
+
+:: 调试用：输出复制结果（可选）
+if %errorlevel% equ 0 (
+    echo [成功] 已将$(TargetDir)dll\*.dll 复制到 $(SolutionDir)FZK.Shell\bin\$(Configuration)\dll
+) else (
+    echo [失败] DLL文件复制出错，错误码：%errorlevel% >&2
+)
+
+参数	作用
+/Y	覆盖文件时不提示（必选，生成事件中无需交互）
+/I	若目标不存在且复制多个文件，自动创建目标目录（推荐）
+/S	复制非空的子目录（如果你的 dll 文件夹下还有子文件夹则需要，否则可省略）
+2>nul	屏蔽 md 命令的 “目录已存在” 错误提示（避免生成事件输出冗余信息）
+xcopy	Windows 系统的文件复制命令（支持文件夹递归、覆盖等）
+/Y	静默覆盖目标文件（无需手动确认）
+/S	复制非空文件夹和子文件夹（这里复制单个 DLL 时/S可省略，不影响功能）
+$(ProjectDir)	Visual Studio 宏：当前项目的根目录（如D:\Project\ModuleA\）
+$(SolutionDir)	Visual Studio 宏：解决方案的根目录（如D:\Project\）
+$(ProjectName)	Visual Studio 宏：当前项目的名称（自动匹配项目名，避免硬编码）
+$(TargetDir)	Visual Studio 宏：编译输出目录（自动匹配 Debug/Release，推荐优先使用）
 

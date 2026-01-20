@@ -1,12 +1,27 @@
-﻿<Window x:Class="FZK.Shell.Views.ShellView"
+﻿<mah:MetroWindow  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+        x:Class="FZK.Shell.Views.ShellView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FZK.Shell.Views"
         mc:Ignorable="d"
-        Title="ShellView" Height="450" Width="800">
+        xmlns:vm="clr-namespace:FZK.Shell.ViewModels"
+        d:DataContext="{d:DesignInstance vm:ShellViewModel}"
+        xmlns:prism="http://prismlibrary.com/"     
+        xmlns:core="clr-namespace:FZK.Core.Models;assembly=FZK.Core" 
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+		prism:ViewModelLocator.AutoWireViewModel="True"
+
+       FontSize="16" ShowTitleBar="False" 
+        WindowStartupLocation="CenterScreen"
+        Title="ShellView" Height="850" Width="1500">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
-        
+        <ContentControl prism:RegionManager.RegionName="{x:Static core:Names.ShellRegion}"/>
     </Grid>
-</Window>
+</mah:MetroWindow>
