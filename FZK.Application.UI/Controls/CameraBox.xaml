@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="FZK.Application.UI.Controls.CameraBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FZK.Application.UI.Controls"
+             mc:Ignorable="d"            >
+    <Grid x:Name="viewport" Background="Transparent"
+          MouseLeftButtonDown="viewport_MouseLeftButtonDown"
+          MouseLeftButtonUp="viewport_MouseLeftButtonUp"
+          MouseRightButtonUp="viewport_MouseRightButtonUp"
+          MouseMove="viewport_MouseMove"
+          MouseLeave="viewport_MouseLeave"
+          MouseWheel="viewport_MouseWheel">
+        <Canvas ClipToBounds="True">
+            <Grid x:Name="imagebox">
+                <Image x:Name="image"/>
+            </Grid>
+            <Rectangle x:Name="rect" Stroke="Red" StrokeThickness="1" Fill="Transparent"/>
+            <TextBlock x:Name="rectLabel" Foreground="Green" FontSize="12"/>
+        </Canvas>
+        <TextBlock x:Name="textblock" Foreground="Green" Text="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="15"/>
+    </Grid>
+</UserControl>

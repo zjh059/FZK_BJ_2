@@ -44,6 +44,9 @@
 	修改主窗体父类Window-->MetroWindow
 
 6.创建Login登录模块
+7.创建初始化硬件界面
+8.创建主界面
+9.创建运行界面
 
 ✨───────────────────────────────────────────────────────────✨  
 💫 菩提本无树,明镜亦非台 | 本来无一物,何处惹尘埃 💫  
@@ -71,6 +74,9 @@ Designer也需要安装
 			 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
 			 prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:vm="clr-namespace:FZK.Application.Main.ViewModels"
+             d:DataContext="{d:DesignInstance vm:MainViewModel}"
+
 					    <i:Interaction.Triggers>
 					        <i:EventTrigger EventName="Loaded">
 					            <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>

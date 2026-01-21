@@ -4,4 +4,32 @@
         <GradientStop Color="#03D8DE" Offset="0"/>
         <GradientStop Color="#F704FE" Offset="1"/>
     </LinearGradientBrush>
+    <LinearGradientBrush x:Key="FZK.Main.Background.Color">
+        <GradientStop Color="#CCE4F7" Offset="0"/>
+        <GradientStop Color="#AFA3EC" Offset="1"/>
+    </LinearGradientBrush>
+    <VisualBrush x:Key="Border.Cell.Color" Viewport="0,0,50,50" ViewportUnits="Absolute" TileMode="Tile">
+        <VisualBrush.Visual>
+            <Rectangle Width="50" Height="50" Opacity="0.5">
+                <Rectangle.Fill>
+                    <DrawingBrush TileMode="Tile">
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Brush="White">
+                                    <GeometryDrawing.Geometry>
+                                        <RectangleGeometry Rect="0 0 25 25"/>
+                                    </GeometryDrawing.Geometry>
+                                </GeometryDrawing>
+                                <GeometryDrawing Brush="White">
+                                    <GeometryDrawing.Geometry>
+                                        <RectangleGeometry Rect="25 25 25 25"/>
+                                    </GeometryDrawing.Geometry>
+                                </GeometryDrawing>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </VisualBrush.Visual>
+    </VisualBrush>
 </ResourceDictionary>

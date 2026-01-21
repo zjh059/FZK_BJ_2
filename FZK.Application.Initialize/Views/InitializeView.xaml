@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="FZK.Application.Initialize.Views.InitializeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FZK.Application.Initialize.Views"
+             mc:Ignorable="d" 
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:vm="clr-namespace:FZK.Application.Initialize.ViewModels"
+             d:DataContext="{d:DesignInstance vm:InitializeViewModel}"             
+             xmlns:prism="http://prismlibrary.com/"             
+			 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+			 prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+
+             FontSize="16"
+             Background="{StaticResource FZK.Login.Background.Color}"
+             d:DesignHeight="900" d:DesignWidth="1500">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid>
+        <Grid Width="auto" Height="auto" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                <TextBlock Height="auto" Width="300" Text="{Binding Message}" Foreground="White"/>
+                <mah:MetroProgressBar Width="250" Margin="4" IsIndeterminate="True" Foreground="White" VerticalAlignment="Center"/>
+                <Button Content="重试" MinWidth="60" Height="30" Margin="4" Command="{Binding InitializeCommand}"/>
+                <Button Content="跳过" MinWidth="60" Height="30" Margin="4" Command="{Binding OpenMainViewCommand}"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+
+</UserControl>

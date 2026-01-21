@@ -1,0 +1,266 @@
+﻿<UserControl x:Class="FZK.Application.Run.Views.RunView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FZK.Application.Run.Views"
+             mc:Ignorable="d" 
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             
+             xmlns:contorls="clr-namespace:FZK.Application.UI.Controls;assembly=FZK.Application.UI"            
+             xmlns:vm="clr-namespace:FZK.Application.Run.ViewModels"
+              d:DataContext="{d:DesignInstance vm:RunViewModel}"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             prism:ViewModelLocator.AutoWireViewModel="True" 
+             xmlns:coreEnums="clr-namespace:FZK.Core.Enum;assembly=FZK.Core"
+             d:DesignHeight="900" d:DesignWidth="1500">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="420"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <!--left-->
+        <Grid Grid.Column="0" Background="White">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0">
+                <Border Background="#F5F5F5" Height="35">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconBoxIcons Kind="RegularPalette" VerticalAlignment="Center" Margin="10 0 0 0"/>
+                        <TextBlock Text="轨道类型" VerticalAlignment="Center" Margin="10 0 0 0"/>
+
+                    </StackPanel>
+
+                </Border>
+                <WrapPanel>
+                    <RadioButton  Height="45" Margin=" 25 8 8 8"
+                               Style="{StaticResource RadioButton.TapeWidth.Style}"
+                               Content="Model1">
+                    </RadioButton>
+                    <RadioButton  Height="45" Margin=" 25 8 8 8"
+                               Style="{StaticResource RadioButton.TapeWidth.Style}"
+                               Content="Model2">
+                    </RadioButton>
+                    <RadioButton  Height="45" Margin=" 25 8 8 8"
+                               Style="{StaticResource RadioButton.TapeWidth.Style}"
+                               Content="Model3">
+                    </RadioButton>
+                    <RadioButton  Height="45" Margin=" 25 8 8 8"
+                               Style="{StaticResource RadioButton.TapeWidth.Style}"
+                               Content="Model4">
+                    </RadioButton>
+                </WrapPanel>
+
+                <Border Background="#F5F5F5" Height="35">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconBoxIcons Kind="RegularPalette" VerticalAlignment="Center" Margin="10 0 0 0"/>
+                        <TextBlock Text="运行模式" VerticalAlignment="Center" Margin="10 0 0 0"/>
+                    </StackPanel>
+                </Border>
+                <WrapPanel>
+                    <RadioButton Height="45" Margin=" 25 8 8 8" 
+                    IsChecked="{Binding RunManager.IsNormalLink,UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource RadioButton.TapeWidth.Style}"
+                    Content="Model1"  >
+                    </RadioButton>
+                    <RadioButton Height="45" Margin=" 25 8 8 8" 
+                    IsChecked="{Binding RunManager.IsNormalLink,UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource RadioButton.TapeWidth.Style}"
+                    Content="Model2"  >
+                    </RadioButton>
+                    <RadioButton Height="45" Margin=" 25 8 8 8" 
+                    IsChecked="{Binding RunManager.IsNormalLink,UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource RadioButton.TapeWidth.Style}"
+                    Content="Model3"  >
+                    </RadioButton>
+                    <RadioButton Height="45" Margin=" 25 8 8 8" 
+                    IsChecked="{Binding RunManager.IsNormalLink,UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource RadioButton.TapeWidth.Style}"
+                    Content="Model4"  >
+                    </RadioButton>
+                </WrapPanel>
+                <Border Background="#F5F5F5" Height="35">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconBoxIcons Kind="RegularPalette" VerticalAlignment="Center" Margin="10 0 0 0"/>
+                        <TextBlock Text="其他参数" VerticalAlignment="Center" Margin="10 0 0 0"/>
+                    </StackPanel>
+                </Border>
+                <WrapPanel>
+                    <Rectangle Width="25"/>
+                    <mah:ToggleSwitch Header="是否检空" OnContent="开" OffContent="关" FontSize="16"
+                                      IsOn="True"/>
+                    <mah:ToggleSwitch Header="是否加热" OnContent="开" OffContent="关" FontSize="16"
+                                      IsOn="False"/>
+                </WrapPanel>
+                <StackPanel Orientation="Horizontal" Margin="25 10 25 0">
+                    <TextBox FontSize="24" Width="180">
+
+                    </TextBox>
+                    <Rectangle Width="10"/>
+                    <TextBox FontSize="24" Width="180">
+
+                    </TextBox>
+                </StackPanel>
+                <Grid>
+                    <Button Content="开始" FontSize="24" Margin="25 10" />
+                    <Button Content="停止" FontSize="24" Margin="25 10" Command="{Binding StopCommand}" 
+                            Background="PaleVioletRed"
+                            Visibility="Collapsed"/>
+                </Grid>
+            </StackPanel>
+            <!--运行流程-->
+            <ScrollViewer Grid.Row="1">
+                <ItemsControl Grid.Row="1"  Margin="8">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Height="auto" Padding="8" Background="#F5F5F5" Margin="8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" TextWrapping="Wrap"
+                                               VerticalAlignment="Bottom" Margin="5 0" FontSize="18">
+                                          <Run Text="12"/>
+                                          <Run Text="..."/>
+                                          <Run Text="s"/>
+                                    </TextBlock>
+                                    <mah:MetroProgressBar Grid.Row="1"  Grid.Column="0" Margin="5" Height="1"
+                                                           Value="{Binding Percent}" Foreground="Green"
+                                                            Style="{StaticResource MahApps.Styles.MetroProgressBar}"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" FontSize="12"
+                                                       VerticalAlignment="Center" Margin="5">
+                                                <Run Text="12"/>
+                                                <Run Text="%"/>
+                                    </TextBlock>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            <!--模板定义-->
+            <Border  Grid.Row="1" Background="White" CornerRadius="5" BorderThickness="0 0 1 1"
+                     BorderBrush="#F5F5F5" Visibility="Collapsed">
+                <StackPanel>
+                    <TextBlock FontSize="20" Margin="20" VerticalAlignment="Center" HorizontalAlignment="Center" Text="请制作丝印模板"/>
+                    <Image Height="350" Margin="10" Source="{Binding RunManager.TaskParameter.TempateGDI.ImageSource}"/>
+                    <Button Content="确定"  Margin="10" FontSize="16"/>
+                    <Button Content="取消"  Margin="10" FontSize="16"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+        <!--right-->
+        <Grid Grid.Column="1">
+            <!--测量结果-->
+            <TextBlock Text="{Binding RunManager.Message}"
+               FontSize="200"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               Panel.ZIndex="500"/>
+            <Border HorizontalAlignment="Center" VerticalAlignment="Top" Height="55" Width="auto" CornerRadius="5" Panel.ZIndex="500">
+                <Border.Background>
+                    <!--50%半透明背景-->
+                    <SolidColorBrush Color="#80FFFFFF"/>
+                </Border.Background>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <WrapPanel>
+                        <RadioButton Style="{StaticResource RadioButton.Preview.Style}" IsChecked="True">
+                            <RadioButton.Content>
+                                <iconPacks:PackIconMaterial Kind="Cctv" Width="45" Height="45">
+                                    <iconPacks:PackIconMaterial.RenderTransform>
+                                        <ScaleTransform ScaleX="-1" ScaleY="1"/>
+                                    </iconPacks:PackIconMaterial.RenderTransform>
+                                    <iconPacks:PackIconMaterial.RenderTransformOrigin>
+                                        <Point X="0.5" Y="0.5"/>
+                                    </iconPacks:PackIconMaterial.RenderTransformOrigin>
+                                </iconPacks:PackIconMaterial>
+                            </RadioButton.Content>
+                        </RadioButton>
+                        <Rectangle Width="10"/>
+                        <RadioButton Style="{StaticResource RadioButton.Preview.Style}">
+                            <RadioButton.Content>
+                                <iconPacks:PackIconMaterial Kind="Cctv" Width="45" Height="45">
+
+                                </iconPacks:PackIconMaterial>
+                            </RadioButton.Content>
+                        </RadioButton>
+                    </WrapPanel>
+                    <Rectangle Width="10"/>
+                    <Border Width="2" Background="Black" Margin="5"/>
+                    <Rectangle Width="10"/>
+                    <RadioButton Style="{StaticResource RadioButton.Preview.Style}">
+                        <RadioButton.Content>
+                            <iconPacks:PackIconMaterial Kind="CameraPlus" Width="45" Height="45">
+
+                            </iconPacks:PackIconMaterial>
+                        </RadioButton.Content>
+                    </RadioButton>
+                    <Rectangle Width="10"/>
+                    <RadioButton Style="{StaticResource RadioButton.Preview.Style}">
+                        <RadioButton.Content>
+                            <iconPacks:PackIconMaterial Kind="CameraControl" Width="45" Height="45">
+
+                            </iconPacks:PackIconMaterial>
+                        </RadioButton.Content>
+                    </RadioButton>
+                    <Rectangle Width="10"/>
+                    <RadioButton Style="{StaticResource RadioButton.Preview.Style}">
+                        <RadioButton.Content>
+                            <iconPacks:PackIconMaterial Kind="VectorCircle" Width="45" Height="45">
+
+                            </iconPacks:PackIconMaterial>
+                        </RadioButton.Content>
+                    </RadioButton>
+                    <Rectangle Width="10"/>
+                    <RadioButton Style="{StaticResource RadioButton.Preview.Style}"
+              Command="{Binding CanSelectRectCommand}">
+                        <RadioButton.Content>
+                            <iconPacks:PackIconMaterial Kind="VectorRectangle" Width="45" Height="45">
+
+                            </iconPacks:PackIconMaterial>
+                        </RadioButton.Content>
+                    </RadioButton>
+                    <Rectangle Width="10"/>
+                    <RadioButton Style="{StaticResource RadioButton.Preview.Style}"
+              Command="{Binding SaveImageCommand}">
+                        <RadioButton.Content>
+                            <iconPacks:PackIconBoxIcons Kind="SolidSave" Width="45" Height="45">
+
+                            </iconPacks:PackIconBoxIcons>
+                        </RadioButton.Content>
+                    </RadioButton>
+                    <Rectangle Width="10"/>
+                    <RadioButton Style="{StaticResource RadioButton.Preview.Style}">
+                        <RadioButton.Content>
+                            <iconPacks:PackIconPicolIcons Kind="DocumentImage" Width="45" Height="45">
+
+                            </iconPacks:PackIconPicolIcons>
+                        </RadioButton.Content>
+                    </RadioButton>
+                    <Rectangle Width="10"/>
+                    <RadioButton Style="{StaticResource RadioButton.Preview.Style}">
+                        <RadioButton.Content>
+                            <iconPacks:PackIconPicolIcons Kind="DocumentImageEdit" Width="45" Height="45">
+
+                            </iconPacks:PackIconPicolIcons>
+                        </RadioButton.Content>
+                    </RadioButton>
+                </StackPanel>
+            </Border>
+            <Border Background="{StaticResource Border.Cell.Color}" />
+            <contorls:CameraBox> 
+            </contorls:CameraBox>
+        </Grid>
+    </Grid>
+</UserControl>

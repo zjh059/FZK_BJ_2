@@ -129,6 +129,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FZK.Application.Share\FZK.Application.Share.csproj">
+      <Project>{eae5c391-d06c-46ba-b809-e9bb621d39ed}</Project>
+      <Name>FZK.Application.Share</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FZK.Application.UI\FZK.Application.UI.csproj">
       <Project>{c52194b8-94c8-44bc-8e7e-682fdfaa18ce}</Project>
       <Name>FZK.Application.UI</Name>

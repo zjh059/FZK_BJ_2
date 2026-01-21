@@ -1,0 +1,64 @@
+﻿<UserControl x:Class="FZK.Application.Main.Views.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FZK.Application.Main.Views"
+             xmlns:vm="clr-namespace:FZK.Application.Main.ViewModels"
+             xmlns:core="clr-namespace:FZK.Core.Models;assembly=FZK.Core"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance vm:MainViewModel}"             
+             xmlns:prism="http://prismlibrary.com/"             
+			 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+			 prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             FontSize="16" 
+             Background="{StaticResource FZK.Main.Background.Color}"             
+             d:DesignHeight="900" d:DesignWidth="1500">
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Background="#3B4446">
+                <RadioButton Content="开始" Style="{StaticResource RadioButton.Menu.Style}" IsChecked="True"
+                             Command="{Binding NavigationgToVewCommand}"
+                             CommandParameter="{x:Static core:Names.MainRegion}">
+                    <RadioButton.Tag>
+                        <iconPacks:PackIconBoxIcons Kind="RegularHome" Width="20" Height="20" />
+                    </RadioButton.Tag>
+                </RadioButton>
+                <RadioButton Content="设置" Style="{StaticResource RadioButton.Menu.Style}">
+                    <RadioButton.Tag>
+                        <iconPacks:PackIconFeatherIcons Kind="Settings" Width="20" Height="20" />
+                    </RadioButton.Tag>
+                </RadioButton>
+                <RadioButton Content="相机标定" Style="{StaticResource RadioButton.Menu.Style}">
+
+                </RadioButton>
+                <RadioButton Content="MARK校准" Style="{StaticResource RadioButton.Menu.Style}">
+                </RadioButton>
+                <RadioButton Content="轴标定" Style="{StaticResource RadioButton.Menu.Style}">
+                </RadioButton>
+                <RadioButton Content="BOM管理" Style="{StaticResource RadioButton.Menu.Style}">
+                </RadioButton>
+                <RadioButton Content="切换用户" Style="{StaticResource RadioButton.Menu.Style}"
+                               Command="{Binding LogoutCommand}">
+                </RadioButton>
+            </StackPanel>
+            <!--主要区域-->
+            <ContentControl Grid.Row="1" prism:RegionManager.RegionName="{x:Static core:Names.MainRegion}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Loaded">
+                        <i:InvokeCommandAction Command="{Binding LoadedCommand}"
+                                              CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ContentControl}}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ContentControl>
+        </Grid>
+        <Grid Tag="遮罩层" Visibility="{Binding Session.Visibility}" Background="Black" Opacity="0.5" Panel.ZIndex="99999">
+
+        </Grid>
+    </Grid>
+</UserControl>

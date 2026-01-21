@@ -27,6 +27,6 @@ namespace FZK.Database.Base.Models
         /// </summary>
         /// 
         [Reactive]
-        public DateTime InsertData { get; set; } = DateTime.Now;
+        public DateTime InsertDate { get; set; } = DateTime.Now;
     }
 }

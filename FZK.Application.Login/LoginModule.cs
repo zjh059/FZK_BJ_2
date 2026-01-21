@@ -1,8 +1,7 @@
-﻿using FZK.Core.Models;
-using Prism.Ioc;
-using Prism.Modularity;
-using System;
+﻿using FZK.Application.Login.Services;
 using FZK.Application.Login.Views;
+using FZK.Application.Share.Login;
+using FZK.Core.Models;
 using Prism.Ioc;
 using Prism.Modularity;
 using System;
@@ -24,6 +23,7 @@ namespace FZK.Application.Login
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<LoginView>();
+            containerRegistry.RegisterSingleton<ISession, Session>();
         }
     }
 }

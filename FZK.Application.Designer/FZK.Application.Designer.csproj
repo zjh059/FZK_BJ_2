@@ -95,9 +95,21 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FZK.Application.Initialize\FZK.Application.Initialize.csproj">
+      <Project>{88881fa0-f162-49b6-9448-df335fc589dd}</Project>
+      <Name>FZK.Application.Initialize</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FZK.Application.Login\FZK.Application.Login.csproj">
       <Project>{fb5c167b-d3de-434d-aa25-f2f5d8d79118}</Project>
       <Name>FZK.Application.Login</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FZK.Application.Main\FZK.Application.Main.csproj">
+      <Project>{9a1b9de0-c20d-4d64-8f42-ac83c3413c33}</Project>
+      <Name>FZK.Application.Main</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FZK.Application.Run\FZK.Application.Run.csproj">
+      <Project>{e15a346a-10fc-4499-8493-bbda2e394196}</Project>
+      <Name>FZK.Application.Run</Name>
     </ProjectReference>
     <ProjectReference Include="..\FZK.Application.UI\FZK.Application.UI.csproj">
       <Project>{c52194b8-94c8-44bc-8e7e-682fdfaa18ce}</Project>
@@ -110,6 +122,18 @@
     </PackageReference>
     <PackageReference Include="MahApps.Metro.IconPacks">
       <Version>5.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="Prism.Wpf">
+      <Version>8.1.97</Version>
+    </PackageReference>
+    <PackageReference Include="ReactiveUI">
+      <Version>22.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="ReactiveUI.Fody">
+      <Version>19.5.41</Version>
+    </PackageReference>
+    <PackageReference Include="ReactiveUI.WPF">
+      <Version>22.3.1</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

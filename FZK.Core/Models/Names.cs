@@ -21,7 +21,7 @@ namespace FZK.Core.Models
 
         //页面名字定义
         public const string LoginView = "LoginView";
-        public const string InitView = "InitView";
+        public const string InitView = "InitializeView";
         public const string MainView = "MainView";
         public const string RunView = "RunView";
         public const string ConfigView = "ConfigView";
@@ -45,7 +45,7 @@ namespace FZK.Core.Models
 
         //模块名字定义
         public const string LoginModule = "LoginModule";
-        public const string InitModule = "InitModule";
+        public const string InitializeModule = "InitializeModule";
         public const string MainModule = "MainModule";
         public const string RunModule = "RunModule";
         public const string CameraHikModule = "CameraHikModule";

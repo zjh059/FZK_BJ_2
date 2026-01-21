@@ -45,6 +45,7 @@
     <Compile Include="Config\IConfigManager.cs" />
     <Compile Include="CoreModule.cs" />
     <Compile Include="Enum\ConfigKey.cs" />
+    <Compile Include="Enum\RoleType.cs" />
     <Compile Include="Helper\JsonHelper.cs" />
     <Compile Include="Models\Names.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -66,6 +67,11 @@
       <Version>19.5.41</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\FZK.Application.Share\FZK.Application.Share.csproj">
+      <Project>{EAE5C391-D06C-46BA-B809-E9BB621D39ED}</Project>
+      <Name>FZK.Application.Share</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -62,6 +62,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Services\Session.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="Views\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
@@ -97,6 +98,14 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\FZK.Application.Share\FZK.Application.Share.csproj">
+      <Project>{eae5c391-d06c-46ba-b809-e9bb621d39ed}</Project>
+      <Name>FZK.Application.Share</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FZK.Application.UI\FZK.Application.UI.csproj">
+      <Project>{c52194b8-94c8-44bc-8e7e-682fdfaa18ce}</Project>
+      <Name>FZK.Application.UI</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FZK.Core\FZK.Core.csproj">
       <Project>{552E8EE4-B039-44F8-9EA1-B527570EA3FE}</Project>
       <Name>FZK.Core</Name>

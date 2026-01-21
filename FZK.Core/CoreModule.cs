@@ -1,4 +1,5 @@
-﻿using FZK.Core.Config;
+﻿using FZK.Application.Share.Init;
+using FZK.Core.Config;
 using Prism.Ioc;
 using Prism.Modularity;
 using System;
