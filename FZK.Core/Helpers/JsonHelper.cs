@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace FZK.Core.Helper
+namespace FZK.Core.Helpers
 {
     /// <summary>
     /// JSON文件读写帮助类

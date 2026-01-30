@@ -1,6 +1,6 @@
 ﻿using FZK.Application.Share.Login;
 using FZK.Application.Share.Models;
-using FZK.Core.Enum;
+using FZK.Core.Enums;
 using FZK.Database.Base.Models;
 using FZK.Database.Base.Repositories;
 using Prism.Commands;

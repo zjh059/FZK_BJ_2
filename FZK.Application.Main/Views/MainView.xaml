@@ -24,12 +24,14 @@
             <StackPanel Orientation="Horizontal" Background="#3B4446">
                 <RadioButton Content="开始" Style="{StaticResource RadioButton.Menu.Style}" IsChecked="True"
                              Command="{Binding NavigationgToVewCommand}"
-                             CommandParameter="{x:Static core:Names.MainRegion}">
+                             CommandParameter="{x:Static core:Names.RunView}">
                     <RadioButton.Tag>
                         <iconPacks:PackIconBoxIcons Kind="RegularHome" Width="20" Height="20" />
                     </RadioButton.Tag>
                 </RadioButton>
-                <RadioButton Content="设置" Style="{StaticResource RadioButton.Menu.Style}">
+                <RadioButton Content="设置" Style="{StaticResource RadioButton.Menu.Style}"
+                             Command="{Binding NavigationgToVewCommand}"
+                             CommandParameter="{x:Static core:Names.ConfigView}">
                     <RadioButton.Tag>
                         <iconPacks:PackIconFeatherIcons Kind="Settings" Width="20" Height="20" />
                     </RadioButton.Tag>

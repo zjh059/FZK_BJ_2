@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace FZK.Application.Initialize
 {
     [Module(ModuleName = Names.InitializeModule, OnDemand = true)] //延迟加载
-    //[ModuleDependency(Names.ConfigModule)]
+    [ModuleDependency(Names.ConfigModule)]
     //[ModuleDependency(Names.CameraHikModule)]//HIk相机模块
     //[ModuleDependency(Names.ControlCardZmotionModule)]//正运动控制卡模块
 

@@ -51,6 +51,9 @@
     <Compile Include="Controls\CameraBox.xaml.cs">
       <DependentUpon>CameraBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BooleanToColorConverter.cs" />
+    <Compile Include="Converters\NGToRedColorConverter.cs" />
+    <Compile Include="Converters\RoleToVisibilityConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

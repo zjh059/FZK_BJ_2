@@ -1,0 +1,654 @@
+﻿<UserControl x:Class="FZK.Application.Config.Views.ConfigAxisView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FZK.Application.Config.Views"
+             mc:Ignorable="d" 
+             xmlns:vm="clr-namespace:FZK.Application.Config.ViewModels"
+             xmlns:core="clr-namespace:FZK.Core.Models;assembly=FZK.Core"
+             d:DataContext="{d:DesignInstance vm:ConfigAxisViewModel}"
+             Background="Transparent"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="1000" d:DesignWidth="1800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <!--X轴区域-->
+        <Grid Grid.Row="0" Grid.Column="0" Background="White" Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Border Background="#F5F5F5">
+                <TextBlock Text="X轴" VerticalAlignment="Center" Margin="15 0"/>
+            </Border>
+            <Border Grid.Row="1" Margin="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Border  CornerRadius="45"
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Margin="30">
+                            <Run Text="X轴"/>
+                            <Run Text="{Binding ControlCard.XAxisPostion}" Foreground="Green"/>
+                        </TextBlock>
+
+                    </Border>
+                    <!--XAxisParameter-->
+                    <StackPanel Grid.Row="1" Margin="20 0">
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="贴胶位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_贴胶位" 
+                                     Text="{Binding SystemConfigManager.XAxisParameter.贴胶位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_贴胶位}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="贴胶位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_吸胶位" 
+                                     Text="{Binding SystemConfigManager.XAxisParameter.吸胶位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_吸胶位}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="校正位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_校正位" 
+                                     Text="{Binding SystemConfigManager.XAxisParameter.校正位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_校正位}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <!--XAxis Control-->
+                    <WrapPanel Grid.Row="2">
+                        <Button Content="JOG+" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogPlusCommand}"/>
+                        <Button Content="JOG-" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogMinusCommand}"/>
+                        <Button Content="复位" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisRecoverCommand}"/>
+                        <Button Content="停止" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisStopCommand}"/>
+                        <Button Content="重置" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisResetCommand}"/>
+                        <Button Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisEnableCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="20" Height="20" CornerRadius="30" VerticalAlignment="Center"
+                                        Margin="0 0 5 0"/>
+                                <TextBlock Text="使能"/>
+                            </StackPanel>
+                        </Button>
+                    </WrapPanel>
+                </Grid>
+            </Border>
+        </Grid>
+        <!--Y轴区域-->
+        <Grid Grid.Row="0" Grid.Column="1" Background="White" Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Border Background="#F5F5F5">
+                <TextBlock Text="Y轴" VerticalAlignment="Center" Margin="15 0"/>
+            </Border>
+            <Border Grid.Row="1" Margin="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Border  CornerRadius="45"
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Margin="30">
+                            <Run Text="Y轴"/>
+                            <Run Text="{Binding ControlCard.YAxisPostion}" Foreground="Green"/>
+                        </TextBlock>
+                    </Border>
+                    <!--YAxisParameter-->
+                    <StackPanel Grid.Row="1" Margin="20 0">
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="吸胶位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_Y吸胶位"
+                                     Text="{Binding SystemConfigManager.YAxisParameter.吸胶位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_Y吸胶位}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="等待位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_Y等待位"
+                                     Text="{Binding SystemConfigManager.YAxisParameter.等待位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_Y等待位}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="贴胶位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_Y贴胶位" 
+                                     Text="{Binding SystemConfigManager.YAxisParameter.贴胶位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_Y贴胶位}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <!--YAxis Control-->
+                    <WrapPanel Grid.Row="2">
+                        <Button Content="JOG+" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogPlusCommand}"/>
+                        <Button Content="JOG-" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogMinusCommand}"/>
+                        <Button Content="复位" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisRecoverCommand}"/>
+                        <Button Content="停止" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisStopCommand}"/>
+                        <Button Content="重置" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisResetCommand}"/>
+                        <Button Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisEnableCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="20" Height="20" CornerRadius="30" VerticalAlignment="Center"
+                                        Margin="0 0 5 0"/>
+                                <TextBlock Text="使能"/>
+                            </StackPanel>
+                        </Button>
+                    </WrapPanel>
+                </Grid>
+            </Border>
+        </Grid>
+        <!--Z轴区域-->
+        <Grid Grid.Row="0" Grid.Column="2" Background="White" Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Border Background="#F5F5F5">
+                <TextBlock Text="Z轴" VerticalAlignment="Center" Margin="15 0"/>
+            </Border>
+            <Border Grid.Row="1" Margin="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Border CornerRadius="45"
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Margin="30">
+                            <Run Text="Z轴"/>
+                            <Run Text="{Binding ControlCard.ZAxisPostion}" Foreground="Green"/>
+                        </TextBlock>
+                    </Border>
+                    <!--ZAxisParameter-->
+                    <StackPanel Grid.Row="1" Margin="20 0">
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="贴折位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_Z贴折位" 
+                                     Text="{Binding SystemConfigManager.ZAxisParameter.贴折位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_Z贴折位}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="吸胶位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_Z吸胶位" 
+                                     Text="{Binding SystemConfigManager.ZAxisParameter.吸胶位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_Z吸胶位}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="待吸位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_Z待吸位" 
+                                     Text="{Binding SystemConfigManager.ZAxisParameter.待吸位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_Z待吸位}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <!--ZAxis Control-->
+                    <WrapPanel Grid.Row="2">
+                        <Button Content="JOG+" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogPlusCommand}"/>
+                        <Button Content="JOG-" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogMinusCommand}"/>
+                        <Button Content="复位" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisRecoverCommand}"/>
+                        <Button Content="停止" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisStopCommand}"/>
+                        <Button Content="重置" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisResetCommand}"/>
+                        <Button Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisEnableCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="20" Height="20" CornerRadius="30" VerticalAlignment="Center"
+                                        Margin="0 0 5 0"/>
+                                <TextBlock Text="使能"/>
+                            </StackPanel>
+                        </Button>
+                    </WrapPanel>
+                </Grid>
+            </Border>
+        </Grid>
+        <!--主轴区域-->
+        <Grid Grid.Row="0" Grid.Column="3" Background="White" Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Border Background="#F5F5F5">
+                <TextBlock Text="主轴" VerticalAlignment="Center" Margin="15 0"/>
+            </Border>
+            <Border Grid.Row="1" Margin="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Border  CornerRadius="45"
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Margin="30">
+                            <Run Text="主轴"/>
+                            <Run Text="{Binding ControlCard.MainAxisPostion}" Foreground="Green"/>
+                        </TextBlock>
+                    </Border>
+                    <!--ZAxisParameter-->
+                    <StackPanel Grid.Row="1" Margin="20 0">
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="压带位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_Main压带位" 
+                                     Text="{Binding SystemConfigManager.MainAxisParameter.压带位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_Main压带位}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="切刀位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_Main切刀位" 
+                                     Text="{Binding SystemConfigManager.MainAxisParameter.切刀位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_Main切刀位}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="取带位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_Main取带位" 
+                                     Text="{Binding SystemConfigManager.MainAxisParameter.取带位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_Main取带位}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <!--ZAxis Control-->
+                    <WrapPanel Grid.Row="2">
+                        <Button Content="JOG+" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogPlusCommand}"/>
+                        <Button Content="JOG-" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogMinusCommand}"/>
+                        <Button Content="复位" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisRecoverCommand}"/>
+                        <Button Content="停止" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisStopCommand}"/>
+                        <Button Content="重置" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisResetCommand}"/>
+                        <Button Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisEnableCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="20" Height="20" CornerRadius="30" VerticalAlignment="Center"
+                                        Margin="0 0 5 0"
+                                        Background="Red"/>
+                                <TextBlock Text="使能"/>
+                            </StackPanel>
+                        </Button>
+                    </WrapPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+
+
+        <!--左轴区域-->
+        <Grid Grid.Row="1" Grid.Column="0" Background="White" Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Border Background="#F5F5F5">
+                <TextBlock Text="左棘轮轴" VerticalAlignment="Center" Margin="15 0"/>
+            </Border>
+            <Border Grid.Row="1" Margin="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Border  CornerRadius="45"
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Margin="30">
+                            <Run Text="左棘轮轴"/>
+                            <Run Text="{Binding ControlCard.LeftAxisPostion}" Foreground="Green"/>
+                        </TextBlock>
+                    </Border>
+                    <!--RightAxisParameter-->
+                    <StackPanel Grid.Row="1" Margin="20 0">
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="左剪切位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_左剪切位" 
+                                     Text="{Binding SystemConfigManager.CalibrationParameter.LeftCutmm,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_左剪切位}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="左剪切位偏移量" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_左剪切位偏移量" 
+                                     Text="{Binding SystemConfigManager.CalibrationParameter.LeftCutOffsetmm,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_左剪切位偏移量}"/>
+                        </StackPanel>
+
+                    </StackPanel>
+                    <!--RightAxis Control-->
+                    <WrapPanel Grid.Row="2">
+                        <Button Content="JOG+" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogPlusCommand}"/>
+                        <Button Content="JOG-" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogMinusCommand}"/>
+                        <Button Content="复位" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisRecoverCommand}"/>
+                        <Button Content="停止" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisStopCommand}"/>
+                        <Button Content="重置" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisResetCommand}"/>
+                        <Button Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisEnableCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="20" Height="20" CornerRadius="30" VerticalAlignment="Center"
+                                        Margin="0 0 5 0" />
+                                <TextBlock Text="使能"/>
+                            </StackPanel>
+                        </Button>
+                    </WrapPanel>
+                </Grid>
+            </Border>
+        </Grid>
+        <!--右轴区域-->
+        <Grid Grid.Row="1" Grid.Column="1" Background="White" Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Border Background="#F5F5F5">
+                <TextBlock Text="右棘轮轴" VerticalAlignment="Center" Margin="15 0"/>
+            </Border>
+            <Border Grid.Row="1" Margin="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Border  CornerRadius="45"
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Margin="30">
+                            <Run Text="右棘轮轴"/>
+                            <Run Text="{Binding ControlCard.RightAxisPostion}" Foreground="Green"/>
+                        </TextBlock>
+                    </Border>
+                    <!--RightAxisParameter-->
+                    <StackPanel Grid.Row="1" Margin="20 0">
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="右剪切位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_右剪切位"
+                                     Text="{Binding SystemConfigManager.CalibrationParameter.RightCutmm,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_右剪切位}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="右剪切位偏移量" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_右剪切位偏移量" 
+                                     Text="{Binding SystemConfigManager.CalibrationParameter.RightCutOffsetmm,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_右剪切位偏移量}"/>
+                        </StackPanel>
+
+                    </StackPanel>
+                    <!--RightAxis Control-->
+                    <WrapPanel Grid.Row="2">
+                        <Button Content="JOG+" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogPlusCommand}"/>
+                        <Button Content="JOG-" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogMinusCommand}"/>
+                        <Button Content="复位" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisRecoverCommand}"/>
+                        <Button Content="停止" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisStopCommand}"/>
+                        <Button Content="重置" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisResetCommand}"/>
+                        <Button Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisEnableCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="20" Height="20" CornerRadius="30" VerticalAlignment="Center"
+                                        Margin="0 0 5 0"/>
+                                <TextBlock Text="使能"/>
+                            </StackPanel>
+                        </Button>
+                    </WrapPanel>
+                </Grid>
+            </Border>
+        </Grid>
+        <!--轨道轴区域-->
+        <Grid Grid.Row="1" Grid.Column="2" Background="White" Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Border Background="#F5F5F5">
+                <TextBlock Text="轨道轴" VerticalAlignment="Center" Margin="15 0"/>
+            </Border>
+            <Border Grid.Row="1" Margin="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Border  CornerRadius="45"
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Margin="30">
+                            <Run Text="轨道轴"/>
+                            <Run Text="{Binding ControlCard.TrackAxisPostion}" Foreground="Green"/>
+                        </TextBlock>
+                    </Border>
+                    <!--Track AxisParameter-->
+                    <StackPanel Grid.Row="1" Margin="20 0">
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="取料位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_Track取料位" 
+                                     Text="{Binding SystemConfigManager.TrackAxisParameter.取料位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_Track取料位}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="轨道宽度" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <ComboBox ItemsSource="{Binding SystemConfigManager.TrackAxisParameter.轨道宽度}"
+                                      SelectedItem="{Binding SystemConfigManager.TrackAxisParameter.Current}"
+                                      Width="80" SelectedIndex="1" DisplayMemberPath="Key">
+
+                            </ComboBox>
+                            <Rectangle Width="5"/>
+                            <TextBox x:Name="_轨道宽度" 
+                                     Text="{Binding SystemConfigManager.TrackAxisParameter.Value}"
+                                     Margin="5 0" Width="58" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_Track取料位}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <!--TrackAxis Control-->
+                    <WrapPanel Grid.Row="2">
+                        <Button Content="JOG+" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogPlusCommand}"/>
+                        <Button Content="JOG-" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogMinusCommand}"/>
+                        <Button Content="复位" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisRecoverCommand}"/>
+                        <Button Content="停止" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisStopCommand}"/>
+                        <Button Content="重置" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisResetCommand}"/>
+                        <Button Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisEnableCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="20" Height="20" CornerRadius="30" VerticalAlignment="Center"
+                                        Margin="0 0 5 0"
+                                        Background="Red"/>
+                                <TextBlock Text="使能"/>
+                            </StackPanel>
+                        </Button>
+                    </WrapPanel>
+                </Grid>
+            </Border>
+        </Grid>
+        <!--剥刀轴区域-->
+        <Grid Grid.Row="1" Grid.Column="3" Background="White" Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Border Background="#F5F5F5">
+                <TextBlock Text="剥刀轴" VerticalAlignment="Center" Margin="15 0"/>
+            </Border>
+            <Border Grid.Row="1" Margin="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Border  CornerRadius="45"
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Margin="30">
+                            <Run Text="剥刀轴"/>
+                            <Run Text="{Binding ControlCard.KnifeAxisPostion}" Foreground="Green"/>
+                        </TextBlock>
+                    </Border>
+                    <!--Knife AxisParameter-->
+                    <StackPanel Grid.Row="1" Margin="20 0">
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="前进位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_Knife前进位" 
+                                     Text="{Binding SystemConfigManager.KnifeAxisParameter.前进位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_Knife前进位}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="小胶位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_Knife小胶位" 
+                                     Text="{Binding SystemConfigManager.KnifeAxisParameter.小胶位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_Knife小胶位}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 15">
+                            <TextBlock Text="大胶位" VerticalAlignment="Center"/>
+                            <Rectangle Width="20"/>
+                            <TextBox x:Name="_Knife大胶位" 
+                                     Text="{Binding SystemConfigManager.KnifeAxisParameter.大胶位,UpdateSourceTrigger=LostFocus}"
+                                     Margin="5 0" Width="150" Height="30"/>
+                            <Button Content="绝对移动"
+                                    Command="{Binding MoveAbsoluteCommand}"
+                                    CommandParameter="{Binding ElementName=_Knife大胶位}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <!--KnifeAxis Control-->
+                    <WrapPanel Grid.Row="2">
+                        <Button Content="JOG+" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogPlusCommand}"/>
+                        <Button Content="JOG-" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisJogMinusCommand}"/>
+                        <Button Content="复位" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisRecoverCommand}"/>
+                        <Button Content="停止" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisStopCommand}"/>
+                        <Button Content="重置" Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisResetCommand}"/>
+                        <Button Width="100" Height="50" Margin="15 15 0 0 " FontSize="18"
+                                Command="{Binding AxisEnableCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <Border Width="20" Height="20" CornerRadius="30" VerticalAlignment="Center"
+                                        Margin="0 0 5 0"
+                                        Background="Red"/>
+                                <TextBlock Text="使能"/>
+                            </StackPanel>
+                        </Button>
+                    </WrapPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

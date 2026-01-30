@@ -95,6 +95,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FZK.Application.Config\FZK.Application.Config.csproj">
+      <Project>{b4baefbd-7261-49fe-8b07-0d7c6a1b664a}</Project>
+      <Name>FZK.Application.Config</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FZK.Application.Initialize\FZK.Application.Initialize.csproj">
       <Project>{88881fa0-f162-49b6-9448-df335fc589dd}</Project>
       <Name>FZK.Application.Initialize</Name>

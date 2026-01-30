@@ -44,9 +44,10 @@
     <Compile Include="Config\ConfigManager.cs" />
     <Compile Include="Config\IConfigManager.cs" />
     <Compile Include="CoreModule.cs" />
-    <Compile Include="Enum\ConfigKey.cs" />
-    <Compile Include="Enum\RoleType.cs" />
-    <Compile Include="Helper\JsonHelper.cs" />
+    <Compile Include="Enums\ConfigKey.cs" />
+    <Compile Include="Enums\RoleType.cs" />
+    <Compile Include="Helpers\GridBorderHelper.cs" />
+    <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Models\Names.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

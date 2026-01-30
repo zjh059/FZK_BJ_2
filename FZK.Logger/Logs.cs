@@ -12,10 +12,8 @@ namespace FZK.Logger
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static void LogTrace(string message)
-        {
-            logger.Trace(message);
-        }
+        public static void LogTrace(string message)=>logger.Trace(message);
+        
 
         public static void LogWarning(string message)
         {

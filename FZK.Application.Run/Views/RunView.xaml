@@ -14,7 +14,7 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              prism:ViewModelLocator.AutoWireViewModel="True" 
-             xmlns:coreEnums="clr-namespace:FZK.Core.Enum;assembly=FZK.Core"
+             xmlns:coreEnums="clr-namespace:FZK.Core.Enums;assembly=FZK.Core"
              d:DesignHeight="900" d:DesignWidth="1500">
 
     <Grid>

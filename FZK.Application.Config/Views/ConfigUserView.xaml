@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="FZK.Application.Config.Views.ConfigUserView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FZK.Application.Config.Views"
+             mc:Ignorable="d" 
+             xmlns:prism="http://prismlibrary.com/"             
+			 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+			 prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:vm="clr-namespace:FZK.Application.Config.ViewModels"
+             d:DataContext="{d:DesignInstance vm:ConfigUserViewModel}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid  Background="White" Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="45"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Border Background="#F5F5F5">
+            <TextBlock Text="用户设置" VerticalAlignment="Center" Margin="15 0"/>
+        </Border>
+        <Border Grid.Row="1" Margin="15">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <DataGrid ItemsSource="{Binding Users}" CanUserAddRows="False" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="用户名" Binding="{Binding UserName}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="密码" Binding="{Binding Password,UpdateSourceTrigger=PropertyChanged}"/>
+                        <DataGridTextColumn Header="角色" Binding="{Binding Role,UpdateSourceTrigger=PropertyChanged}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel Grid.Row="1" HorizontalAlignment="Left" Margin="0 10">
+                    <Button Content="保存" Width="100" Height="30" Command="{Binding UpdateUserCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

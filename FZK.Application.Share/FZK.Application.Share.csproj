@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\ISystemConfigManager.cs" />
+    <Compile Include="Config\SoftwareConfig.cs" />
     <Compile Include="Init\IHardwareManager.cs" />
     <Compile Include="Init\InitResult.cs" />
     <Compile Include="Login\ISession.cs" />
@@ -50,7 +52,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Config\" />
     <Folder Include="Enums\" />
     <Folder Include="Run\" />
   </ItemGroup>

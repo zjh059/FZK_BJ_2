@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FZK.Core.Enum
+namespace FZK.Core.Enums
 {
     public enum RoleType
     {
