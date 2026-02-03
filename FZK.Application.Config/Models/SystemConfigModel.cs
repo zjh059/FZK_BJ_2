@@ -1,4 +1,7 @@
 ﻿using FZK.Application.Share.Config;
+using FZK.Hardware.PLC.Base;
+using FZK.Hardware.Robot.Base;
+using FZK.Hardware.Scanner.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +16,42 @@ namespace FZK.Application.Config.Models
     public class SystemConfigModel
     {
         public SoftwareConfig SoftwareConfig { get; set; } = new SoftwareConfig();
+
+        public ScannerConfig LeftUpScannerConfig { get; set; } = new ScannerConfig()
+        {
+            IpAddress = "127.0.0.1",
+            Port = 8888,
+            Direction =ScannerType.左上.ToString()
+        };
+        public ScannerConfig LeftDownScannerConfig { get; set; } = new ScannerConfig()
+        {
+            IpAddress = "127.0.0.1",
+            Port = 8889,
+            Direction = ScannerType.左下.ToString()
+
+        };
+        public ScannerConfig RightUpScannerConfig { get; set; } = new ScannerConfig()
+        {
+            IpAddress = "127.0.0.1",
+            Port = 8890,
+            Direction = ScannerType.右上.ToString()
+        };
+        public ScannerConfig RightDownScannerConfig { get; set; } = new ScannerConfig()
+        {
+            IpAddress = "127.0.0.1",
+            Port = 8891,
+            Direction = ScannerType.右下.ToString()
+        };
+        public PLCConfig pLCConfig { get; set; } = new PLCConfig()
+        {
+            IpAddress = "127.0.0.1",
+            Port = 8890
+        };
+        public RobotConfig robotConfig { get; set; } = new RobotConfig()
+        {
+            IpAddress = "127.0.0.1",
+            Port = 8891
+        };
         ///// <summary>
         ///// 左相机配置参数
         ///// </summary>

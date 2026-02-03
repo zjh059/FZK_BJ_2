@@ -124,6 +124,18 @@
       <Project>{8C0E8C31-F745-4FF0-87C6-A76075CD3776}</Project>
       <Name>FZK.Database.Base</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FZK.Hardware.PLC.Base\FZK.Hardware.PLC.Base.csproj">
+      <Project>{CAD481D6-740D-4FB0-9CEC-4ABC25FF449D}</Project>
+      <Name>FZK.Hardware.PLC.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FZK.Hardware.Robot.Base\FZK.Hardware.Robot.Base.csproj">
+      <Project>{B0CC9BDF-24B0-4B50-8F9B-7180A348E735}</Project>
+      <Name>FZK.Hardware.Robot.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FZK.Hardware.Scanner.Base\FZK.Hardware.Scanner.Base.csproj">
+      <Project>{E49C07CA-9E5D-4694-87CB-FA330905789F}</Project>
+      <Name>FZK.Hardware.Scanner.Base</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FZK.Logger\FZK.Logger.csproj">
       <Project>{cabb804a-ae12-4d2c-8bb5-6d54f91c4a5d}</Project>
       <Name>FZK.Logger</Name>

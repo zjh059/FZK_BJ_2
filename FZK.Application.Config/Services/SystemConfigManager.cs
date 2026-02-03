@@ -2,6 +2,7 @@
 using FZK.Application.Share.Config;
 using FZK.Core.Config;
 using FZK.Core.Enums;
+using FZK.Hardware.Scanner.Base;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -11,13 +12,27 @@ using System.Threading.Tasks;
 
 namespace FZK.Application.Config.Services
 {
-     class SystemConfigManager : ReactiveObject, ISystemConfigManager
+    class SystemConfigManager : ReactiveObject, ISystemConfigManager
     {
         private SystemConfigModel Config { get; set; }
 
         public SoftwareConfig SoftwareConfig => Config.SoftwareConfig;
 
         private IConfigManager ConfigManager { get; }
+
+        public ScannerConfig LeftUpScannerConfig => throw new NotImplementedException();
+
+        public ScannerConfig RightUpScannerConfig => throw new NotImplementedException();
+
+        public ScannerConfig LeftDownScannerConfig => throw new NotImplementedException();
+
+        public ScannerConfig RightDownScannerConfig => throw new NotImplementedException();
+
+        public ScannerConfig RobotScannerConfig => throw new NotImplementedException();
+
+        public Hardware.PLC.Base.PLCConfig pLCConfig => throw new NotImplementedException();
+
+        public Hardware.Robot.Base.RobotConfig robotConfig => throw new NotImplementedException();
 
         public SystemConfigManager(IConfigManager configManager)
         {

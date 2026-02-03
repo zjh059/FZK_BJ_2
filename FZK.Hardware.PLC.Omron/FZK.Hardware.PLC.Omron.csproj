@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EAE5C391-D06C-46BA-B809-E9BB621D39ED}</ProjectGuid>
+    <ProjectGuid>{53542F33-FC69-4196-B43D-53D626E78F8C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FZK.Application.Share</RootNamespace>
-    <AssemblyName>FZK.Application.Share</AssemblyName>
+    <RootNamespace>FZK.Hardware.PLC.Omron</RootNamespace>
+    <AssemblyName>FZK.Hardware.PLC.Omron</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -41,19 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config\ISystemConfigManager.cs" />
-    <Compile Include="Config\SoftwareConfig.cs" />
-    <Compile Include="Enums\RunStatus.cs" />
-    <Compile Include="Init\IHardwareManager.cs" />
-    <Compile Include="Init\InitResult.cs" />
-    <Compile Include="Login\ISession.cs" />
-    <Compile Include="Models\InitSuccessEvent.cs" />
-    <Compile Include="Models\LoginEvent.cs" />
-    <Compile Include="Models\LogoutEvent.cs" />
+    <Compile Include="PLCDemo.cs" />
+    <Compile Include="PLCOmronModule.cs" />
+    <Compile Include="PLCOmronNJ501_1400.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Run\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Prism.Unity">
@@ -73,21 +64,13 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FZK.Database.Base\FZK.Database.Base.csproj">
-      <Project>{8C0E8C31-F745-4FF0-87C6-A76075CD3776}</Project>
-      <Name>FZK.Database.Base</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FZK.Hardware.PLC.Base\FZK.Hardware.PLC.Base.csproj">
       <Project>{CAD481D6-740D-4FB0-9CEC-4ABC25FF449D}</Project>
       <Name>FZK.Hardware.PLC.Base</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FZK.Hardware.Robot.Base\FZK.Hardware.Robot.Base.csproj">
-      <Project>{B0CC9BDF-24B0-4B50-8F9B-7180A348E735}</Project>
-      <Name>FZK.Hardware.Robot.Base</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FZK.Hardware.Scanner.Base\FZK.Hardware.Scanner.Base.csproj">
-      <Project>{E49C07CA-9E5D-4694-87CB-FA330905789F}</Project>
-      <Name>FZK.Hardware.Scanner.Base</Name>
+    <ProjectReference Include="..\FZK.Logger\FZK.Logger.csproj">
+      <Project>{CABB804A-AE12-4D2C-8BB5-6D54F91C4A5D}</Project>
+      <Name>FZK.Logger</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
