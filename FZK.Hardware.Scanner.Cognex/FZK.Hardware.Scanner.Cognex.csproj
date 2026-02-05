@@ -77,4 +77,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)FZK.Shell\bin\$(Configuration)" /S</PostBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace FZK.Application.Config.Views
 {
     /// <summary>
-    /// ConfigMarkView.xaml 的交互逻辑
+    /// ConfigAxisView.xaml 的交互逻辑
     /// </summary>
-    public partial class ConfigMarkView : UserControl
+    public partial class ConfigRobotView : UserControl
     {
-        public ConfigMarkView()
+        public ConfigRobotView()
         {
             InitializeComponent();
         }

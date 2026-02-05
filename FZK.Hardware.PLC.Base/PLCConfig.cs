@@ -51,7 +51,7 @@ namespace FZK.Hardware.PLC.Base
         /// </summary>
         public byte NetworkNo { get; set; } = 0x00;
         /// <summary>
-        /// 单元号（默认0x00，单单元无需修改）
+        /// （默单元号认0x00，单单元无需修改）
         /// </summary>
         public byte UnitNo { get; set; } = 0x00;
         #endregion

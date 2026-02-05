@@ -20,19 +20,18 @@ namespace FZK.Application.Config.Services
 
         private IConfigManager ConfigManager { get; }
 
-        public ScannerConfig LeftUpScannerConfig => throw new NotImplementedException();
+        public ScannerConfig LeftUpScannerConfig => Config.LeftUpScannerConfig;
 
-        public ScannerConfig RightUpScannerConfig => throw new NotImplementedException();
+        public ScannerConfig RightUpScannerConfig => Config.RightUpScannerConfig;
 
-        public ScannerConfig LeftDownScannerConfig => throw new NotImplementedException();
+        public ScannerConfig LeftDownScannerConfig => Config.LeftDownScannerConfig;
 
-        public ScannerConfig RightDownScannerConfig => throw new NotImplementedException();
+        public ScannerConfig RightDownScannerConfig => Config.RightDownScannerConfig;
 
-        public ScannerConfig RobotScannerConfig => throw new NotImplementedException();
+        public ScannerConfig RobotScannerConfig => Config.RobotScannerConfig;
 
-        public Hardware.PLC.Base.PLCConfig pLCConfig => throw new NotImplementedException();
-
-        public Hardware.Robot.Base.RobotConfig robotConfig => throw new NotImplementedException();
+        public Hardware.PLC.Base.PLCConfig pLCConfig => Config.pLCConfig;
+        public Hardware.Robot.Base.RobotConfig robotConfig => Config.robotConfig;
 
         public SystemConfigManager(IConfigManager configManager)
         {
@@ -57,7 +56,37 @@ namespace FZK.Application.Config.Services
         /// </summary>
         public void Save()
         {
+            elsSquare();
             ConfigManager.Write(ConfigKey.SystemConfig, Config);//序列化
+        }
+        /// <summary>
+        /// 对齐颗粒度
+        /// </summary>
+        public void elsSquare()
+        {
+            var delaytime = LeftUpScannerConfig.DelayTime;
+            RightUpScannerConfig.DelayTime = delaytime;
+            LeftDownScannerConfig.DelayTime = delaytime;
+            RightDownScannerConfig.DelayTime = delaytime;
+            RobotScannerConfig.DelayTime = delaytime;
+
+            var triggerCommand = LeftUpScannerConfig.TriggerCommand;
+            RightUpScannerConfig.TriggerCommand = triggerCommand;
+            LeftDownScannerConfig.TriggerCommand = triggerCommand;
+            RightDownScannerConfig.TriggerCommand = triggerCommand;
+            RobotScannerConfig.TriggerCommand = triggerCommand;
+
+            var maxReconnectCount = LeftUpScannerConfig.MaxReconnectCount;
+            RightUpScannerConfig.MaxReconnectCount = maxReconnectCount;
+            LeftDownScannerConfig.MaxReconnectCount = maxReconnectCount;
+            RightDownScannerConfig.MaxReconnectCount = maxReconnectCount;
+            RobotScannerConfig.MaxReconnectCount = maxReconnectCount;
+
+            var reconnectDelay = LeftUpScannerConfig.ReconnectDelay;
+            RightUpScannerConfig.ReconnectDelay = reconnectDelay;
+            LeftDownScannerConfig.ReconnectDelay = reconnectDelay;
+            RightDownScannerConfig.ReconnectDelay = reconnectDelay;
+            RobotScannerConfig.ReconnectDelay = reconnectDelay;
         }
     }
 }

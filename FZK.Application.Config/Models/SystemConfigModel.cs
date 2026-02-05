@@ -25,32 +25,38 @@ namespace FZK.Application.Config.Models
         };
         public ScannerConfig LeftDownScannerConfig { get; set; } = new ScannerConfig()
         {
-            IpAddress = "127.0.0.1",
+            IpAddress = "127.0.0.3",
             Port = 8889,
             Direction = ScannerType.左下.ToString()
 
         };
         public ScannerConfig RightUpScannerConfig { get; set; } = new ScannerConfig()
         {
-            IpAddress = "127.0.0.1",
+            IpAddress = "127.0.0.2",
             Port = 8890,
             Direction = ScannerType.右上.ToString()
         };
         public ScannerConfig RightDownScannerConfig { get; set; } = new ScannerConfig()
         {
-            IpAddress = "127.0.0.1",
+            IpAddress = "127.0.0.4",
             Port = 8891,
             Direction = ScannerType.右下.ToString()
         };
+        public ScannerConfig RobotScannerConfig { get; set; } = new ScannerConfig()
+        {
+            IpAddress = "127.0.0.5",
+            Port = 8892,
+            Direction = ScannerType.机械臂.ToString()
+        };
         public PLCConfig pLCConfig { get; set; } = new PLCConfig()
         {
-            IpAddress = "127.0.0.1",
-            Port = 8890
+            IpAddress = "127.0.0.6",
+            Port = 8893
         };
         public RobotConfig robotConfig { get; set; } = new RobotConfig()
         {
-            IpAddress = "127.0.0.1",
-            Port = 8891
+            IpAddress = "127.0.0.7",
+            Port = 8894
         };
         ///// <summary>
         ///// 左相机配置参数

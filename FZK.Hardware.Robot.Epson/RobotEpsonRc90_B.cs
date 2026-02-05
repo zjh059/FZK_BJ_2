@@ -451,7 +451,7 @@ namespace FZK.Hardware.Robot.Epson
                     if (_sendQueue.TryDequeue(out string command))
                     {
                         // 转换为字节数组
-                        byte[] sendBytes = _robotConfig.Encode.GetBytes(command);
+                        byte[] sendBytes = Encoding.UTF8.GetBytes(command);
                         // 发送指令
                         _tcpClient.Client.Send(sendBytes);
                         Logs.LogInfo($"机械手指令发送成功：{command.Trim()}（字节长度：{sendBytes.Length}）");
@@ -509,7 +509,7 @@ namespace FZK.Hardware.Robot.Epson
                     // 从队列取数据并解析
                     if (_receiveQueue.TryDequeue(out byte[] receiveBytes))
                     {
-                        string content = _robotConfig.Encode.GetString(receiveBytes).Trim();
+                        string content = Encoding.UTF8.GetString(receiveBytes).Trim();
                         if (!string.IsNullOrWhiteSpace(content))
                         {
                             ReceiveContent = content;

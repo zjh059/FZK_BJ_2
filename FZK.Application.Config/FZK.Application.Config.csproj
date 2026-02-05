@@ -65,28 +65,20 @@
     </Compile>
     <Compile Include="Services\CalibrationManager.cs" />
     <Compile Include="Services\SystemConfigManager.cs" />
-    <Compile Include="ViewModels\AxisCalibrationViewModel.cs" />
-    <Compile Include="ViewModels\CameraCalibrationViewModel.cs" />
-    <Compile Include="ViewModels\ConfigAxisViewModel.cs" />
-    <Compile Include="ViewModels\ConfigIOViewModel.cs" />
-    <Compile Include="ViewModels\ConfigMarkViewModel.cs" />
+    <Compile Include="ViewModels\ConfigPLCViewModel.cs" />
+    <Compile Include="ViewModels\ConfigRobotViewModel.cs" />
+    <Compile Include="ViewModels\ConfigScannerViewModel.cs" />
     <Compile Include="ViewModels\ConfigSoftwareViewModel.cs" />
     <Compile Include="ViewModels\ConfigUserViewModel.cs" />
     <Compile Include="ViewModels\ConfigViewModel.cs" />
-    <Compile Include="Views\AxisCalibrationView.xaml.cs">
-      <DependentUpon>AxisCalibrationView.xaml</DependentUpon>
+    <Compile Include="Views\ConfigRobotView.xaml.cs">
+      <DependentUpon>ConfigRobotView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CameraCalibrationView.xaml.cs">
-      <DependentUpon>CameraCalibrationView.xaml</DependentUpon>
+    <Compile Include="Views\ConfigScannerView.xaml.cs">
+      <DependentUpon>ConfigScannerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ConfigAxisView.xaml.cs">
-      <DependentUpon>ConfigAxisView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ConfigIOView.xaml.cs">
-      <DependentUpon>ConfigIOView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ConfigMarkView.xaml.cs">
-      <DependentUpon>ConfigMarkView.xaml</DependentUpon>
+    <Compile Include="Views\ConfigPLCView.xaml.cs">
+      <DependentUpon>ConfigPLCView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ConfigSoftwareView.xaml.cs">
       <DependentUpon>ConfigSoftwareView.xaml</DependentUpon>
@@ -142,23 +134,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Views\AxisCalibrationView.xaml">
+    <Page Include="Views\ConfigRobotView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CameraCalibrationView.xaml">
+    <Page Include="Views\ConfigScannerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ConfigAxisView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ConfigIOView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ConfigMarkView.xaml">
+    <Page Include="Views\ConfigPLCView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

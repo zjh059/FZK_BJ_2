@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace FZK.Application.Config.Views
 {
     /// <summary>
-    /// CameraCalibrationView.xaml 的交互逻辑
+    /// ConfigIOView.xaml 的交互逻辑
     /// </summary>
-    public partial class CameraCalibrationView : UserControl
+    public partial class ConfigScannerView : UserControl
     {
-        public CameraCalibrationView()
+        public ConfigScannerView()
         {
             InitializeComponent();
         }

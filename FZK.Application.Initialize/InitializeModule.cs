@@ -14,13 +14,10 @@ namespace FZK.Application.Initialize
 {
     [Module(ModuleName = Names.InitializeModule, OnDemand = true)] //延迟加载
     [ModuleDependency(Names.ConfigModule)]
-    //[ModuleDependency(Names.CameraHikModule)]//HIk相机模块
-    //[ModuleDependency(Names.ControlCardZmotionModule)]//正运动控制卡模块
 
-    //[ModuleDependency(Names.CameraEmulationModule)]//仿真相机模块
-    //[ModuleDependency(Names.ControlCardEmulationModule)]//仿真控制卡模块
-    //[ModuleDependency(Names.LightEmulationModule)]//仿真光源模块
-    //[ModuleDependency(Names.BridgeEmulationModule)]//仿真电桥模块
+    [ModuleDependency(Names.ScannerCognexModule)]//仿真控制卡模块
+    [ModuleDependency(Names.RobotEpsonModule)]//仿真光源模块
+    [ModuleDependency(Names.PLCOmronModule)]//仿真电桥模块
     public class InitializeModule : IModule
     {
         public void OnInitialized(IContainerProvider containerProvider)

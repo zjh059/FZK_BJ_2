@@ -11,7 +11,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:vm="clr-namespace:FZK.Application.Config.ViewModels"
              d:DataContext="{d:DesignInstance vm:ConfigSoftwareViewModel}"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="1000" d:DesignWidth="1800">
     <!--<i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
@@ -23,34 +23,84 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Border Background="#F5F5F5">
-            <TextBlock Text="系统设置" VerticalAlignment="Center" Margin="15 0"/>
+            <TextBlock Text="IP设置" VerticalAlignment="Center" Margin="15 0"/>
         </Border>
-        <Border Grid.Row="1" Margin="15">
-            <StackPanel >
+        <Border Grid.Row="1" Margin="5">
+            <StackPanel>
+
+                <!--PLC-->
                 <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="控制卡IP" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                    <TextBlock Text="PLC IP" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
                     <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.ControlCardConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
+               Text="{Binding SystemConfigManager.pLCConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
+
                     <TextBlock Text="端口号" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
                     <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.ControlCardConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
+               Text="{Binding SystemConfigManager.pLCConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="左相机" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.LeftCameraConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Text="右相机" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.RightCameraConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="寸动步长mm" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.SoftwareConfig.AxisMoveStepMM,UpdateSourceTrigger=LostFocus}"/>
-                    <TextBlock Text="系统标题" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.SoftwareConfig.Title,UpdateSourceTrigger=PropertyChanged}"/>
 
+                <!--上扫码地址-->
+                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
+                    <TextBlock Text="左上相机" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
+                             Text="{Binding SystemConfigManager.LeftUpScannerConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Text="右上相机" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
+                             Text="{Binding SystemConfigManager.RightUpScannerConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+
+                <!--上扫码端口号-->
+                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
+                    <TextBlock Text="端口号" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
+                             Text="{Binding SystemConfigManager.LeftUpScannerConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Text="端口号" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
+                             Text="{Binding SystemConfigManager.RightUpScannerConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+
+
+                <!--下扫码地址-->
+                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
+                    <TextBlock Text="左下相机" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
+                             Text="{Binding SystemConfigManager.LeftDownScannerConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Text="右下相机" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
+                             Text="{Binding SystemConfigManager.RightDownScannerConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+
+                <!--下扫码端口号-->
+                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
+                    <TextBlock Text="端口号" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
+                             Text="{Binding SystemConfigManager.LeftDownScannerConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Text="端口号" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
+                             Text="{Binding SystemConfigManager.RightDownScannerConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                
+                <!--料扫码-->
+                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
+                    <TextBlock Text="料扫码 IP" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
+                             Text="{Binding SystemConfigManager.RobotScannerConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Text="端口号" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
+                             Text="{Binding SystemConfigManager.RobotScannerConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
+                </StackPanel>
+                <!--机械手-->
+                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
+                    <TextBlock Text="机械手 IP" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
+                             Text="{Binding SystemConfigManager.robotConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Text="端口号" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
+                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
+                             Text="{Binding SystemConfigManager.robotConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
             </StackPanel>
         </Border>

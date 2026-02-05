@@ -25,13 +25,11 @@ namespace FZK.Application.Config
             containerRegistry.RegisterSingleton<ISystemConfigManager, SystemConfigManager>();//注册系统参数服务类
            
             containerRegistry.RegisterForNavigation<ConfigView>();
-            containerRegistry.RegisterForNavigation<ConfigAxisView>();
-            containerRegistry.RegisterForNavigation<ConfigIOView>();
+            containerRegistry.RegisterForNavigation<ConfigRobotView>();
+            containerRegistry.RegisterForNavigation<ConfigScannerView>();
             containerRegistry.RegisterForNavigation<ConfigSoftwareView>();
             containerRegistry.RegisterForNavigation<ConfigUserView>();
-            containerRegistry.RegisterForNavigation<CameraCalibrationView>();
-            containerRegistry.RegisterForNavigation<ConfigMarkView>();
-            containerRegistry.RegisterForNavigation<AxisCalibrationView>();
+            containerRegistry.RegisterForNavigation<ConfigPLCView>();
 
         }
     }

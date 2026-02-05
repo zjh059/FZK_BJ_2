@@ -27,11 +27,6 @@ namespace FZK.Hardware.Robot.Base
         public int MaxReconnectCount { get; set; } = -1;
 
         /// <summary>
-        /// 指令发送编码（默认UTF8）
-        /// </summary>
-        public Encoding Encode { get; set; } = Encoding.UTF8;
-
-        /// <summary>
         /// 指令结束符（如\r\n，根据机械手协议配置）
         /// </summary>
         public string CommandEndFlag { get; set; } = "\r\n";

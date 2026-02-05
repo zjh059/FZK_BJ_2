@@ -10,7 +10,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:vm="clr-namespace:FZK.Application.Config.ViewModels"
              xmlns:core="clr-namespace:FZK.Core.Models;assembly=FZK.Core"
-            
+             
              d:DataContext="{d:DesignInstance vm:ConfigViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -25,24 +25,43 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel Background="White">
-            <RadioButton Content="运动轴设置"
+            <RadioButton Content="IP设置"
                          Command="{Binding NavigatonToViewCommand}"
-                         CommandParameter="{x:Static core:Names.ConfigAxisView}"
+                         Style="{StaticResource RadioButton.Menu.Config.Style}"
+                         CommandParameter="{x:Static core:Names.ConfigSoftwareView}">
+                <RadioButton.Tag>
+                    <iconPacks:PackIconMaterialDesign Kind="KeyboardArrowRight" Width="20" Height="20"/>
+                </RadioButton.Tag>
+            </RadioButton>
+            <RadioButton Content="PLC设置"
+                         Command="{Binding NavigatonToViewCommand}"
+                         CommandParameter="{x:Static core:Names.ConfigPLCView}"
                          Style="{StaticResource RadioButton.Menu.Config.Style}"
                          >
                 <RadioButton.Tag>
                     <iconPacks:PackIconMaterialDesign Kind="KeyboardArrowRight" Width="20" Height="20"/>
                 </RadioButton.Tag>
             </RadioButton>
-            <RadioButton Content="IO参数"
+            <RadioButton Content="扫码设置"
                          Command="{Binding NavigatonToViewCommand}"
-                         CommandParameter="{x:Static core:Names.ConfigIOView}"
+                         CommandParameter="{x:Static core:Names.ConfigScannerView}"
                           Style="{StaticResource RadioButton.Menu.Config.Style}"
                          >
                 <RadioButton.Tag>
                     <iconPacks:PackIconMaterialDesign Kind="KeyboardArrowRight" Width="20" Height="20"/>
                 </RadioButton.Tag>
             </RadioButton>
+
+            <RadioButton Content="Robot设置"
+                         Command="{Binding NavigatonToViewCommand}"
+                         CommandParameter="{x:Static core:Names.ConfigRobotView}"
+                         Style="{StaticResource RadioButton.Menu.Config.Style}"
+                         >
+                <RadioButton.Tag>
+                    <iconPacks:PackIconMaterialDesign Kind="KeyboardArrowRight" Width="20" Height="20"/>
+                </RadioButton.Tag>
+            </RadioButton>
+
             <RadioButton Content="用户设置"
                          Command="{Binding NavigatonToViewCommand}"
                          CommandParameter="{x:Static core:Names.ConfigUserView}"
@@ -52,14 +71,7 @@
                     <iconPacks:PackIconMaterialDesign Kind="KeyboardArrowRight" Width="20" Height="20"/>
                 </RadioButton.Tag>
             </RadioButton>
-            <RadioButton Content="系统设置"
-                         Command="{Binding NavigatonToViewCommand}"
-                         Style="{StaticResource RadioButton.Menu.Config.Style}"
-                         CommandParameter="{x:Static core:Names.ConfigSoftwareView}">
-                <RadioButton.Tag>
-                    <iconPacks:PackIconMaterialDesign Kind="KeyboardArrowRight" Width="20" Height="20"/>
-                </RadioButton.Tag>
-            </RadioButton>
+
             <RadioButton Content="保存"
                          Command="{Binding SaveConfigCommand}"
                           Style="{StaticResource RadioButton.Menu.Config.Style}"

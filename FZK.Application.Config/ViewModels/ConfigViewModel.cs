@@ -53,7 +53,7 @@ namespace FZK.Application.Config.ViewModels
         private void OnRegionManager()
         {
             if (loaded) return;
-            RegionManager.RequestNavigate(Names.ConfigRegion, Names.ConfigAxisView);
+            RegionManager.RequestNavigate(Names.ConfigRegion, Names.ConfigSoftwareView);
             loaded = true;
         }
     }

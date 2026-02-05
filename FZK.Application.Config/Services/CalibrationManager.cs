@@ -33,9 +33,7 @@ namespace FZK.Application.Config.Services
         public CalibrationManager(
     ISystemConfigManager systemConfigManager)
         {
-
             SystemConfigManager = systemConfigManager;
-
 
         }
     }
