@@ -2,6 +2,7 @@
 using FZK.Application.Share.Config;
 using FZK.Core.Config;
 using FZK.Core.Enums;
+using FZK.Hardware.PLC.Base;
 using FZK.Hardware.Scanner.Base;
 using ReactiveUI;
 using System;
@@ -32,6 +33,10 @@ namespace FZK.Application.Config.Services
 
         public Hardware.PLC.Base.PLCConfig pLCConfig => Config.pLCConfig;
         public Hardware.Robot.Base.RobotConfig robotConfig => Config.robotConfig;
+
+        public PlcAddressConfig plcAddressConfig => Config.plcAddressConfig;
+
+        public RunConfig runConfig => Config.runConfig;
 
         public SystemConfigManager(IConfigManager configManager)
         {

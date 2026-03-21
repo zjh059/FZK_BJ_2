@@ -1,0 +1,247 @@
+﻿<UserControl x:Class="FZK.Application.Debug.Views.BTEntityDebugView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FZK.Application.Debug.Views"
+             xmlns:vm="clr-namespace:FZK.Application.Debug.ViewModels"
+             xmlns:converters="clr-namespace:FZK.Application.UI.Converters;assembly=FZK.Application.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="1000"
+             d:DataContext="{d:DesignInstance vm:BTEntityDebugViewModel}">
+    <!-- 统一样式定义（适配WPF 4.7.2，移除高版本属性） -->
+    <UserControl.Resources>
+        <!-- 布尔转可见性转换器（引用项目已有转换器） -->
+        <converters:BoolToVisibleConvert x:Key="BoolToVisibleConvert"/>
+
+        <!-- 标题样式 -->
+        <Style x:Key="TitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0 0 0 15"/>
+            <Setter Property="Foreground" Value="#212529"/>
+        </Style>
+
+        <!-- 按钮样式 -->
+        <Style x:Key="ButtonPrimaryStyle" TargetType="Button">
+            <Setter Property="Background" Value="#007BFF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10 5"/>
+            <Setter Property="Margin" Value="0 0 8 0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#6C757D"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ButtonDangerStyle" TargetType="Button">
+            <Setter Property="Background" Value="#DC3545"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10 5"/>
+            <Setter Property="Margin" Value="0 0 8 0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#6C757D"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ButtonSuccessStyle" TargetType="Button">
+            <Setter Property="Background" Value="#28A745"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10 5"/>
+            <Setter Property="Margin" Value="0 0 8 0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#6C757D"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- 输入框样式 -->
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="Margin" Value="0 0 8 0"/>
+            <Setter Property="BorderBrush" Value="#CED4DA"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="32"/>
+        </Style>
+
+        <!-- 数据表格样式 -->
+        <Style x:Key="DataGridStyle" TargetType="DataGrid">
+            <Setter Property="AlternatingRowBackground" Value="#F8F9FA"/>
+            <Setter Property="RowBackground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#CED4DA"/>
+            <Setter Property="RowHeight" Value="35"/>
+            <Setter Property="Margin" Value="0 10 0 0"/>
+            <Setter Property="SelectionMode" Value="Extended"/>
+            <Setter Property="CanUserSortColumns" Value="True"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+        </Style>
+
+        <!-- 标签样式 -->
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0 0 5 0"/>
+            <Setter Property="Width" Value="80"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="15" DataContext="{Binding}">
+        <!-- 整体布局 -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 1. 标题 + 工具栏 -->
+        <Grid Grid.Row="0" Margin="0 0 0 10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="底板码盖板码绑定管理" Style="{StaticResource TitleStyle}"/>
+
+            <!-- 功能按钮组 -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Content="新增绑定" Style="{StaticResource ButtonPrimaryStyle}" Width="100" 
+                        Command="{Binding AddCommand}"/>
+                <Button Content="编辑选中" Style="{StaticResource ButtonPrimaryStyle}" Width="100" 
+                        Command="{Binding EditCommand}" IsEnabled="{Binding CanEdit}"/>
+                <Button Content="删除选中" Style="{StaticResource ButtonDangerStyle}" Width="100"  x:Name="BatchDeleteBtn"
+                        Command="{Binding BatchDeleteCommand}" IsEnabled="{Binding CanDelete}"/>
+                <Button Content="刷新数据" Style="{StaticResource ButtonSuccessStyle}" Width="100" 
+                        Command="{Binding RefreshCommand}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- 2. 筛选区 -->
+        <Grid Grid.Row="1" Margin="0 0 0 10" Background="White" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="底板码：" Style="{StaticResource LabelStyle}"/>
+            <TextBox Grid.Column="1" Style="{StaticResource TextBoxStyle}" x:Name="FilterBottomCode" Width="180"
+                     Text="{Binding FilterBottomCode, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Grid.Column="2" Text="盖板码：" Style="{StaticResource LabelStyle}"/>
+            <TextBox Grid.Column="3" Style="{StaticResource TextBoxStyle}" x:Name="FilterTopCode" Width="180"
+                     Text="{Binding FilterTopCode, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <Button Grid.Column="5" Content="筛选数据" Style="{StaticResource ButtonPrimaryStyle}" Width="100" HorizontalAlignment="Left"
+                    Command="{Binding FilterCommand}"/>
+        </Grid>
+
+        <!-- 3. 数据展示区（DataGrid） -->
+        <DataGrid Grid.Row="2" x:Name="BTEntityDataGrid" Style="{StaticResource DataGridStyle}"
+          ItemsSource="{Binding BTEntities}"
+          SelectedItem="{Binding SelectedBTEntity, Mode=TwoWay}">
+            <DataGrid.Columns>
+                <!-- 主键ID列 -->
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60" SortMemberPath="Id"/>
+                <!-- 底板码列 -->
+                <DataGridTextColumn Header="底板码" Binding="{Binding BottomCode}" Width="200" SortMemberPath="BottomCode"/>
+                <!-- 盖板码列（删除错误的ColumnDefinition行） -->
+                <DataGridTextColumn Header="盖板码" Binding="{Binding TopCode}" Width="200" SortMemberPath="TopCode"/>
+                <!-- 使用次数列 -->
+                <DataGridTextColumn Header="使用次数" Binding="{Binding Counts}" Width="100" SortMemberPath="Counts"/>
+                <!-- 最后修改时间列 -->
+                <DataGridTextColumn Header="最后修改时间" Binding="{Binding UpdateTime,StringFormat=yyyy-MM-dd HH:mm:ss}" Width="200" SortMemberPath="UpdateTime"/>
+                <!-- 行内操作列 -->
+                <DataGridTemplateColumn Header="操作" Width="160">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="编辑" Style="{StaticResource ButtonPrimaryStyle}" Width="70" 
+                                Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                CommandParameter="{Binding Id}" Margin="0 0 5 0"/>
+                                <Button Content="删除" Style="{StaticResource ButtonDangerStyle}" Width="70" 
+                                Command="{Binding DataContext.DeleteItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                CommandParameter="{Binding Id}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- 4. 编辑/新增表单区 -->
+        <Border Grid.Row="3" Margin="0 10 0 0" Background="White" 
+                BorderBrush="#CED4DA" BorderThickness="1" Padding="15"
+                Visibility="{Binding IsFormVisible, Converter={StaticResource BoolToVisibleConvert}}" x:Name="EditFormBorder">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- 表单标题 -->
+                <TextBlock Grid.Row="0" Text="{Binding FormTitle}" Style="{StaticResource TitleStyle}" x:Name="FormTitle"/>
+
+                <!-- 表单内容 -->
+                <Grid Grid.Row="1" Margin="0 10 0 10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="300"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="300"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- 底板码 -->
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="底板码：" Style="{StaticResource LabelStyle}"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource TextBoxStyle}" x:Name="TxtBottomCode" Width="280"
+                             Text="{Binding CurrentEntity.BottomCode, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!-- 盖板码 -->
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="盖板码：" Style="{StaticResource LabelStyle}"/>
+                    <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource TextBoxStyle}" x:Name="TxtTopCode" Width="280"
+                             Text="{Binding CurrentEntity.TopCode, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!-- 使用次数 -->
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="使用次数：" Style="{StaticResource LabelStyle}"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource TextBoxStyle}" x:Name="TxtCounts" Width="280"
+                             Text="{Binding CurrentEntity.Counts, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <!-- 最后修改时间（只读） -->
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="修改时间：" Style="{StaticResource LabelStyle}"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TxtUpdateTime" 
+                               Text="{Binding CurrentEntity.UpdateTime, StringFormat=yyyy-MM-dd HH:mm:ss}"
+                               VerticalAlignment="Center" Foreground="#6C757D"/>
+                </Grid>
+
+                <!-- 表单操作按钮 -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="保存" Style="{StaticResource ButtonSuccessStyle}" Width="100" 
+                            Command="{Binding SaveCommand}"/>
+                    <Button Content="取消" Style="{StaticResource ButtonPrimaryStyle}" Width="100" Margin="10 0 0 0" 
+                            Command="{Binding CancelCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

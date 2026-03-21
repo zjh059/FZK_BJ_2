@@ -1,4 +1,7 @@
-﻿using System;
+﻿using FZK.Hardware.PLC.Base;
+using FZK.Hardware.Robot.Base;
+using FZK.Hardware.Scanner.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +17,13 @@ namespace FZK.Application.Share.Init
     {
         bool Initialized { get; }
         Task<InitResult> InitAsync();
+        Task<InitResult> Stop();
+        IPLC OmronPLC { get; }
+        IScanner LeftUpScanner { get; }
+        IScanner LeftDownScanner { get; }
+        IScanner RightUpScanner { get; }
+        IScanner RightDownScanner { get; }
+        IScanner SPScanner { get; }
+        IRobot EpsonRobot { get; }
     }
 }

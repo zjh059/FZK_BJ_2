@@ -54,6 +54,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FZK.Hardware.Robot.Epson", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FZK.Hardware.PLC.Omron", "FZK.Hardware.PLC.Omron\FZK.Hardware.PLC.Omron.csproj", "{53542F33-FC69-4196-B43D-53D626E78F8C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FZK.Application.Debug", "FZK.Application.Debug\FZK.Application.Debug.csproj", "{A4FEB8F4-D667-432E-8430-DDC7CE3D4FC4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -136,6 +138,10 @@ Global
 		{53542F33-FC69-4196-B43D-53D626E78F8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53542F33-FC69-4196-B43D-53D626E78F8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53542F33-FC69-4196-B43D-53D626E78F8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4FEB8F4-D667-432E-8430-DDC7CE3D4FC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4FEB8F4-D667-432E-8430-DDC7CE3D4FC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4FEB8F4-D667-432E-8430-DDC7CE3D4FC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4FEB8F4-D667-432E-8430-DDC7CE3D4FC4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -159,6 +165,7 @@ Global
 		{1B3E0B71-8393-429E-BF3D-5980955B9EC2} = {3976A8D8-A1FE-44E7-93F6-A04A4CF8428E}
 		{842025B8-8392-4FA8-9631-3E725AE355EF} = {3976A8D8-A1FE-44E7-93F6-A04A4CF8428E}
 		{53542F33-FC69-4196-B43D-53D626E78F8C} = {3976A8D8-A1FE-44E7-93F6-A04A4CF8428E}
+		{A4FEB8F4-D667-432E-8430-DDC7CE3D4FC4} = {32E5CC52-1337-42EA-AB95-AC1F7688548A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9496D9DD-75CF-4E80-A086-A8578FF1A366}

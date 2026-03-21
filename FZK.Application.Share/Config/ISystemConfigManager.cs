@@ -21,11 +21,12 @@ namespace FZK.Application.Share.Config
         ScannerConfig RightDownScannerConfig { get; }
         ScannerConfig RobotScannerConfig { get; }
         PLCConfig pLCConfig { get; }
+        PlcAddressConfig plcAddressConfig { get; }
         RobotConfig robotConfig { get; }
-
+        RunConfig runConfig { get; }
+        SoftwareConfig SoftwareConfig { get; }
         //CameraConfig LeftCameraConfig { get; }
         //CameraConfig RightCameraConfig { get; }
-        //SoftwareConfig SoftwareConfig { get; }
         //ControlCardConfig ControlCardConfig { get; }
         //LightConfig LightConfig { get; }
         //BridgeConfig BridgeConfig { get; }

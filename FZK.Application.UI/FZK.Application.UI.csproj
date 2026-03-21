@@ -52,8 +52,16 @@
       <DependentUpon>CameraBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BooleanToColorConverter.cs" />
+    <Compile Include="Converters\BoolToColorConverter.cs" />
+    <Compile Include="Converters\BoolToTextConverter.cs" />
+    <Compile Include="Converters\BoolToVisibleConvert.cs" />
+    <Compile Include="Converters\PasswordMaskConverter.cs" />
     <Compile Include="Converters\NGToRedColorConverter.cs" />
+    <Compile Include="Converters\ResultToTextConverter.cs" />
     <Compile Include="Converters\RoleToVisibilityConverter.cs" />
+    <Compile Include="Converters\StatusToColorConverter.cs" />
+    <Compile Include="Converters\StepStatusToColorConverter.cs" />
+    <Compile Include="Converters\StepStatusToTextConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -98,6 +106,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\Converters.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\Ellipse.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

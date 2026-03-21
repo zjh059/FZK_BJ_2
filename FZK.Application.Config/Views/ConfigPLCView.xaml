@@ -6,54 +6,286 @@
              xmlns:local="clr-namespace:FZK.Application.Config.Views"
              mc:Ignorable="d" 
              xmlns:prism="http://prismlibrary.com/"             
-			 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
-			 prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:vm="clr-namespace:FZK.Application.Config.ViewModels"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:plcEnums="clr-namespace:FZK.Hardware.PLC.Base;assembly=FZK.Hardware.PLC.Base"
              d:DataContext="{d:DesignInstance vm:ConfigPLCViewModel}"
              d:DesignHeight="1000" d:DesignWidth="1800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="45"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Border Background="#F5F5F5">
-            <TextBlock Text="PLC设置" VerticalAlignment="Center" Margin="15 0"/>
-        </Border>
-        <!--left-->
-        <Border Grid.Row="1" Margin="15">
-            <StackPanel>
-                <!--PLC-->
-                
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="超时时间" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                               Text="{Binding SystemConfigManager.pLCConfig.Timeout,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Text="重连次数" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                               Text="{Binding SystemConfigManager.pLCConfig.MaxReconnectCount,UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>   
-                
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="重连间隔" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                               Text="{Binding SystemConfigManager.pLCConfig.ReconnectDelay,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Text="心跳间隔" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                               Text="{Binding SystemConfigManager.pLCConfig.HeartbeatInterval,UpdateSourceTrigger=PropertyChanged}"/>
+
+    <UserControl.Resources>
+        <!-- 枚举值列表 -->
+        <ObjectDataProvider x:Key="PLCRegisterTypeEnumValues" 
+                            MethodName="GetValues" 
+                            ObjectType="{x:Type plcEnums:PLCRegisterType}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="plcEnums:PLCRegisterType"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
+        <!-- 卡片样式 -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect ShadowDepth="2" BlurRadius="8" Opacity="0.15"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style>
+
+        <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+
+        <Style x:Key="FormLabelStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,5,10,5"/>
+            <Setter Property="Foreground" Value="#4A5568"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <Style x:Key="FormTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#CBD5E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Margin" Value="0,0,15,0"/>
+            <Setter Property="Background" Value="#F7FAFC"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#3182CE"/>
+                    <Setter Property="Background" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="FormComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#CBD5E0"/>
+            <Setter Property="Background" Value="#F7FAFC"/>
+            <Setter Property="Margin" Value="0,0,15,0"/>
+        </Style>
+
+        <Style x:Key="FormCheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,5,15,5"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#F9FAFB">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- 标题栏 -->
+            <Border Grid.Row="0" Background="White" Margin="0,0,0,20" 
+                    BorderThickness="0,0,0,1" BorderBrush="#E2E8F0">
+                <TextBlock Text="PLC 设置" FontSize="20" FontWeight="Bold" 
+                           Foreground="#1A202C" Margin="0,10,0,10"/>
+            </Border>
+
+            <!-- 基础配置卡片 -->
+            <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="20">
+                <StackPanel>
+                    <TextBlock Text="基础连接配置" Style="{StaticResource SectionTitleStyle}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 第一行 -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="超时时间 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.pLCConfig.Timeout, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="重连次数" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.pLCConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- 第二行 -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="重连间隔 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.pLCConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="指令间隔 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="1" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.pLCConfig.SendInterval, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- 第三行 -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="队列长度" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.pLCConfig.MaxSendQueueLength, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
                 </StackPanel>
-                
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="队列长度" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                               Text="{Binding SystemConfigManager.pLCConfig.MaxSendQueueLength,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Text="指令间隔" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                               Text="{Binding SystemConfigManager.pLCConfig.SendInterval,UpdateSourceTrigger=PropertyChanged}"/>
+            </Border>
+
+            <!-- 寄存器地址配置卡片（治具1、治具2并排） -->
+            <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="20">
+                <StackPanel>
+                    <TextBlock Text="寄存器地址配置" Style="{StaticResource SectionTitleStyle}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- 治具1 -->
+                        <Border Grid.Column="0" BorderBrush="#EDF2F7" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,10,0">
+                            <StackPanel>
+                                <TextBlock Text="治具1寄存器地址" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="#2C5282"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="130"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="D0 (底/导向扫码):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig1TriggerScan}"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="D1 (焊接扫码):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig1TriggerWeld}"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="D2 (清零):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig1TriggerClear}"/>
+
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="D100 (扫码完成):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig1ScanResult}"/>
+
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="D101 (焊接完成):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig1WeldResult}"/>
+
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="D106 (比对结果):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig1CompareResult}"/>
+
+                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="D104 (焊接最终):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig1WeldFinalResult}"/>
+
+                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="D108 (计数):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="7" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig1Count}"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 治具2 -->
+                        <Border Grid.Column="1" BorderBrush="#EDF2F7" BorderThickness="1" CornerRadius="6" Padding="12" Margin="10,0,0,0">
+                            <StackPanel>
+                                <TextBlock Text="治具2寄存器地址" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="#2C5282"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="130"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="D3 (底/导向扫码):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig2TriggerScan}"/>
+
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="D4 (焊接扫码):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig2TriggerWeld}"/>
+
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="D5 (清零):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig2TriggerClear}"/>
+
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="D102 (扫码完成):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig2ScanResult}"/>
+
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="D103 (焊接完成):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig2WeldResult}"/>
+
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="D107 (比对结果):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig2CompareResult}"/>
+
+                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="D105 (焊接最终):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig2WeldFinalResult}"/>
+
+                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="D109 (计数):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBox Grid.Row="7" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.PlcAddressConfig.Jig2Count}"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
                 </StackPanel>
-                
-            </StackPanel>
-        </Border>
-    </Grid>
+            </Border>
+
+            <!-- 心跳配置卡片（新增） -->
+            <Border Grid.Row="3" Style="{StaticResource CardStyle}" Padding="20">
+                <StackPanel>
+                    <TextBlock Text="心跳监控配置" Style="{StaticResource SectionTitleStyle}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 第一行：寄存器类型 + 地址 -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="寄存器类型" Style="{StaticResource FormLabelStyle}"/>
+                        <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormComboBoxStyle}"
+                                  ItemsSource="{Binding Source={StaticResource PLCRegisterTypeEnumValues}}"
+                                  SelectedItem="{Binding SystemConfigManager.pLCConfig.HeartbeatRegisterType, UpdateSourceTrigger=PropertyChanged}"
+                                  IsSynchronizedWithCurrentItem="True"/>
+
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="地址" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.pLCConfig.HeartbeatAddress, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- 第二行：心跳间隔 + 启用开关 -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="心跳间隔 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.pLCConfig.HeartbeatInterval, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <CheckBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" 
+                                  Content="启用心跳监控" Style="{StaticResource FormCheckBoxStyle}"
+                                  IsChecked="{Binding SystemConfigManager.pLCConfig.HeartbeatIsOpen, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

@@ -21,8 +21,8 @@
         </Grid.ColumnDefinitions>
         <Border Grid.Column="1" Width="1" Background="AliceBlue" Margin="0 300 0 300"/>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock Text="视觉对位" TextWrapping="Wrap" FontSize="120" Foreground="White" VerticalAlignment="Center"/>
-            <TextBlock Text="运动控制系统" TextWrapping="Wrap" FontSize="80" Foreground="White" VerticalAlignment="Center"/>
+            <TextBlock Text="焊接上下料" TextWrapping="Wrap" FontSize="80" Foreground="White" VerticalAlignment="Center"/>
+            <TextBlock Text="扫码系统" TextWrapping="Wrap" FontSize="80" Foreground="White" VerticalAlignment="Center"/>
         </StackPanel>
         <Grid Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid.ColumnDefinitions>

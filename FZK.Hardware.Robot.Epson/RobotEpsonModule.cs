@@ -20,7 +20,7 @@ namespace FZK.Hardware.Robot.Epson
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            if (!ConfigManager.NoHardwareMode)
+            //if (!ConfigManager.NoHardwareMode)
             {
                 containerRegistry.Register<IRobot, RobotEpsonRc90_B> ();
             }

@@ -58,9 +58,10 @@ namespace FZK.Hardware.PLC.Base
 
         #region 心跳配置（Fins标准心跳，无需自定义指令）
         /// <summary>
-        /// 心跳检测间隔(ms)（0则关闭心跳）
-        /// </summary>
-        public int HeartbeatInterval { get; set; } = 3000;
+        public PLCRegisterType HeartbeatRegisterType { get; set; } = PLCRegisterType.DM; // 心跳寄存器类型（如CIO/DM）
+        public ushort HeartbeatAddress { get; set; } = 110; // 心跳寄存器地址
+        public int HeartbeatInterval { get; set; } = 1000; // 心跳间隔（ms）
+        public bool HeartbeatIsOpen { get; set; } = true; // 心跳间隔（ms）
         #endregion
 
         #region 指令队列配置
@@ -73,5 +74,7 @@ namespace FZK.Hardware.PLC.Base
         /// </summary>
         public int SendInterval { get; set; } = 100;
         #endregion
+
+
     }
 }

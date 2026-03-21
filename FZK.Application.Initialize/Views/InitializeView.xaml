@@ -25,7 +25,7 @@
     <Grid>
         <Grid Width="auto" Height="auto" HorizontalAlignment="Center" VerticalAlignment="Center">
             <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                <TextBlock Height="auto" Width="300" Text="{Binding Message}" Foreground="White"/>
+                <TextBlock Height="auto" Width="auto" Text="{Binding Message}" Foreground="White"/>
                 <mah:MetroProgressBar Width="250" Margin="4" IsIndeterminate="True" Foreground="White" VerticalAlignment="Center"/>
                 <Button Content="重试" MinWidth="60" Height="30" Margin="4" Command="{Binding InitializeCommand}"/>
                 <Button Content="跳过" MinWidth="60" Height="30" Margin="4" Command="{Binding OpenMainViewCommand}"/>

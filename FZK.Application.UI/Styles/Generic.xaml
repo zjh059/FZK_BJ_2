@@ -8,5 +8,6 @@
         <ResourceDictionary Source="pack://application:,,,/FZK.Application.UI;component/Styles/Color.xaml"/>
         <ResourceDictionary Source="pack://application:,,,/FZK.Application.UI;component/Styles/Converters.xaml"/>
         <ResourceDictionary Source="pack://application:,,,/FZK.Application.UI;component/Styles/Word.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/FZK.Application.UI;component/Styles/Ellipse.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A4FEB8F4-D667-432E-8430-DDC7CE3D4FC4}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <RootNamespace>FZK.Application.Debug</RootNamespace>
+    <AssemblyName>FZK.Application.Debug</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DebugModule.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Service\DatabaseManager.cs" />
+    <Compile Include="ViewModels\BTEntityDebugViewModel.cs" />
+    <Compile Include="ViewModels\CodeEntityDebugViewModel.cs" />
+    <Compile Include="ViewModels\DataBaseDebugViewModel.cs" />
+    <Compile Include="ViewModels\PLCDebugViewModel.cs" />
+    <Compile Include="ViewModels\RobotDebugViewModel.cs" />
+    <Compile Include="ViewModels\ScannerDebugViewModel.cs" />
+    <Compile Include="ViewModels\UserEntityDebugViewModel.cs" />
+    <Compile Include="Views\BTEntityDebugView.xaml.cs">
+      <DependentUpon>BTEntityDebugView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CodeEntityDebugView.xaml.cs">
+      <DependentUpon>CodeEntityDebugView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataBaseDebugView.xaml.cs">
+      <DependentUpon>DataBaseDebugView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PasswordBoxHelper.cs" />
+    <Compile Include="Views\PLCDebugView.xaml.cs">
+      <DependentUpon>PLCDebugView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\RobotDebugView.xaml.cs">
+      <DependentUpon>RobotDebugView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ScannerDebugView.xaml.cs">
+      <DependentUpon>ScannerDebugView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserEntityDebugView.xaml.cs">
+      <DependentUpon>UserEntityDebugView.xaml</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MahApps.Metro">
+      <Version>2.4.10</Version>
+    </PackageReference>
+    <PackageReference Include="MahApps.Metro.IconPacks">
+      <Version>5.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="Prism.Unity">
+      <Version>8.1.97</Version>
+    </PackageReference>
+    <PackageReference Include="Prism.Wpf">
+      <Version>8.1.97</Version>
+    </PackageReference>
+    <PackageReference Include="ReactiveUI">
+      <Version>22.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="ReactiveUI.Fody">
+      <Version>19.5.41</Version>
+    </PackageReference>
+    <PackageReference Include="ReactiveUI.WPF">
+      <Version>22.3.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Views\BTEntityDebugView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CodeEntityDebugView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataBaseDebugView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PLCDebugView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RobotDebugView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ScannerDebugView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserEntityDebugView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FZK.Application.Share\FZK.Application.Share.csproj">
+      <Project>{eae5c391-d06c-46ba-b809-e9bb621d39ed}</Project>
+      <Name>FZK.Application.Share</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FZK.Application.UI\FZK.Application.UI.csproj">
+      <Project>{c52194b8-94c8-44bc-8e7e-682fdfaa18ce}</Project>
+      <Name>FZK.Application.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FZK.Core\FZK.Core.csproj">
+      <Project>{552e8ee4-b039-44f8-9ea1-b527570ea3fe}</Project>
+      <Name>FZK.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FZK.Database.Base\FZK.Database.Base.csproj">
+      <Project>{8c0e8c31-f745-4ff0-87c6-a76075cd3776}</Project>
+      <Name>FZK.Database.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FZK.Hardware.PLC.Base\FZK.Hardware.PLC.Base.csproj">
+      <Project>{CAD481D6-740D-4FB0-9CEC-4ABC25FF449D}</Project>
+      <Name>FZK.Hardware.PLC.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FZK.Hardware.Scanner.Base\FZK.Hardware.Scanner.Base.csproj">
+      <Project>{E49C07CA-9E5D-4694-87CB-FA330905789F}</Project>
+      <Name>FZK.Hardware.Scanner.Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FZK.Logger\FZK.Logger.csproj">
+      <Project>{CABB804A-AE12-4D2C-8BB5-6D54F91C4A5D}</Project>
+      <Name>FZK.Logger</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)FZK.Shell\bin\$(Configuration)" /S
+</PostBuildEvent>
+  </PropertyGroup>
+</Project>

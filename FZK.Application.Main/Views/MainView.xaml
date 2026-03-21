@@ -36,14 +36,22 @@
                         <iconPacks:PackIconFeatherIcons Kind="Settings" Width="20" Height="20" />
                     </RadioButton.Tag>
                 </RadioButton>
-                <RadioButton Content="相机标定" Style="{StaticResource RadioButton.Menu.Style}">
+                <RadioButton Content="PLC调试" Style="{StaticResource RadioButton.Menu.Style}"
+                             Command="{Binding NavigationgToVewCommand}"
+                             CommandParameter="{x:Static core:Names.PLCDebugView}">
 
                 </RadioButton>
-                <RadioButton Content="MARK校准" Style="{StaticResource RadioButton.Menu.Style}">
+                <RadioButton Content="扫码触发" Style="{StaticResource RadioButton.Menu.Style}"
+                               Command="{Binding NavigationgToVewCommand}"
+                               CommandParameter="{x:Static core:Names.ScannerDebugView}">
                 </RadioButton>
-                <RadioButton Content="轴标定" Style="{StaticResource RadioButton.Menu.Style}">
+                <RadioButton Content="机械臂调试" Style="{StaticResource RadioButton.Menu.Style}"
+                               Command="{Binding NavigationgToVewCommand}"
+                               CommandParameter="{x:Static core:Names.RobotDebugView}">
                 </RadioButton>
-                <RadioButton Content="BOM管理" Style="{StaticResource RadioButton.Menu.Style}">
+                <RadioButton Content="数据管理" Style="{StaticResource RadioButton.Menu.Style}"
+                               Command="{Binding NavigationgToVewCommand}"
+                               CommandParameter="{x:Static core:Names.DataBaseDebugView}">
                 </RadioButton>
                 <RadioButton Content="切换用户" Style="{StaticResource RadioButton.Menu.Style}"
                                Command="{Binding LogoutCommand}">

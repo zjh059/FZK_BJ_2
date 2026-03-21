@@ -41,7 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PLCDemo.cs" />
+    <Compile Include="FinsHelper.cs" />
+    <Compile Include="Helper\DSFinsCommunication.cs" />
     <Compile Include="PLCOmronModule.cs" />
     <Compile Include="PLCOmronNJ501_1400.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

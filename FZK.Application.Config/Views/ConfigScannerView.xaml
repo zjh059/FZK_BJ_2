@@ -15,38 +15,380 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              prism:ViewModelLocator.AutoWireViewModel="True"
              FontSize="16"
+             xmlns:enums="clr-namespace:FZK.Hardware.Scanner.Base;assembly=FZK.Hardware.Scanner.Base"
              d:DesignHeight="1000" d:DesignWidth="1800">
+    <UserControl.Resources>
+        <ObjectDataProvider x:Key="ScannerTypeEnumValues" 
+                        MethodName="GetValues" 
+                        ObjectType="{x:Type enums:ScannerType}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="enums:ScannerType"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="45"/>
-            <RowDefinition/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Border Background="#F5F5F5">
+
+        <!-- 标题栏 -->
+        <Border Background="#F5F5F5" Grid.Row="0">
             <TextBlock Text="扫码器设置" VerticalAlignment="Center" Margin="15 0"/>
         </Border>
-        <Border Grid.Row="1" Margin="15">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="扫码延迟" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                            Text="{Binding SystemConfigManager.LeftUpScannerConfig.DelayTime,UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <TextBlock Text="触发指令" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                            Text="{Binding SystemConfigManager.LeftUpScannerConfig.TriggerCommand,UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
+        <!-- 配置内容区域：TabControl 切换不同扫码器 -->
+        <TabControl Grid.Row="1" Margin="15">
+            <!-- 左上扫码器 -->
+            <TabItem Header="左上扫码器">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="重连次数" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                            Text="{Binding SystemConfigManager.LeftUpScannerConfig.MaxReconnectCount,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="IP地址：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftUpScannerConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <TextBlock Text="重连延迟" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                            Text="{Binding SystemConfigManager.LeftUpScannerConfig.ReconnectDelay,UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="端口：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftUpScannerConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
 
-            </StackPanel>
-        </Border>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="方向：" VerticalAlignment="Center" Margin="5"/>
+                            <ComboBox Grid.Row="2" Grid.Column="1" Margin="5"
+                                      ItemsSource="{Binding Source={StaticResource ScannerTypeEnumValues}}"
+                                      SelectedItem="{Binding SystemConfigManager.LeftUpScannerConfig.Direction, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="扫码延迟(ms)：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftUpScannerConfig.DelayTime, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="触发指令：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftUpScannerConfig.TriggerCommand, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="最大重连次数：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="5" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftUpScannerConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="重连延迟(ms)：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftUpScannerConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="7" Grid.Column="0" Text="编码名称：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="7" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftUpScannerConfig.EncodingName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="码值分隔符：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="8" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftUpScannerConfig.CodeDelimiter, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="9" Grid.Column="0" Text="SN长度：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="9" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftUpScannerConfig.SnLength, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- 左下扫码器 -->
+            <TabItem Header="左下扫码器">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="IP地址：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftDownScannerConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="端口：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftDownScannerConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="方向：" VerticalAlignment="Center" Margin="5"/>
+                            <ComboBox Grid.Row="2" Grid.Column="1" Margin="5"
+                                     ItemsSource="{Binding Source={StaticResource ScannerTypeEnumValues}}"
+                                     SelectedItem="{Binding SystemConfigManager.LeftDownScannerConfig.Direction, 
+                                     UpdateSourceTrigger=PropertyChanged}"
+/>
+
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="扫码延迟(ms)：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftDownScannerConfig.DelayTime, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="触发指令：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftDownScannerConfig.TriggerCommand, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="最大重连次数：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="5" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftDownScannerConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="重连延迟(ms)：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftDownScannerConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="7" Grid.Column="0" Text="编码名称：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="7" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftDownScannerConfig.EncodingName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="码值分隔符：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="8" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftDownScannerConfig.CodeDelimiter, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="9" Grid.Column="0" Text="SN长度：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="9" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.LeftDownScannerConfig.SnLength, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- 右上扫码器 -->
+            <TabItem Header="右上扫码器">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="IP地址：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightUpScannerConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="端口：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightUpScannerConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="方向：" VerticalAlignment="Center" Margin="5"/>
+                            <ComboBox Grid.Row="2" Grid.Column="1" Margin="5"
+                                      ItemsSource="{Binding Source={StaticResource ScannerTypeEnumValues}}"
+                                      SelectedItem="{Binding SystemConfigManager.RightUpScannerConfig.Direction, 
+                                UpdateSourceTrigger=PropertyChanged}"/>
+
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="扫码延迟(ms)：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightUpScannerConfig.DelayTime, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="触发指令：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightUpScannerConfig.TriggerCommand, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="最大重连次数：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="5" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightUpScannerConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="重连延迟(ms)：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightUpScannerConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="7" Grid.Column="0" Text="编码名称：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="7" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightUpScannerConfig.EncodingName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="码值分隔符：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="8" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightUpScannerConfig.CodeDelimiter, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="9" Grid.Column="0" Text="SN长度：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="9" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightUpScannerConfig.SnLength, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- 右下扫码器 -->
+            <TabItem Header="右下扫码器">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="IP地址：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightDownScannerConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="端口：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightDownScannerConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="方向：" VerticalAlignment="Center" Margin="5"/>
+                            <ComboBox Grid.Row="2" Grid.Column="1" Margin="5"
+                                      ItemsSource="{Binding Source={StaticResource ScannerTypeEnumValues}}"
+                                      SelectedItem="{Binding SystemConfigManager.RightDownScannerConfig.Direction, 
+                                UpdateSourceTrigger=PropertyChanged}"/>
+
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="扫码延迟(ms)：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightDownScannerConfig.DelayTime, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="触发指令：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightDownScannerConfig.TriggerCommand, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="最大重连次数：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="5" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightDownScannerConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="重连延迟(ms)：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightDownScannerConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="7" Grid.Column="0" Text="编码名称：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="7" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightDownScannerConfig.EncodingName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="码值分隔符：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="8" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightDownScannerConfig.CodeDelimiter, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="9" Grid.Column="0" Text="SN长度：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="9" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RightDownScannerConfig.SnLength, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- 机械臂扫码器 -->
+            <TabItem Header="机械臂扫码器">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="IP地址：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RobotScannerConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="端口：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RobotScannerConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="方向：" VerticalAlignment="Center" Margin="5"/>
+                            <ComboBox Grid.Row="2" Grid.Column="1" Margin="5"
+                                        ItemsSource="{Binding Source={StaticResource ScannerTypeEnumValues}}"
+                                        SelectedItem="{Binding SystemConfigManager.RobotScannerConfig.Direction, 
+                                        UpdateSourceTrigger=PropertyChanged}"/>
+
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="扫码延迟(ms)：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RobotScannerConfig.DelayTime, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="触发指令：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RobotScannerConfig.TriggerCommand, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="最大重连次数：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="5" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RobotScannerConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="重连延迟(ms)：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RobotScannerConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="7" Grid.Column="0" Text="编码名称：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="7" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RobotScannerConfig.EncodingName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="码值分隔符：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="8" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RobotScannerConfig.CodeDelimiter, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="9" Grid.Column="0" Text="SN长度：" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="9" Grid.Column="1" Margin="5" 
+                                     Text="{Binding SystemConfigManager.RobotScannerConfig.SnLength, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+
+        <!-- 底部按钮区 -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="15">
+            <Button Content="保存" Width="80" Height="30" Margin="5" Command="{Binding SaveCommand}"/>
+            <Button Content="取消" Width="80" Height="30" Margin="5" Command="{Binding CancelCommand}"/>
+        </StackPanel>
     </Grid>
 </UserControl>

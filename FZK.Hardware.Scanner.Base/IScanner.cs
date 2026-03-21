@@ -47,5 +47,7 @@ namespace FZK.Hardware.Scanner.Base
         /// 关闭扫码
         /// </summary>
         void Close();
+        Task<bool> CheckConnectionAsync(); // 你需要的异步重连方法
+
     }
 }

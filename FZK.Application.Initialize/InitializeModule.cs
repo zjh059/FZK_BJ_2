@@ -14,10 +14,9 @@ namespace FZK.Application.Initialize
 {
     [Module(ModuleName = Names.InitializeModule, OnDemand = true)] //延迟加载
     [ModuleDependency(Names.ConfigModule)]
-
-    [ModuleDependency(Names.ScannerCognexModule)]//仿真控制卡模块
-    [ModuleDependency(Names.RobotEpsonModule)]//仿真光源模块
-    [ModuleDependency(Names.PLCOmronModule)]//仿真电桥模块
+    [ModuleDependency(Names.ScannerCognexModule)]//扫码模块
+    [ModuleDependency(Names.RobotEpsonModule)]//机械手模块
+    [ModuleDependency(Names.PLCOmronModule)]//PLC模块
     public class InitializeModule : IModule
     {
         public void OnInitialized(IContainerProvider containerProvider)

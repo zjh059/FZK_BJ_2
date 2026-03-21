@@ -102,7 +102,42 @@
                     <TextBox Height="25" Width="200" Margin="0 0 10 0" 
                              Text="{Binding SystemConfigManager.robotConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
+                <!-- 运行参数配置 -->
+                <Border Margin="30 20 15 0" BorderBrush="#CED4DA" BorderThickness="1" Padding="10">
+                    <StackPanel>
+                        <TextBlock Text="运行参数配置" FontWeight="Bold" Margin="0 0 0 10"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="150"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="PLC读取间隔(ms):" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SystemConfigManager.RunConfig.PlcReadInterval}" Margin="5"/>
+
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="状态检查间隔(ms):" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding SystemConfigManager.RunConfig.StatusCheckInterval}" Margin="5"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="最大记录数:" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SystemConfigManager.RunConfig.MaxScanRecords}" Margin="5"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="扫码重试次数:" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding SystemConfigManager.RunConfig.ScanRetryCount}" Margin="5"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="重试延迟(ms):" VerticalAlignment="Center" Margin="5"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SystemConfigManager.RunConfig.ScanRetryDelay}" Margin="5"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
             </StackPanel>
+            
         </Border>
     </Grid>
 </UserControl>

@@ -15,6 +15,7 @@ namespace FZK.Core.Models
         public const string ShellRegion = "ShellRegion";
         public const string MainRegion = "MainRegion";
         public const string ConfigRegion = "ConfigRegion";
+        public const string DBRegion = "DBRegion";
         public const string BomRegion = "BomRegion";
 
 
@@ -25,6 +26,7 @@ namespace FZK.Core.Models
         public const string MainView = "MainView";
         public const string RunView = "RunView";
 
+        //设置界面
         public const string ConfigView = "ConfigView";
         public const string ConfigScannerView = "ConfigScannerView";//扫码设置页面
         public const string ConfigRobotView = "ConfigRobotView";//机械臂设置页面
@@ -32,7 +34,17 @@ namespace FZK.Core.Models
         public const string ConfigUserView = "ConfigUserView";//用户管理页面
         public const string ConfigSoftwareView = "ConfigSoftwareView";//系统设置页面
 
-     
+        public const string BTEntityDebugView = "BTEntityDebugView";
+        public const string CodeEntityDebugView = "CodeEntityDebugView";
+        public const string UserEntityDebugView = "UserEntityDebugView";//系统设置页面
+
+        //调试界面
+        public const string ScannerDebugView = "ScannerDebugView";
+        public const string RobotDebugView = "RobotDebugView";
+        public const string PLCDebugView = "PLCDebugView";
+        public const string DataBaseDebugView = "DataBaseDebugView";
+
+
         public const string BomView = "BomView";//Bom主页面
         public const string ElementEntityView = "ElementEntityView";//元件管理页面
         public const string BomEntityView = "BomEntityView";//Bom管理页面

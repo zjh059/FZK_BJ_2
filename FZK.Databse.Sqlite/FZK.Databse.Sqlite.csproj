@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BTRepository.cs" />
+    <Compile Include="CodeRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepositoryBase.cs" />
     <Compile Include="SqliteDbContext.cs" />
@@ -74,6 +76,12 @@
       <Version>1.7.0.34</Version>
     </PackageReference>
     <PackageReference Include="System.Data.SQLite">
+      <Version>1.0.118</Version>
+    </PackageReference>
+    <PackageReference Include="System.Data.SQLite.Core">
+      <Version>1.0.118</Version>
+    </PackageReference>
+    <PackageReference Include="System.Data.SQLite.EF6">
       <Version>1.0.118</Version>
     </PackageReference>
   </ItemGroup>

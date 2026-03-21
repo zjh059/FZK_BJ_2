@@ -19,9 +19,14 @@ namespace FZK.Hardware.Scanner.Cognex
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            if (!ConfigManager.NoHardwareMode)
+           // if (!ConfigManager.NoHardwareMode)
             {
-                containerRegistry.Register<IScanner, ScannerCognexDM260>();
+                containerRegistry.Register<IScanner, ScannerCognexDM260>(ScannerType.左上.ToString());
+                containerRegistry.Register<IScanner, ScannerCognexDM260>(ScannerType.左下.ToString());
+                containerRegistry.Register<IScanner, ScannerCognexDM260>(ScannerType.右上.ToString());
+                containerRegistry.Register<IScanner, ScannerCognexDM260>(ScannerType.右下.ToString());
+                containerRegistry.Register<IScanner, ScannerCognexDM260>(ScannerType.机械臂.ToString());
+
             }
         }
     }

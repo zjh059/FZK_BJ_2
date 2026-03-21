@@ -6,34 +6,23 @@ using System.Threading.Tasks;
 
 namespace FZK.Hardware.PLC.Base
 {
-    /// <summary>
-    /// 欧姆龙PLC寄存器类型枚举（常用类型）
-    /// </summary>
     public enum PLCRegisterType
     {
         /// <summary>
-        /// 数据寄存器（D区，最常用）
+        /// DM区：数据寄存器（存数值/拆BOOL位，掉电保持）
         /// </summary>
-        D,
+        DM,
         /// <summary>
-        /// 内部辅助继电器（W区）
+        /// CIO区：I/O控制区（物理I/O/通用BOOL位，掉电不保持）
         /// </summary>
-        W,
+        CIO,
         /// <summary>
-        /// 输入继电器（X区）
+        /// TIM区：定时器当前值（仅数值）
         /// </summary>
-        X,
+        TIM,
         /// <summary>
-        /// 输出继电器（Y区）
+        /// CNTR区：计数器当前值（仅数值）
         /// </summary>
-        Y,
-        /// <summary>
-        /// 计数器当前值（C区）
-        /// </summary>
-        C,
-        /// <summary>
-        /// 定时器当前值（T区）
-        /// </summary>
-        T
+        CNTR
     }
 }

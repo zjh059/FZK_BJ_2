@@ -19,6 +19,8 @@ namespace FZK.Databse.Sqlite
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterSingleton<IUserRepository, UserRepository>();//注册用户操作类
+            containerRegistry.RegisterSingleton<IBTRepository, BTRepository>();//注册用户操作类
+            containerRegistry.RegisterSingleton<ICodeRepository, CodeRepository>();//注册用户操作类
         }
     }
 }

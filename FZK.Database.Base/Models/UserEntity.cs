@@ -22,6 +22,5 @@ namespace FZK.Database.Base.Models
         /// 角色
         /// </summary>
         public int Role { get; set; }
-
     }
 }

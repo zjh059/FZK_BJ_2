@@ -21,74 +21,76 @@ namespace FZK.Application.Config.Models
         {
             IpAddress = "127.0.0.1",
             Port = 8888,
-            Direction =ScannerType.左上.ToString()
+            Direction =ScannerType.左上 
         };
         public ScannerConfig LeftDownScannerConfig { get; set; } = new ScannerConfig()
         {
-            IpAddress = "127.0.0.3",
+            IpAddress = "127.0.0.1",
             Port = 8889,
-            Direction = ScannerType.左下.ToString()
+            Direction = ScannerType.左下
 
         };
         public ScannerConfig RightUpScannerConfig { get; set; } = new ScannerConfig()
         {
-            IpAddress = "127.0.0.2",
+            IpAddress = "127.0.0.1",
             Port = 8890,
-            Direction = ScannerType.右上.ToString()
+            Direction = ScannerType.右上
         };
         public ScannerConfig RightDownScannerConfig { get; set; } = new ScannerConfig()
         {
-            IpAddress = "127.0.0.4",
+            IpAddress = "127.0.0.1",
             Port = 8891,
-            Direction = ScannerType.右下.ToString()
+            Direction = ScannerType.右下
         };
         public ScannerConfig RobotScannerConfig { get; set; } = new ScannerConfig()
         {
-            IpAddress = "127.0.0.5",
+            IpAddress = "127.0.0.1",
             Port = 8892,
-            Direction = ScannerType.机械臂.ToString()
+            Direction = ScannerType.机械臂
         };
         public PLCConfig pLCConfig { get; set; } = new PLCConfig()
         {
-            IpAddress = "127.0.0.6",
+            IpAddress = "127.0.0.1",
             Port = 8893
         };
         public RobotConfig robotConfig { get; set; } = new RobotConfig()
         {
-            IpAddress = "127.0.0.7",
+            IpAddress = "127.0.0.1",
             Port = 8894
         };
-        ///// <summary>
-        ///// 左相机配置参数
-        ///// </summary>
-        //public CameraConfig LeftCameraConfig { get; set; } = new CameraConfig()
-        //{
-        //    IpAddress = "192.68.0.1",
-        //    Direction = CameraType.Left.ToString(),
-        //};
-        ///// <summary>
-        ///// 右相机配置参数
-        ///// </summary>
-        //public CameraConfig RightCameraConfig { get; set; } = new CameraConfig()
-        //{
-        //    IpAddress = "192.168.0.2",
-        //    Direction = CameraType.Right.ToString(),
-        //};
-        ///// <summary>
-        ///// 控制卡参数
-        ///// </summary>
-        //public ControlCardConfig ControlCardConfig { get; set; } = new ControlCardConfig();
-        //public XAxisParameter XAxisParameter { get; set; } = new XAxisParameter();
-        //public YAxisParameter YAxisParameter { get; set; } = new YAxisParameter();
-        //public ZAxisParameter ZAxisParameter { get; set; } = new ZAxisParameter();
-        //public MainAxisParameter MainAxisParameter { get; set; } = new MainAxisParameter();
-        //public KnifeAxisParameter KnifeAxisParameter { get; set; } = new KnifeAxisParameter();
-        //public TrackAxisParameter TrackAxisParameter { get; set; } = new TrackAxisParameter();
-        //public CalibrationParameter CalibrationParameter { get; set; } = new CalibrationParameter();
-        //public LightConfig LightConfig { get; set; } = new LightConfig();
-        //public BridgeConfig BridgeConfig { get; set; } = new BridgeConfig();
+        public PlcAddressConfig plcAddressConfig { get; set; } = new PlcAddressConfig()
+        {
+            // 治具1寄存器地址
+            Jig1TriggerScan = 0,
+            Jig1TriggerWeld = 1,
+            Jig1TriggerClear = 2,
+            Jig1ScanResult = 100,
+            Jig1WeldResult = 101,
+            Jig1CompareResult = 106,
+            Jig1WeldFinalResult = 104,
+            Jig1Count = 108,
 
+            // 治具2寄存器地址
+            Jig2TriggerScan = 3,
+            Jig2TriggerWeld = 4,
+            Jig2TriggerClear = 5,
+            Jig2ScanResult = 102,
+            Jig2WeldResult = 103,
+            Jig2CompareResult = 107,
+            Jig2WeldFinalResult = 105,
+            Jig2Count = 109,
 
-
+            // 心跳监控地址
+            HeartbeatMonitor = 110
+        };
+        public RunConfig runConfig { get; set; } = new RunConfig()
+        {
+            PlcReadInterval = 5000,
+            StatusCheckInterval = 1000,
+            MaxScanRecords = 1000,
+            ScanRetryCount = 3,
+            ScanRetryDelay = 200,
+           
+        };
     }
 }
