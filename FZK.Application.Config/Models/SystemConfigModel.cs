@@ -21,7 +21,7 @@ namespace FZK.Application.Config.Models
         {
             IpAddress = "127.0.0.1",
             Port = 8888,
-            Direction =ScannerType.左上 
+            Direction = ScannerType.左上
         };
         public ScannerConfig LeftDownScannerConfig { get; set; } = new ScannerConfig()
         {
@@ -59,28 +59,23 @@ namespace FZK.Application.Config.Models
             Port = 8894
         };
         public PlcAddressConfig plcAddressConfig { get; set; } = new PlcAddressConfig()
-        {
-            // 治具1寄存器地址
+        { 
             Jig1TriggerScan = 0,
             Jig1TriggerWeld = 1,
             Jig1TriggerClear = 2,
-            Jig1ScanResult = 100,
-            Jig1WeldResult = 101,
-            Jig1CompareResult = 106,
-            Jig1WeldFinalResult = 104,
-            Jig1Count = 108,
-
-            // 治具2寄存器地址
             Jig2TriggerScan = 3,
             Jig2TriggerWeld = 4,
             Jig2TriggerClear = 5,
+            Jig1ScanResult = 100,
+            Jig1WeldResult = 101,
             Jig2ScanResult = 102,
             Jig2WeldResult = 103,
+            Jig1WeldFinalResult = 104,
+            Jig1CompareResult = 105,
+            Jig2WeldFinalResult = 106,
             Jig2CompareResult = 107,
-            Jig2WeldFinalResult = 105,
+            Jig1Count = 108,
             Jig2Count = 109,
-
-            // 心跳监控地址
             HeartbeatMonitor = 110
         };
         public RunConfig runConfig { get; set; } = new RunConfig()
@@ -90,7 +85,7 @@ namespace FZK.Application.Config.Models
             MaxScanRecords = 1000,
             ScanRetryCount = 3,
             ScanRetryDelay = 200,
-           
+
         };
     }
 }

@@ -53,7 +53,10 @@ namespace FZK.Application.Run.ViewModels
         private readonly ScannerConfig _rightDownScannerConfig;
         private readonly ScannerConfig _rightUpScannerConfig;
         private readonly ScannerConfig __robotScannerConfig; // 机械臂扫码枪
-        private readonly int bottomCodeLength ;
+        private readonly int bottomCodeLength;
+        // 存储治具当前正在处理的底板码
+        private string _currentJig1BottomCode;
+        private string _currentJig2BottomCode;
 
         // 定时器
         private System.Timers.Timer _plcReadTimer;
@@ -114,7 +117,7 @@ namespace FZK.Application.Run.ViewModels
             _statusCheckTimer.Elapsed += StatusCheckTimer_Elapsed;
             _statusCheckTimer.Start();
 
-       
+
 
             // 初始化PLC寄存器默认值
             InitPlcRegisters();
@@ -180,7 +183,7 @@ namespace FZK.Application.Run.ViewModels
         [Reactive] public bool IsPlcConnected { get; set; } = false;
         [Reactive] public bool IsLeftDownScannerConnected { get; set; } = false;
         [Reactive] public bool IsLeftUpScannerConnected { get; set; } = false;
-        [Reactive] public bool IsRightUpScannerConnected { get; set; } = false; 
+        [Reactive] public bool IsRightUpScannerConnected { get; set; } = false;
         [Reactive] public bool IsRightDownScannerConnected { get; set; } = false;
         [Reactive] public bool IsSPScannerConnected { get; set; } = false;
         [Reactive] public bool IsRobotConnected { get; set; } = false;
@@ -263,8 +266,8 @@ namespace FZK.Application.Run.ViewModels
         {
             try
             {
-                IsPlcConnected = _hardwareManager.OmronPLC?.Connected ?? false ;
-                IsLeftUpScannerConnected =  _hardwareManager.LeftUpScanner?.Connected ?? false ;
+                IsPlcConnected = _hardwareManager.OmronPLC?.Connected ?? false;
+                IsLeftUpScannerConnected = _hardwareManager.LeftUpScanner?.Connected ?? false;
                 IsLeftDownScannerConnected = _hardwareManager.LeftDownScanner?.Connected ?? false;
                 IsRightUpScannerConnected = _hardwareManager.RightUpScanner?.Connected ?? false;
                 IsRightDownScannerConnected = _hardwareManager.RightDownScanner?.Connected ?? false;
@@ -277,28 +280,8 @@ namespace FZK.Application.Run.ViewModels
                 AppendLog($"刷新硬件状态失败：{ex.Message}");
             }
         }
-        private int _lastHeartbeatValue = 0;
-        private int _heartbeatWriting = 0; // 0=空闲, 1=正在写入
-        private async void HeartbeatWriteTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            if (_disposed || !IsRunning || IsNoHardwareMode) return;
-            if (Interlocked.CompareExchange(ref _heartbeatWriting, 1, 0) != 0)
-                return;
-            try
-            {
-                int newValue = _lastHeartbeatValue == 0 ? 1 : 0;
-                await WritePlcRegister(_plcAddr.HeartbeatMonitor, newValue);
-                _lastHeartbeatValue = newValue;
-                Logs.LogInfo($"心跳写入成功:{newValue}");
-                PlcD110 = newValue.ToString();
-               
 
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, "心跳写入失败");
-            }
-        }
+
         #endregion
 
         #region 设备启动/停止
@@ -325,11 +308,11 @@ namespace FZK.Application.Run.ViewModels
             }
             else
             {
-                _plcReadTimer.Stop();               
+                _plcReadTimer.Stop();
                 Logs.LogInfo("设备停止，停止监控PLC寄存器");
                 if (!IsNoHardwareMode) _hardwareService.Stop();
                 Logs.LogInfo("设备停止...");
-                
+
             }
 
             this.RaisePropertyChanged(nameof(RunStatusText));
@@ -364,9 +347,9 @@ namespace FZK.Application.Run.ViewModels
             try
             {
                 PlcD108 = 0;
-                 WritePlcRegister(_plcAddr.Jig1Count, 0);
+                WritePlcRegister(_plcAddr.Jig1Count, 0);
                 Logs.LogInfo("治具1使用次数已清零");
-                UpdateJigCountInDb(1, "0");
+                await UpdateJigCountInDb(1, "0");
                 this.RaisePropertyChanged(nameof(Jig1UseCount));
             }
             catch (Exception ex)
@@ -380,9 +363,9 @@ namespace FZK.Application.Run.ViewModels
             try
             {
                 PlcD109 = 0;
-                 WritePlcRegister(_plcAddr.Jig2Count, 0);
+                WritePlcRegister(_plcAddr.Jig2Count, 0);
                 Logs.LogInfo("治具2使用次数已清零");
-                UpdateJigCountInDb(2, "0");
+                await UpdateJigCountInDb(2, "0");
                 this.RaisePropertyChanged(nameof(Jig2UseCount));
             }
             catch (Exception ex)
@@ -400,14 +383,14 @@ namespace FZK.Application.Run.ViewModels
             Logs.LogInfo("PLC读取定时器触发");
             if (_disposed || !IsRunning) return;
 
-            await System.Windows. Application.Current.Dispatcher.InvokeAsync(async () =>
+            await System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
             {
                 try
                 {
                     await ReadPlcRegisters();
                     await ProcessJig1Logic();
                     await ProcessJig2Logic();
-                  //  await ProcessRobotLogic();
+                    //  await ProcessRobotLogic();
                 }
                 catch (Exception ex)
                 {
@@ -431,7 +414,7 @@ namespace FZK.Application.Run.ViewModels
             _plcAddr.Jig2TriggerScan,
             _plcAddr.Jig2TriggerWeld,
             _plcAddr.Jig2TriggerClear,
-           
+
         };
 
                 var plcValues = await _hardwareService.ReadPlcRegisters(addresses);
@@ -512,7 +495,7 @@ namespace FZK.Application.Run.ViewModels
             if (PlcD0 == "1")
             {
                 await ProcessJig1Scan();
-              
+
             }
 
             // 2. 焊接结果扫码触发
@@ -733,8 +716,8 @@ namespace FZK.Application.Run.ViewModels
                     // MES查询主板码测试结果
                     // bool mesResult = await _mesService.GetMesTestResult(spCode);
                     bool mesResult = true;
-                    int weldResult = mesResult ? 1 : 2;                   
-                    await UpdateCodeEntityTestResult(spCode, weldResult);                   
+                    int weldResult = mesResult ? 1 : 2;
+                    await UpdateCodeEntityTestResult(spCode, weldResult);
                     string newCount = await UpdateBTEntityCount(bottomCode);
                     if (int.TryParse(newCount, out int countValue))
                     {
@@ -752,7 +735,7 @@ namespace FZK.Application.Run.ViewModels
                     // 写入焊接最终结果
                     await WritePlcRegister(_plcAddr.Jig1WeldFinalResult, weldResult);
                     PlcD104 = weldResult;
-
+                    _currentJig1BottomCode = bottomCode;
                     // 添加扫描记录
                     await AddScanRecordAsync(new ScanRecord
                     {
@@ -816,6 +799,7 @@ namespace FZK.Application.Run.ViewModels
 
             try
             {
+                string bottomRaw = string.Empty;
                 if (IsNoHardwareMode)
                 {
                     bottomCode = $"B{DateTime.Now:yyyyMMddHHmmss}";
@@ -823,8 +807,20 @@ namespace FZK.Application.Run.ViewModels
                 }
                 else
                 {
-                    bottomCode = await _hardwareService.TriggerScanner(ScannerType.左下);
-                    scanSuccess = !string.IsNullOrEmpty(bottomCode);
+                    bottomRaw = await _hardwareService.TriggerScanner(ScannerType.左下);
+
+
+
+                    if (TryParseBottomAndSpCode(bottomRaw, _rightDownScannerConfig.CodeDelimiter, out string parsedBottom, out string parsedSp))
+                    {
+                        bottomCode = parsedBottom;
+                        scanSuccess = !string.IsNullOrEmpty(bottomCode);
+                    }
+                    else
+                    {
+                        Logs.LogWarn($"治具2右下扫码结果无法解析出底板码：{bottomRaw}");
+                    }
+                    
                 }
 
                 if (scanSuccess)
@@ -905,7 +901,7 @@ namespace FZK.Application.Run.ViewModels
         private async Task ProcessJig2Scan()
         {
             Logs.LogInfo("治具2-D3触发：开始底/顶部扫码");
-             WritePlcRegister(_plcAddr.Jig2TriggerScan, 0);
+            WritePlcRegister(_plcAddr.Jig2TriggerScan, 0);
             PlcD3 = "0";
 
             string bottomCode = string.Empty;
@@ -937,7 +933,7 @@ namespace FZK.Application.Run.ViewModels
                         // 触发右下扫码枪（返回双码）和右上扫码枪
                         var bottomTask = _hardwareService.TriggerScanner(ScannerType.右下);
                         var topTask = _hardwareService.TriggerScanner(ScannerType.右上);
-                         Task.WhenAll(bottomTask, topTask);
+                        Task.WhenAll(bottomTask, topTask);
                         string bottomRaw = await bottomTask;
                         topCode = await topTask;
 
@@ -1089,7 +1085,8 @@ namespace FZK.Application.Run.ViewModels
                     await WritePlcRegister(_plcAddr.Jig2WeldResult, 1);
                     PlcD103 = 1;
 
-                    bool mesResult = await _mesService.GetMesTestResult(spCode);
+                    // bool mesResult = await _mesService.GetMesTestResult(spCode);
+                    bool mesResult = true;// await _mesService.GetMesTestResult(spCode);
                     int weldResult = mesResult ? 1 : 2;
 
                     await UpdateCodeEntityTestResult(spCode, weldResult);
@@ -1129,7 +1126,7 @@ namespace FZK.Application.Run.ViewModels
                     Logs.LogWarn("治具2焊接扫码失败：多次重试后仍未获取到有效码值");
                     await WritePlcRegister(_plcAddr.Jig2WeldFinalResult, 2);
                     PlcD105 = 2;
-
+                    _currentJig2BottomCode = bottomCode;
                     await AddScanRecordAsync(new ScanRecord
                     {
                         CreateTime = DateTime.Now,
@@ -1172,6 +1169,7 @@ namespace FZK.Application.Run.ViewModels
 
             try
             {
+                string bottomRaw = string.Empty;
                 if (IsNoHardwareMode)
                 {
                     bottomCode = $"B{DateTime.Now:yyyyMMddHHmmss}";
@@ -1179,7 +1177,18 @@ namespace FZK.Application.Run.ViewModels
                 }
                 else
                 {
-                    bottomCode = await _hardwareService.TriggerScanner(ScannerType.右下);
+                    bottomRaw = await _hardwareService.TriggerScanner(ScannerType.右下);
+
+                    if (TryParseBottomAndSpCode(bottomRaw, _rightDownScannerConfig.CodeDelimiter, out string parsedBottom, out string parsedSp))
+                    {
+                        bottomCode = parsedBottom;                       
+                        scanSuccess = !string.IsNullOrEmpty(bottomCode);
+                    }
+                    else
+                    {
+                        Logs.LogWarn($"治具2右下扫码结果无法解析出底板码：{bottomRaw}");
+                    }
+
                     scanSuccess = !string.IsNullOrEmpty(bottomCode);
                 }
 
@@ -1477,10 +1486,26 @@ namespace FZK.Application.Run.ViewModels
             }
         }
 
-        private void UpdateJigCountInDb(int jigNo, string count)
+        private async Task UpdateJigCountInDb(int jigNo, string count)
         {
-            // 这里可以实现将治具计数持久化到数据库的逻辑
-            Logs.LogInfo($"更新治具{jigNo}使用次数到数据库：{count}");
+            string bottomCode = null;
+            if (jigNo == 1)
+            {
+                bottomCode = _currentJig1BottomCode;
+            }
+            else if (jigNo == 2)
+            {
+                bottomCode = _currentJig2BottomCode;
+            }
+
+            if (string.IsNullOrEmpty(bottomCode))
+            {
+                Logs.LogWarn($"治具{jigNo}清零失败：当前无有效的底板码");
+                return;
+            }
+
+            await ClearBTEntityCount(bottomCode);
+            Logs.LogInfo($"治具{jigNo}数据库计数已清零，底板码={bottomCode}");
         }
 
         #endregion
@@ -1489,7 +1514,7 @@ namespace FZK.Application.Run.ViewModels
 
         private async Task AddScanRecordAsync(ScanRecord record)
         {
-            await System.Windows. Application.Current.Dispatcher.InvokeAsync(() =>
+            await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 ScanRecords.Insert(0, record);
                 while (ScanRecords.Count > _runConfig.MaxScanRecords)
@@ -1640,9 +1665,9 @@ namespace FZK.Application.Run.ViewModels
                 Logs.LogWarn($"码特征识别失败，按顺序假设：底板={spCode}，主板={bottomCode}");
                 return true; // 返回 true，但记录警告
             }
-            if (codes.Length == 1&& codes[0].Length== bottomCodeLength)
+            if (codes.Length == 1 && codes[0].Length == bottomCodeLength)
             {
-                
+
                 bottomCode = codes[0].Trim();
                 spCode = codes[1].Trim();
                 Logs.LogWarn($"码特征识别失败，按顺序假设：底板={spCode}，主板={bottomCode}");
@@ -1690,7 +1715,7 @@ namespace FZK.Application.Run.ViewModels
 
     #region 配置类（需在SystemConfigManager中实现）
 
-  
+
 
     #endregion
 }

@@ -32,7 +32,7 @@ namespace FZK.Hardware.PLC.Omron
         public bool Connected
         {
             get { lock (_stateLock) return _connected; }
-             set { lock (_stateLock) _connected = value; }
+            set { lock (_stateLock) _connected = value; }
         }
 
         private bool _handshakeCompleted;
@@ -73,6 +73,9 @@ namespace FZK.Hardware.PLC.Omron
 
         public IObservable<string> MessageObservable => _messageSubject;
         public IObservable<string> ReceiveFrameObservable => _receiveFrameSubject;
+
+        public byte HeartbeatSid { get; private set; } = 0xFE;
+
         // ===========================================================
 
         #region 私有核心字段
@@ -82,6 +85,7 @@ namespace FZK.Hardware.PLC.Omron
         private readonly ConcurrentQueue<byte[]> _sendQueue = new ConcurrentQueue<byte[]>();
         private readonly ConcurrentDictionary<byte, TaskCompletionSource<byte[]>> _waitingCommands
             = new ConcurrentDictionary<byte, TaskCompletionSource<byte[]>>();
+        private readonly ConcurrentQueue<byte[]> _sendQueueNoResponse = new ConcurrentQueue<byte[]>();
 
         private Task _receiveTask;
         private Task _sendTask;
@@ -346,6 +350,7 @@ namespace FZK.Hardware.PLC.Omron
 
                 // 4. 清空收发队列
                 while (_sendQueue.TryDequeue(out _)) { }
+                while (_sendQueueNoResponse.TryDequeue(out _)) { }
 
                 // 5. 关闭TCP连接
                 if (_tcpClient != null)
@@ -375,6 +380,7 @@ namespace FZK.Hardware.PLC.Omron
                 Message = "PLC连接已关闭，所有资源释放完成";
                 Logs.LogTrace(Message);
             }
+
             catch (Exception ex)
             {
                 string errorMsg = $"关闭PLC连接异常：{ex.Message}";
@@ -447,8 +453,8 @@ namespace FZK.Hardware.PLC.Omron
                 _plcNegotiatedNode = response[19];
                 _finsConfig.TargetNode = _plcNegotiatedNode;
                 HandshakeCompleted = true;
-                Logs.LogTrace ($"FINS握手成功，PLC节点号：{_plcNegotiatedNode}");
-                Connected=true;
+                Logs.LogTrace($"FINS握手成功，PLC节点号：{_plcNegotiatedNode}");
+                Connected = true;
                 Initialized = true;
                 return true;
             }
@@ -578,6 +584,12 @@ namespace FZK.Hardware.PLC.Omron
                     if (receivedData.Length >= MinResponseLength)
                     {
                         byte sid = receivedData[TcpHeaderLength + FinsHeaderSidOffset];
+                        if (sid == HeartbeatSid)
+                        {
+                            // 心跳响应，直接忽略，不进行任何匹配
+                            continue;
+                        }
+
                         Logs.LogTrace($"接收到响应，SID={sid}，等待列表：{string.Join(",", _waitingCommands.Keys)}");
 
                         if (_waitingCommands.TryRemove(sid, out var tcs) && !tcs.Task.IsCompleted)
@@ -640,7 +652,7 @@ namespace FZK.Hardware.PLC.Omron
                     }
                     Thread.Sleep(100);
                 }
-               
+
             }
             Logs.LogTrace("接收任务已终止");
         }
@@ -660,20 +672,18 @@ namespace FZK.Hardware.PLC.Omron
 
                     if (_sendQueue.TryDequeue(out byte[] frame))
                     {
-                      
-                        byte[] lengthHeader = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(frame.Length));
-                        Logs.LogTrace($"帧长度：{frame.Length}，应为34");
-                        currentClient.Client.Send(lengthHeader);
-                        Logs.LogTrace($"发送长度头：{ByteToHex(lengthHeader)}");
-                        currentClient.Client.Send(frame);
-                        Logs.LogTrace($"发送FINS帧：{ByteToHex(frame)}");
-                        if (_plcConfig.SendInterval > 0)
-                            Thread.Sleep(_plcConfig.SendInterval);
+                        SendFrame(currentClient, frame);
+                        continue;
                     }
-                    else
+
+                    if (_sendQueueNoResponse.TryDequeue(out byte[] frameNoResp))
                     {
-                        Thread.Sleep(1);
+                        SendFrame(currentClient, frameNoResp);
+                        continue;
                     }
+
+                    Thread.Sleep(1);
+
                 }
                 catch (Exception ex)
                 {
@@ -688,7 +698,14 @@ namespace FZK.Hardware.PLC.Omron
             }
             Logs.LogTrace("发送任务已终止");
         }
-
+        private void SendFrame(TcpClient client, byte[] frame)
+        {
+            byte[] lengthHeader = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(frame.Length));
+            client.Client.Send(lengthHeader);
+            client.Client.Send(frame);
+            if (_plcConfig.SendInterval > 0)
+                Thread.Sleep(_plcConfig.SendInterval);
+        }
         private async Task HeartbeatTaskAsync()
         {
             var token = _cancellationTokenSource.Token;
@@ -704,7 +721,8 @@ namespace FZK.Hardware.PLC.Omron
                         continue;
                     }
                     // 队列保护
-                    if (_sendQueue.Count >= _plcConfig.MaxSendQueueLength)
+                    if (_sendQueue.Count >= _plcConfig.MaxSendQueueLength ||
+    _sendQueueNoResponse.Count >= _plcConfig.MaxSendQueueLength)
                     {
                         Logs.LogWarn("心跳发送队列已满，跳过本次心跳");
                         await Task.Delay(_plcConfig.HeartbeatInterval, token);
@@ -715,18 +733,23 @@ namespace FZK.Hardware.PLC.Omron
                     ushort writeValue = ConvertToPlcValue(heartbeatValue, false);
                     byte areaCode = GetRegisterAreaCode(_plcConfig.HeartbeatRegisterType);
 
-                    var heartbeatConfig = _finsConfig.CloneForRequest();
+                    var heartbeatConfig = _finsConfig.HeartRequest();
                     byte[] frame = FinsHelper.BuildWriteUInt16Command(
                         heartbeatConfig,
                         areaCode,
                         _plcConfig.HeartbeatAddress,
                         writeValue);
 
-                    _sendQueue.Enqueue(frame);
+                    _sendQueueNoResponse.Enqueue(frame);
                     Logs.LogTrace($"心跳指令 (SID={heartbeatConfig.SID}) 已入队：{ByteToHex(frame)}");
 
                     isSetOn = !isSetOn;
                     await Task.Delay(_plcConfig.HeartbeatInterval, _cancellationTokenSource.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    // 正常取消，退出循环
+                    break;
                 }
                 catch (Exception ex)
                 {
@@ -812,8 +835,7 @@ namespace FZK.Hardware.PLC.Omron
                 if (_plcConfig.HeartbeatIsOpen)
                 {
                     if (_heartbeatTask == null || _heartbeatTask.IsCompleted)
-                        _heartbeatTask = Task.Factory.StartNew(HeartbeatTaskAsync, _cancellationTokenSource.Token,
-                            TaskCreationOptions.LongRunning, TaskScheduler.Default);
+                        _heartbeatTask = Task.Run(HeartbeatTaskAsync, _cancellationTokenSource.Token);
                 }
                 if (_reconnectTask == null || _reconnectTask.IsCompleted)
                     _reconnectTask = Task.Factory.StartNew(ReconnectTask, _cancellationTokenSource.Token,

@@ -80,7 +80,20 @@ namespace FZK.Hardware.PLC.Omron
                     RetryCount = this.RetryCount
                 };
             }
+            public FinsConfig HeartRequest()
+            {
+                return new FinsConfig
+                {
+                    SourceNode = this.SourceNode,
+                    TargetNode = this.TargetNode,
+                    NetworkNo = this.NetworkNo,
+                    SID = 0xFE,
+                    Timeout = this.Timeout,
+                    RetryCount = this.RetryCount
+                };
+            }
         }
+
         #endregion
 
         #region SID管理器
@@ -94,7 +107,7 @@ namespace FZK.Hardware.PLC.Omron
                 lock (_lock)
                 {
                     _currentSID++;
-                    if (_currentSID > 0xFE) _currentSID = 1;
+                    if (_currentSID >= 0xFE) _currentSID = 1;
                     return _currentSID;
                 }
             }
