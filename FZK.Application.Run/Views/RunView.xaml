@@ -2,93 +2,123 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:FZK.Application.Run.Views"
-             mc:Ignorable="d" 
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:contorls="clr-namespace:FZK.Application.UI.Controls;assembly=FZK.Application.UI"            
-             xmlns:vm="clr-namespace:FZK.Application.Run.ViewModels"
-             d:DataContext="{d:DesignInstance vm:RunViewModel}"
-             xmlns:prism="http://prismlibrary.com/"            
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             prism:ViewModelLocator.AutoWireViewModel="True" 
-             xmlns:coreEnums="clr-namespace:FZK.Core.Enums;assembly=FZK.Core"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:prism="http://prismlibrary.com/"
              xmlns:converters="clr-namespace:FZK.Application.UI.Converters;assembly=FZK.Application.UI"
-             d:DesignHeight="900" d:DesignWidth="1500">
+             xmlns:vm="clr-namespace:FZK.Application.Run.ViewModels"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="1500"
+             d:DataContext="{d:DesignInstance vm:RunViewModel}">
 
     <UserControl.Resources>
-        <!-- 布尔转可见性转换器 -->
+        <!-- 转换器 -->
         <converters:BoolToVisibleConvert x:Key="BooleanToVisibilityConverter"/>
-        <!-- 状态颜色转换器 -->
         <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
-        <!-- 结果转文本转换器 -->
         <converters:ResultToTextConverter x:Key="ResultToTextConverter"/>
-        <!-- 新增：连接状态文本转换器（布尔转"已连接"/"未连接"） -->
         <converters:BoolToTextConverter x:Key="BoolToTextConverter" TrueText="已连接" FalseText="未连接"/>
+
+        <!-- 通用阴影 -->
+        <DropShadowEffect x:Key="CardShadow" BlurRadius="8" ShadowDepth="2" Opacity="0.15" Color="#CCCCCC"/>
 
         <!-- 标题样式 -->
         <Style x:Key="TitleStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Margin" Value="0 0 0 15"/>
-            <Setter Property="Foreground" Value="#212529"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
         </Style>
 
         <!-- 子标题样式 -->
         <Style x:Key="SubTitleStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Margin" Value="0 10 0 5"/>
-            <Setter Property="Foreground" Value="#495057"/>
+            <Setter Property="Foreground" Value="#34495E"/>
         </Style>
-        <!-- 新增：ToggleButton专用样式 -->
-        <Style x:Key="ToggleButtonPrimaryStyle" TargetType="ToggleButton">
-            <Setter Property="Background" Value="#007BFF"/>
+
+        <!-- 主按钮样式 -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#3498DB"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Margin" Value="0 0 8 0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="Width" Value="140"/>
-            <!-- 适配你的宽度需求 -->
-            <Style.Triggers>
-                <!-- 可选：添加IsChecked的样式（选中时变色） -->
-                <Trigger Property="IsChecked" Value="True">
-                    <Setter Property="Background" Value="#0056b3"/>
-                    <!-- 选中时深一点的蓝色 -->
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#6C757D"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-     
-        <Style x:Key="ButtonSuccessStyle" TargetType="Button">
-            <Setter Property="Background" Value="#28A745"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Margin" Value="0 0 8 0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Height" Value="32"/>
             <Setter Property="Width" Value="120"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#6C757D"/>
+                    <Setter Property="Background" Value="#95A5A6"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="ButtonDangerStyle" TargetType="Button">
-            <Setter Property="Background" Value="#DC3545"/>
+        <!-- 成功按钮样式 -->
+        <Style x:Key="SuccessButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#27AE60"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Margin" Value="0 0 8 0"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Height" Value="32"/>
             <Setter Property="Width" Value="120"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="2"/>
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#6C757D"/>
+                    <Setter Property="Background" Value="#95A5A6"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- 危险按钮样式 -->
+        <Style x:Key="DangerButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#E74C3C"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="2"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#95A5A6"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- 手动按钮样式（小尺寸） -->
+        <Style x:Key="ManualButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#3FC1F7"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#BDC3C7"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- 切换按钮样式 -->
+        <Style x:Key="ToggleButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Width" Value="140"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="2"/>
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="#2980B9"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#95A5A6"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -104,7 +134,7 @@
             <Setter Property="Height" Value="25"/>
         </Style>
 
-        <!-- 新增：硬件连接状态标签样式 -->
+        <!-- 硬件连接状态标签样式 -->
         <Style x:Key="HardwareStatusLabelStyle" TargetType="TextBlock">
             <Setter Property="Padding" Value="10 5"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -120,187 +150,177 @@
         <Style x:Key="DataGridStyle" TargetType="DataGrid">
             <Setter Property="AlternatingRowBackground" Value="#F8F9FA"/>
             <Setter Property="RowBackground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#CED4DA"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
             <Setter Property="RowHeight" Value="35"/>
             <Setter Property="Margin" Value="0 10 0 0"/>
             <Setter Property="CanUserSortColumns" Value="True"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
             <Setter Property="IsReadOnly" Value="True"/>
             <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
         </Style>
 
         <!-- 表头样式 -->
         <Style x:Key="DataGridColumnHeaderStyle" TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="#E9ECEF"/>
-            <Setter Property="Foreground" Value="#212529"/>
+            <Setter Property="Background" Value="#ECF0F1"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="BorderThickness" Value="0 0 1 1"/>
-            <Setter Property="BorderBrush" Value="#CED4DA"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
             <Setter Property="Height" Value="35"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
+
+        <!-- 卡片容器样式 -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Effect" Value="{StaticResource CardShadow}"/>
+            <Setter Property="Padding" Value="15"/>
+        </Style>
     </UserControl.Resources>
 
-    <Grid Margin="15" >
-        <!-- 整体布局 -->
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
-            <!-- 新增：硬件连接状态行 -->
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- 1. 顶部标题 + 控制区 -->
-        <Grid Grid.Row="0" Margin="0 0 0 10">
+        <!-- 1. 顶部控制区 -->
+        <Grid Grid.Row="0" Margin="0 0 0 15">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-
             <TextBlock Grid.Column="0" Text="镀金片焊接中段设备运行监控" Style="{StaticResource TitleStyle}"/>
-
-            <!-- 核心控制按钮组 -->
-            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                <!-- 无硬件模式切换 -->
-                <ToggleButton x:Name="ToggleHardwareMode" Content="{Binding HardwareModeText}" 
-                              Style="{StaticResource ToggleButtonPrimaryStyle}" Width="140"
-                              IsChecked="{Binding IsNoHardwareMode}" Margin="0 0 8 0"/>
-                <!-- 启动/停止设备 -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" >
+                <ToggleButton Content="{Binding HardwareModeText}" Style="{StaticResource ToggleButtonStyle}"
+                              IsChecked="{Binding IsNoHardwareMode}"/>
                 <Button Content="{Binding RunStatusText}" Style="{Binding RunStatusButtonStyle}"
-                        Command="{Binding ToggleRunCommand}" Margin="0 0 8 0"/>
-                <!-- 刷新状态 -->
-                <Button Content="刷新状态" Style="{StaticResource ButtonSuccessStyle}"
-                        Command="{Binding RefreshStatusCommand}" Margin="0 0 8 0"/>
-                <!-- 清空日志 -->
-                <Button Content="清空日志" Style="{StaticResource ButtonDangerStyle}"
-                        Command="{Binding ClearLogCommand}" Margin="0 0 8 0"/>
+                        Command="{Binding ToggleRunCommand}"/>
+                <Button Content="刷新状态" Style="{StaticResource SuccessButtonStyle}"
+                        Command="{Binding RefreshStatusCommand}"/>
+                <Button Content="清空日志" Style="{StaticResource DangerButtonStyle}"
+                        Command="{Binding ClearLogCommand}"/>
             </StackPanel>
         </Grid>
 
         <!-- 2. PLC寄存器状态监控区 -->
-        <Grid Grid.Row="1" Margin="0 0 0 10" Background="White" >
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-
-            <TextBlock Grid.Row="0" Text="PLC寄存器状态（实时监控）" 
-                       Style="{StaticResource SubTitleStyle}"/>
-
-             <!--寄存器表格--> 
-       
-        <Grid Grid.Row="1" Margin="0 5 0 5">
-                <Grid.ColumnDefinitions>
-                     <!--治具1读取寄存器--> 
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                     <!--治具2读取寄存器-->
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                     <!--心跳位-->
-                    <ColumnDefinition Width="*"/>
-                     <!--分隔--> 
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                 <!--治具1读取寄存器--> 
-                <Border Grid.Column="0" BorderBrush="#CED4DA" BorderThickness="1" Padding="5" Margin="0 0 5 0">
-                    <StackPanel>
-                        <TextBlock Text="治具1-D0（底/导向板扫码）" FontSize="12" Margin="0 0 0 5"/>
-                        <TextBlock Text="{Binding PlcD0}" Style="{StaticResource StatusLabelStyle}"
-                                   Background="{Binding PlcD0, Converter={StaticResource StatusToColorConverter}}"/>
-                    </StackPanel>
-                </Border>
-                <Border Grid.Column="1" BorderBrush="#CED4DA" BorderThickness="1" Padding="5" Margin="0 0 5 0">
-                    <StackPanel>
-                        <TextBlock Text="治具1-D1（焊接结果扫码）" FontSize="12" Margin="0 0 0 5"/>
-                        <TextBlock Text="{Binding PlcD1}" Style="{StaticResource StatusLabelStyle}"
-                                   Background="{Binding PlcD1, Converter={StaticResource StatusToColorConverter}}"/>
-                    </StackPanel>
-                </Border>
-                <Border Grid.Column="2" BorderBrush="#CED4DA" BorderThickness="1" Padding="5" Margin="0 0 5 0">
-                    <StackPanel>
-                        <TextBlock Text="治具1-D2（清零）" FontSize="12" Margin="0 0 0 5"/>
-                        <TextBlock Text="{Binding PlcD2}" Style="{StaticResource StatusLabelStyle}"
-                                   Background="{Binding PlcD2, Converter={StaticResource StatusToColorConverter}}"/>
-                    </StackPanel>
-                </Border>
-
-                 <!--治具2读取寄存器--> 
-                <Border Grid.Column="3" BorderBrush="#CED4DA" BorderThickness="1" Padding="5" Margin="0 0 5 0">
-                    <StackPanel>
-                        <TextBlock Text="治具2-D3（底/导向板扫码）" FontSize="12" Margin="0 0 0 5"/>
-                        <TextBlock Text="{Binding PlcD3}" Style="{StaticResource StatusLabelStyle}"
-                                   Background="{Binding PlcD3, Converter={StaticResource StatusToColorConverter}}"/>
-                    </StackPanel>
-                </Border>
-                <Border Grid.Column="4" BorderBrush="#CED4DA" BorderThickness="1" Padding="5" Margin="0 0 5 0">
-                    <StackPanel>
-                        <TextBlock Text="治具2-D4（焊接结果扫码）" FontSize="12" Margin="0 0 0 5"/>
-                        <TextBlock Text="{Binding PlcD4}" Style="{StaticResource StatusLabelStyle}"
-                                   Background="{Binding PlcD4, Converter={StaticResource StatusToColorConverter}}"/>
-                    </StackPanel>
-                </Border>
-                <Border Grid.Column="5" BorderBrush="#CED4DA" BorderThickness="1" Padding="5" Margin="0 0 5 0">
-                    <StackPanel>
-                        <TextBlock Text="治具2-D5（清零）" FontSize="12" Margin="0 0 0 5"/>
-                        <TextBlock Text="{Binding PlcD5}" Style="{StaticResource StatusLabelStyle}"
-                                   Background="{Binding PlcD5, Converter={StaticResource StatusToColorConverter}}"/>
-                    </StackPanel>
-                </Border>
-                <Border Grid.Column="6" BorderBrush="#CED4DA" BorderThickness="1" Padding="5" Margin="0 0 5 0">
-                    <StackPanel>
-                        <TextBlock Text="心跳监控 D110" FontSize="12" Margin="0 0 0 5"/>
-                        <TextBlock Text="{Binding PlcD110}" Style="{StaticResource StatusLabelStyle}"
-                   Background="{Binding PlcD110, Converter={StaticResource StatusToColorConverter}}"/>
-                    </StackPanel>
-                </Border>
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0 0 0 15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="PLC寄存器状态（实时监控）" Style="{StaticResource SubTitleStyle}"/>
+                <Grid Grid.Row="1" Margin="0 5 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <!-- 治具1 -->
+                    <Border Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" Padding="8" Margin="0 0 8 0">
+                        <StackPanel>
+                            <TextBlock Text="治具1-D0（底/导向板扫码）" FontSize="12" Margin="0 0 0 5" TextAlignment="Center"/>
+                            <TextBlock Text="{Binding PlcD0}" Style="{StaticResource StatusLabelStyle}"
+                                       Background="{Binding PlcD0, Converter={StaticResource StatusToColorConverter}}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="1" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" Padding="8" Margin="0 0 8 0">
+                        <StackPanel>
+                            <TextBlock Text="治具1-D1（焊接结果扫码）" FontSize="12" Margin="0 0 0 5" TextAlignment="Center"/>
+                            <TextBlock Text="{Binding PlcD1}" Style="{StaticResource StatusLabelStyle}"
+                                       Background="{Binding PlcD1, Converter={StaticResource StatusToColorConverter}}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="2" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" Padding="8" Margin="0 0 8 0">
+                        <StackPanel>
+                            <TextBlock Text="治具1-D2（清零）" FontSize="12" Margin="0 0 0 5" TextAlignment="Center"/>
+                            <TextBlock Text="{Binding PlcD2}" Style="{StaticResource StatusLabelStyle}"
+                                       Background="{Binding PlcD2, Converter={StaticResource StatusToColorConverter}}"/>
+                        </StackPanel>
+                    </Border>
+                    <!-- 治具2 -->
+                    <Border Grid.Column="3" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" Padding="8" Margin="0 0 8 0">
+                        <StackPanel>
+                            <TextBlock Text="治具2-D3（底/导向板扫码）" FontSize="12" Margin="0 0 0 5" TextAlignment="Center"/>
+                            <TextBlock Text="{Binding PlcD3}" Style="{StaticResource StatusLabelStyle}"
+                                       Background="{Binding PlcD3, Converter={StaticResource StatusToColorConverter}}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="4" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" Padding="8" Margin="0 0 8 0">
+                        <StackPanel>
+                            <TextBlock Text="治具2-D4（焊接结果扫码）" FontSize="12" Margin="0 0 0 5" TextAlignment="Center"/>
+                            <TextBlock Text="{Binding PlcD4}" Style="{StaticResource StatusLabelStyle}"
+                                       Background="{Binding PlcD4, Converter={StaticResource StatusToColorConverter}}"/>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="5" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" Padding="8" Margin="0 0 8 0">
+                        <StackPanel>
+                            <TextBlock Text="治具2-D5（清零）" FontSize="12" Margin="0 0 0 5" TextAlignment="Center"/>
+                            <TextBlock Text="{Binding PlcD5}" Style="{StaticResource StatusLabelStyle}"
+                                       Background="{Binding PlcD5, Converter={StaticResource StatusToColorConverter}}"/>
+                        </StackPanel>
+                    </Border>
+                    <!-- 心跳位 -->
+                    <Border Grid.Column="6" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="6" Padding="8">
+                        <StackPanel>
+                            <TextBlock Text="心跳监控 D110" FontSize="12" Margin="0 0 0 5" TextAlignment="Center"/>
+                            <TextBlock Text="{Binding PlcD110}" Style="{StaticResource StatusLabelStyle}"
+                                       Background="{Binding PlcD110, Converter={StaticResource StatusToColorConverter}}"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </Grid>
-        </Grid>
+        </Border>
 
         <!-- 3. 核心数据展示区 -->
-        <Grid Grid.Row="2" Margin="0 0 0 10">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="350"/>
+                <ColumnDefinition Width="380"/>
             </Grid.ColumnDefinitions>
 
             <!-- 左侧：治具状态 + 扫码记录 -->
-            <Grid Grid.Column="0" Margin="0 0 10 0">
+            <Grid Grid.Column="0" Margin="0 0 15 0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- 治具使用次数 -->
-                <Grid Grid.Row="0" Margin="0 0 0 10" Background="White" >
+                <!-- 治具使用次数卡片 -->
+                <Grid Grid.Row="0" Margin="0 0 0 15">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-
-                    <Border Grid.Column="0" BorderBrush="#CED4DA" BorderThickness="1" Padding="10" Margin="0 0 5 0">
+                    <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0 0 8 0">
                         <StackPanel>
                             <TextBlock Text="治具1焊接使用次数（D108）" Style="{StaticResource SubTitleStyle}" Margin="0 0 0 5"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding Jig1UseCount}" FontSize="24" FontWeight="Bold" Foreground="#007BFF"/>
-                                <TextBlock Text="/40" FontSize="24" Margin="5 0 0 0" Foreground="#6C757D"/>
+                                <TextBlock Text="{Binding Jig1UseCount}" FontSize="28" FontWeight="Bold" Foreground="#3498DB"/>
+                                <TextBlock Text="/40" FontSize="20" Margin="5 0 0 0" Foreground="#7F8C8D"/>
                             </StackPanel>
                             <Button Content="手动清零" Style="{StaticResource ManualButtonStyle}" Width="100"
                                     Command="{Binding ClearJig1CountCommand}" Margin="0 10 0 0" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
-
-                    <Border Grid.Column="1" BorderBrush="#CED4DA" BorderThickness="1" Padding="10" Margin="5 0 0 0">
+                    <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8 0 0 0">
                         <StackPanel>
                             <TextBlock Text="治具2焊接使用次数（D109）" Style="{StaticResource SubTitleStyle}" Margin="0 0 0 5"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding Jig2UseCount}" FontSize="24" FontWeight="Bold" Foreground="#007BFF"/>
-                                <TextBlock Text="/40" FontSize="24" Margin="5 0 0 0" Foreground="#6C757D"/>
+                                <TextBlock Text="{Binding Jig2UseCount}" FontSize="28" FontWeight="Bold" Foreground="#3498DB"/>
+                                <TextBlock Text="/40" FontSize="20" Margin="5 0 0 0" Foreground="#7F8C8D"/>
                             </StackPanel>
                             <Button Content="手动清零" Style="{StaticResource ManualButtonStyle}" Width="100"
                                     Command="{Binding ClearJig2CountCommand}" Margin="0 10 0 0" HorizontalAlignment="Center"/>
@@ -308,38 +328,38 @@
                     </Border>
                 </Grid>
 
-                <!-- 扫码记录表格 -->
-                <Grid Grid.Row="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Grid.Row="0" Text="扫码记录（实时更新）" Style="{StaticResource SubTitleStyle}"/>
-
-                    <DataGrid Grid.Row="1" Style="{StaticResource DataGridStyle}"
-                              ItemsSource="{Binding ScanRecords}"
-                              ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="时间" Binding="{Binding CreateTime, StringFormat=yyyy-MM-dd HH:mm:ss}" Width="180"/>
-                            <DataGridTextColumn Header="治具编号" Binding="{Binding JigNo}" Width="80"/>
-                            <DataGridTextColumn Header="扫码类型" Binding="{Binding ScanType}" Width="120"/>
-                            <DataGridTextColumn Header="底板码" Binding="{Binding BottomCode}" Width="280"/>
-                            <DataGridTextColumn Header="导向板码" Binding="{Binding TopCode}" Width="280"/>
-                            <DataGridTextColumn Header="主板码" Binding="{Binding SPCode}" Width="100"/>
-                            <DataGridTemplateColumn Header="扫码结果" Width="100">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Result, Converter={StaticResource ResultToTextConverter}}"
-                                                   Style="{StaticResource StatusLabelStyle}"
-                                                   Background="{Binding Result, Converter={StaticResource StatusToColorConverter}}"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="备注" Binding="{Binding Remark}" Width="*"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
+                <!-- 扫码记录表格卡片 -->
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="15">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="扫码记录（实时更新）" Style="{StaticResource SubTitleStyle}"/>
+                        <DataGrid Grid.Row="1" Style="{StaticResource DataGridStyle}"
+                                  ItemsSource="{Binding ScanRecords}"
+                                  ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="时间" Binding="{Binding CreateTime, StringFormat=yyyy-MM-dd HH:mm:ss}" Width="160"/>
+                                <DataGridTextColumn Header="治具编号" Binding="{Binding JigNo}" Width="80"/>
+                                <DataGridTextColumn Header="扫码类型" Binding="{Binding ScanType}" Width="100"/>
+                                <DataGridTextColumn Header="底板码" Binding="{Binding BottomCode}" Width="200"/>
+                                <DataGridTextColumn Header="导向板码" Binding="{Binding TopCode}" Width="200"/>
+                                <DataGridTextColumn Header="主板码" Binding="{Binding SPCode}" Width="140"/>
+                                <DataGridTemplateColumn Header="扫码结果" Width="90">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Result, Converter={StaticResource ResultToTextConverter}}"
+                                                       Style="{StaticResource StatusLabelStyle}"
+                                                       Background="{Binding Result, Converter={StaticResource StatusToColorConverter}}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="备注" Binding="{Binding Remark}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
             </Grid>
 
             <!-- 右侧：机械臂状态 + 运行日志 -->
@@ -349,139 +369,110 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- 机械臂状态 -->
-                <Border Grid.Row="0" BorderBrush="#CED4DA" BorderThickness="1" Padding="10" Margin="0 0 0 10" Background="White">
+                <!-- 机械臂状态卡片 -->
+                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0 0 0 15">
                     <StackPanel>
                         <TextBlock Text="机械臂状态" Style="{StaticResource SubTitleStyle}" Margin="0 0 0 5"/>
                         <TextBlock Text="{Binding RobotStatus}" Style="{StaticResource StatusLabelStyle}"
                                    Background="{Binding RobotStatus, Converter={StaticResource StatusToColorConverter}}"
-                                   Margin="0 0 0 5"/>
-                        <TextBlock Text="当前扫码位：{Binding RobotScanPosition}" FontSize="12" Margin="0 5 0 0"/>
-                        <TextBlock Text="最新报站结果：{Binding RobotReportResult}" FontSize="12" Margin="0 5 0 0"/>
+                                   Margin="0 0 0 8"/>
+                        <TextBlock Text="当前扫码位：" FontWeight="SemiBold" Margin="0 5 0 0"/>
+                        <TextBlock Text="{Binding RobotScanPosition}" Margin="0 2 0 5"/>
+                        <TextBlock Text="最新报站结果：" FontWeight="SemiBold" Margin="0 5 0 0"/>
+                        <TextBlock Text="{Binding RobotReportResult}" Margin="0 2 0 0"/>
                     </StackPanel>
                 </Border>
 
-                <!-- 运行日志 -->
-                <Grid Grid.Row="1" Background="White">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Grid.Row="0" Text="设备运行日志" Style="{StaticResource SubTitleStyle}" Margin="0 10 0 5"/>
-
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0 0 0 10">
-                        <TextBlock x:Name="RunLogText" Text="{Binding RunLog}" FontFamily="Consolas" FontSize="12"
-                                   TextWrapping="Wrap" Padding="5"/>
-                    </ScrollViewer>
-                </Grid>
+                <!-- 运行日志卡片 -->
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="15">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="设备运行日志" Style="{StaticResource SubTitleStyle}" Margin="0 0 0 10"/>
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <TextBlock Text="{Binding RunLog}" FontFamily="Consolas" FontSize="12"
+                                       TextWrapping="Wrap" Padding="5"/>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
             </Grid>
         </Grid>
 
-        <!-- 4. 手动操作区 -->
-        <Border Grid.Row="3" Background="White" BorderBrush="#CED4DA" BorderThickness="1" Padding="10" Margin="0 10 0 0">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <TextBlock Grid.Row="0" Text="手动操作（测试用）" Style="{StaticResource SubTitleStyle}"/>
-
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0 5 0 0">
-                    <!-- 治具1手动触发 -->
-                    <Button Content="1底/导向板扫码" Style="{StaticResource ManualButtonStyle}"
-                            Command="{Binding ManualTriggerJig1ScanCommand}" Margin="0 0 8 0"/>
-                    <Button Content="1焊接结果扫码" Style="{StaticResource ManualButtonStyle}"
-                            Command="{Binding ManualTriggerJig1WeldScanCommand}" Margin="0 0 8 0"/>
-                    <Button Content="1清零" Style="{StaticResource ManualButtonStyle}"
-                            Command="{Binding ManualTriggerJig1ClearCommand}" Margin="0 0 8 0"/>
-
-                    <!-- 治具2手动触发 -->
-                    <Button Content="2底/导向板扫码" Style="{StaticResource ManualButtonStyle}"
-                            Command="{Binding ManualTriggerJig2ScanCommand}" Margin="0 0 8 0"/>
-                    <Button Content="2焊接结果扫码" Style="{StaticResource ManualButtonStyle}"
-                            Command="{Binding ManualTriggerJig2WeldScanCommand}" Margin="0 0 8 0"/>
-                    <Button Content="2清零" Style="{StaticResource ManualButtonStyle}"
-                            Command="{Binding ManualTriggerJig2ClearCommand}" Margin="0 0 8 0"/>
-
-                    <!-- 机械臂操作 -->
-                    <Button Content="机械臂到扫码位" Style="{StaticResource ManualButtonStyle}"
-                            Command="{Binding SimulateRobotToScanPosCommand}" Margin="0 0 8 0"/>
-                    <Button Content="模拟报站结果" Style="{StaticResource ManualButtonStyle}"
-                            Command="{Binding SimulateRobotReportCommand}" Margin="0 0 8 0"/>
-                </StackPanel>
-            </Grid>
+        <!-- 4. 手动操作区（美化版） -->
+        <Border Grid.Row="3" Style="{StaticResource CardStyle}" Margin="0 15 0 15">
+            <StackPanel>
+                <TextBlock Text="手动扫码（测试）" Style="{StaticResource SubTitleStyle}" Margin="0 0 0 10"/>
+                <WrapPanel Orientation="Horizontal"  HorizontalAlignment="Left">
+                    <Button Content="左下扫码" Style="{StaticResource ManualButtonStyle}"
+                            Command="{Binding ManualTriggerLeftDownScanCommand}" Margin="2"/>
+                    <Button Content="左上扫码" Style="{StaticResource ManualButtonStyle}"
+                            Command="{Binding ManualTriggerLeftUpScanCommand}" Margin="2"/>
+                    <Button Content="右上扫码" Style="{StaticResource ManualButtonStyle}"
+                            Command="{Binding ManualTriggerRightUpScanCommand}" Margin="2"/>
+                    <Button Content="右下扫码" Style="{StaticResource ManualButtonStyle}"
+                            Command="{Binding ManualTriggerRightDownScanCommand}" Margin="2"/>
+                    <Button Content="机械臂扫码" Style="{StaticResource ManualButtonStyle}"
+                            Command="{Binding ManualTriggerRobotScanCommand}" Margin="2"/>
+                </WrapPanel>
+            </StackPanel>
         </Border>
 
-        <!-- 新增：5. 硬件连接状态显示区 -->
-        <Border Grid.Row="4" Background="#F8F9FA" BorderBrush="#CED4DA" BorderThickness="1" Padding="15" Margin="0 10 0 0">
+        <!-- 5. 硬件连接状态区 -->
+        <Border Grid.Row="4" Style="{StaticResource CardStyle}" Background="#F8F9FA" Margin="0 0 0 0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-
-                <TextBlock Grid.Row="0" Text="硬件连接状态（实时监控）" Style="{StaticResource SubTitleStyle}" Margin="0 0 0 10"/>
-
-                <Grid Grid.Row="1" Margin="0 5 0 5">
+                <TextBlock Text="硬件连接状态（实时监控）" Style="{StaticResource SubTitleStyle}" Margin="0 0 0 10"/>
+                <Grid Grid.Row="1" Margin="0 5 0 0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-
-                    <!-- PLC连接状态 -->
                     <StackPanel Grid.Column="0" HorizontalAlignment="Center">
                         <TextBlock Text="欧姆龙PLC" FontSize="12" Margin="0 0 0 5" HorizontalAlignment="Center"/>
                         <TextBlock Text="{Binding IsPlcConnected, Converter={StaticResource BoolToTextConverter}}" 
                                    Style="{StaticResource HardwareStatusLabelStyle}"
                                    Background="{Binding IsPlcConnected, Converter={StaticResource StatusToColorConverter}}"/>
                     </StackPanel>
-
-                    <!-- 左上扫码枪 -->
                     <StackPanel Grid.Column="1" HorizontalAlignment="Center">
                         <TextBlock Text="左上扫码枪" FontSize="12" Margin="0 0 0 5" HorizontalAlignment="Center"/>
                         <TextBlock Text="{Binding IsLeftUpScannerConnected, Converter={StaticResource BoolToTextConverter}}" 
                                    Style="{StaticResource HardwareStatusLabelStyle}"
                                    Background="{Binding IsLeftUpScannerConnected, Converter={StaticResource StatusToColorConverter}}"/>
                     </StackPanel>
-
-                    <!-- 左下扫码枪 -->
                     <StackPanel Grid.Column="2" HorizontalAlignment="Center">
                         <TextBlock Text="左下扫码枪" FontSize="12" Margin="0 0 0 5" HorizontalAlignment="Center"/>
                         <TextBlock Text="{Binding IsLeftDownScannerConnected, Converter={StaticResource BoolToTextConverter}}" 
                                    Style="{StaticResource HardwareStatusLabelStyle}"
                                    Background="{Binding IsLeftDownScannerConnected, Converter={StaticResource StatusToColorConverter}}"/>
                     </StackPanel>
-
-                    <!-- 右上扫码枪 -->
                     <StackPanel Grid.Column="3" HorizontalAlignment="Center">
                         <TextBlock Text="右上扫码枪" FontSize="12" Margin="0 0 0 5" HorizontalAlignment="Center"/>
                         <TextBlock Text="{Binding IsRightUpScannerConnected, Converter={StaticResource BoolToTextConverter}}" 
                                    Style="{StaticResource HardwareStatusLabelStyle}"
                                    Background="{Binding IsRightUpScannerConnected, Converter={StaticResource StatusToColorConverter}}"/>
                     </StackPanel>
-                    <!-- 右上扫码枪 -->
                     <StackPanel Grid.Column="4" HorizontalAlignment="Center">
                         <TextBlock Text="右下扫码枪" FontSize="12" Margin="0 0 0 5" HorizontalAlignment="Center"/>
                         <TextBlock Text="{Binding IsRightDownScannerConnected, Converter={StaticResource BoolToTextConverter}}" 
                                    Style="{StaticResource HardwareStatusLabelStyle}"
                                    Background="{Binding IsRightDownScannerConnected, Converter={StaticResource StatusToColorConverter}}"/>
                     </StackPanel>
-                    <!-- 右上扫码枪 -->
                     <StackPanel Grid.Column="5" HorizontalAlignment="Center">
                         <TextBlock Text="机械臂扫码枪" FontSize="12" Margin="0 0 0 5" HorizontalAlignment="Center"/>
                         <TextBlock Text="{Binding IsSPScannerConnected, Converter={StaticResource BoolToTextConverter}}" 
                                    Style="{StaticResource HardwareStatusLabelStyle}"
                                    Background="{Binding IsSPScannerConnected, Converter={StaticResource StatusToColorConverter}}"/>
                     </StackPanel>
-                    <!-- 机械臂 -->
                     <StackPanel Grid.Column="6" HorizontalAlignment="Center">
                         <TextBlock Text="EPSON机械臂" FontSize="12" Margin="0 0 0 5" HorizontalAlignment="Center"/>
                         <TextBlock Text="{Binding IsRobotConnected, Converter={StaticResource BoolToTextConverter}}" 

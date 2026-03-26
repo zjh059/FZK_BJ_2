@@ -23,7 +23,7 @@ namespace FZK.Hardware.PLC.Base
         /// <summary>
         /// TCP收发超时时间(ms)
         /// </summary>
-        public int Timeout { get; set; } = 3000;
+        public int Timeout { get; set; } = 10000;
         #endregion
 
         #region 重连配置
@@ -60,7 +60,7 @@ namespace FZK.Hardware.PLC.Base
         /// <summary>
         public PLCRegisterType HeartbeatRegisterType { get; set; } = PLCRegisterType.DM; // 心跳寄存器类型（如CIO/DM）
         public ushort HeartbeatAddress { get; set; } = 110; // 心跳寄存器地址
-        public int HeartbeatInterval { get; set; } = 1000; // 心跳间隔（ms）
+        public int HeartbeatInterval { get; set; } = 10000; // 心跳间隔（ms）
         public bool HeartbeatIsOpen { get; set; } = true; // 心跳间隔（ms）
         #endregion
 
@@ -68,11 +68,11 @@ namespace FZK.Hardware.PLC.Base
         /// <summary>
         /// 最大发送队列长度（防止内存溢出）
         /// </summary>
-        public int MaxSendQueueLength { get; set; } = 100;
+        public int MaxSendQueueLength { get; set; } = 200;
         /// <summary>
         /// 指令发送间隔(ms)（适配PLC处理能力，防止指令积压）
         /// </summary>
-        public int SendInterval { get; set; } = 100;
+        public int SendInterval { get; set; } =5000;
         #endregion
 
 

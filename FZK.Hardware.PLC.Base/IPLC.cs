@@ -80,7 +80,7 @@ namespace FZK.Hardware.PLC.Base
         /// <param name="value">写入值（需在寄存器取值范围内）</param>
         /// <param name="isBCD">是否按BCD码写入（默认false，二进制）</param>
         /// <returns>是否写入成功</returns>
-        bool Write(PLCRegisterType registerType, ushort address, int value, bool isBCD = false);
+        bool Write(PLCRegisterType registerType, ushort address, int value, bool isBCD = false, bool Require = true);
 
         /// <summary>
         /// 批量写入PLC寄存器（连续地址）
@@ -90,7 +90,7 @@ namespace FZK.Hardware.PLC.Base
         /// <param name="values">写入值集合</param>
         /// <param name="isBCD">是否按BCD码写入（默认false，二进制）</param>
         /// <returns>是否写入成功</returns>
-        bool BatchWrite(PLCRegisterType registerType, ushort startAddress, List<int> values, bool isBCD = false);
+        bool BatchWrite(PLCRegisterType registerType, ushort startAddress, List<int> values, bool isBCD = false, bool Require = true);
 
         /// <summary>
         /// 检查并重新建立连接（外部手动调用）

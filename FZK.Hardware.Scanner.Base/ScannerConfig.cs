@@ -38,6 +38,7 @@ namespace FZK.Hardware.Scanner.Base
         /// 多码结果之间的分隔符（结束符），例如 "\r\n", "," 等
         /// </summary>
         public string CodeDelimiter { get; set; } = ",";
+        public string EndOfMessageDelimiter { get; set; } = "\r\n";
 
         public int SnLength { get; set; } = 26;
     }

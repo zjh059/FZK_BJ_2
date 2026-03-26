@@ -27,7 +27,9 @@ namespace FZK.Hardware.PLC.Omron
         #endregion
 
         #region FINS头固定值
-        private const byte ICF = 0xC0;   // 控制帧：1100 0000 (响应要求=1 + 命令帧=1)
+        private const byte ICF = 0x80;   // 命令帧（需要响应）：bit7=1，bit6=0，bit0=0 → 0x80（二进制 1000 0000）
+        private const byte ICFNR = 0x81;   //命令帧（不需要响应）：bit7=1，bit6=0，bit0=1 → 0x81（二进制 1000 0001）
+                                                                     //响应帧：bit7=1，bit6=1，bit0=0 → 0xC0（二进制 1100 0000）
         private const byte RSV = 0x00;   // 系统保留
         private const byte GCT = 0x01;   // 网关数：0x01（无网关，直接连接）
         private const byte DA2 = 0x00;   // 目标单元号（CPU单元固定0）
@@ -248,7 +250,7 @@ namespace FZK.Hardware.PLC.Omron
             return BuildTcpFrame(finsBody);
         }
 
-        public static byte[] BuildBatchWriteCommand(FinsConfig finsConfig, byte areaCode, ushort startAddress, ushort[] values)
+        public static byte[] BuildBatchWriteCommand(FinsConfig finsConfig, byte areaCode, ushort startAddress, ushort[] values, bool Require)
         {
             ValidateAreaCode(areaCode);
             ValidateAddress(areaCode, startAddress, (ushort)values.Length);
@@ -256,22 +258,22 @@ namespace FZK.Hardware.PLC.Omron
                 throw new ArgumentException("写入数据必须在1-1000个之间");
 
             var requestConfig = finsConfig.CloneForRequest();
-            byte[] finsBody = BuildFinsBody(requestConfig, false, areaCode, startAddress, (ushort)values.Length, 0, values);
+            byte[] finsBody = BuildFinsBody(requestConfig, false, areaCode, startAddress, (ushort)values.Length, 0, values, Require);
             return BuildTcpFrame(finsBody);
         }
 
         public static byte[] BuildReadUInt16Command(FinsConfig finsConfig, byte areaCode, ushort address)
             => BuildBatchReadCommand(finsConfig, areaCode, address, 1);
 
-        public static byte[] BuildWriteUInt16Command(FinsConfig finsConfig, byte areaCode, ushort address, ushort value)
-            => BuildBatchWriteCommand(finsConfig, areaCode, address, new ushort[] { value });
+        public static byte[] BuildWriteUInt16Command(FinsConfig finsConfig, byte areaCode, ushort address, ushort value, bool Require = false)
+            => BuildBatchWriteCommand(finsConfig, areaCode, address, new ushort[] { value },Require);
         #endregion
 
         #region 构建FINS应用体
         private static byte[] BuildFinsBody(FinsConfig config, bool isRead, byte areaCode, ushort address, ushort length, ushort writeValue)
             => BuildFinsBody(config, isRead, areaCode, address, length, writeValue, null);
 
-        private static byte[] BuildFinsBody(FinsConfig config, bool isRead, byte areaCode, ushort address, ushort length, ushort writeValue, ushort[] writeValues)
+        private static byte[] BuildFinsBody(FinsConfig config, bool isRead, byte areaCode, ushort address, ushort length, ushort writeValue, ushort[] writeValues,bool Require=true)
         {
             // 计算FINS应用体长度（标准格式）
             // 读: 10(FINS头) + 2(指令码) + 1(区域码) + 2(地址) + 1(位位置) + 2(长度) = 18
@@ -281,7 +283,7 @@ namespace FZK.Hardware.PLC.Omron
             int index = 0;
 
             // 1. 构建10字节FINS头
-            body[index++] = ICF;                    // ICF
+            body[index++] = Require?ICF: ICFNR;                    // ICF
             body[index++] = RSV;                     // RSV
             body[index++] = GCT;                     // GCT
             body[index++] = config.NetworkNo;        // DNA
