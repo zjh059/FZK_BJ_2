@@ -8,70 +8,153 @@
              xmlns:vm="clr-namespace:FZK.Application.Config.ViewModels"
              xmlns:core="clr-namespace:FZK.Core.Models;assembly=FZK.Core"
              d:DataContext="{d:DesignInstance vm:ConfigRobotViewModel}"
-             Background="Transparent"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              prism:ViewModelLocator.AutoWireViewModel="True"
              d:DesignHeight="1000" d:DesignWidth="1800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="45"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Border Background="#F5F5F5">
-            <TextBlock Text="机械手设置" VerticalAlignment="Center" Margin="15 0"/>
-        </Border>
-        <Border Grid.Row="1" Margin="15">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="超时时间" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                      Text="{Binding SystemConfigManager.robotConfig.Timeout,UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <TextBlock Text="重连间隔" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                      Text="{Binding SystemConfigManager.robotConfig.ReconnectDelay,UpdateSourceTrigger=PropertyChanged}"/>
+    <UserControl.Resources>
+        <!-- 卡片样式 -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect ShadowDepth="2" BlurRadius="8" Opacity="0.15"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style>
+
+        <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+
+        <Style x:Key="FormLabelStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,5,10,5"/>
+            <Setter Property="Foreground" Value="#4A5568"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <Style x:Key="FormTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#CBD5E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Margin" Value="0,0,15,0"/>
+            <Setter Property="Background" Value="#F7FAFC"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#3182CE"/>
+                    <Setter Property="Background" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="FormComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#CBD5E0"/>
+            <Setter Property="Background" Value="#F7FAFC"/>
+            <Setter Property="Margin" Value="0,0,15,0"/>
+        </Style>
+
+        <Style x:Key="FormCheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,5,15,5"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#F9FAFB">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- 标题栏 -->
+            <Border Grid.Row="0" Background="White" Margin="0,0,0,20" 
+                    BorderThickness="0,0,0,1" BorderBrush="#E2E8F0">
+                <TextBlock Text="机械手设置" FontSize="20" FontWeight="Bold" 
+                           Foreground="#1A202C" Margin="0,10,0,10"/>
+            </Border>
+
+            <!-- 机械手配置卡片 -->
+            <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="20">
+                <StackPanel>
+                    <TextBlock Text="连接与通信参数" Style="{StaticResource SectionTitleStyle}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 第一行：IP地址和端口 -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="IP地址" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.robotConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="端口" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.robotConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- 第二行：超时时间和重连间隔 -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="超时时间 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.robotConfig.Timeout, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="重连间隔 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="1" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.robotConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- 第三行：重连次数和心跳间隔 -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="重连次数" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.robotConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="心跳间隔 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="2" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.robotConfig.HeartbeatInterval, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- 第四行：心跳指令和响应内容 -->
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="心跳指令" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.robotConfig.HeartbeatCommand, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="响应内容" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="3" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.robotConfig.HeartbeatResponse, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- 第五行：指令超时时间和指令重发次数 -->
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="指令超时时间 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.robotConfig.CommandTimeout, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Grid.Row="4" Grid.Column="2" Text="指令重发次数" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="4" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.robotConfig.CommandRetryCount, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- 第六行：指令重发延迟（单独占一列） -->
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="指令重发延迟 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.robotConfig.CommandRetryDelay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="重连次数" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                      Text="{Binding SystemConfigManager.robotConfig.MaxReconnectCount,UpdateSourceTrigger=PropertyChanged}"/>
-
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="心跳间隔" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                      Text="{Binding SystemConfigManager.robotConfig.HeartbeatInterval,UpdateSourceTrigger=PropertyChanged}"/>
-
-                    <TextBlock Text="心跳指令" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                      Text="{Binding SystemConfigManager.robotConfig.HeartbeatCommand,UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-                
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="响应内容" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                      Text="{Binding SystemConfigManager.robotConfig.HeartbeatResponse,UpdateSourceTrigger=PropertyChanged}"/>
-
-                    <TextBlock Text="指令超时时间" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                      Text="{Binding SystemConfigManager.robotConfig.CommandTimeout,UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-
-
-                    <TextBlock Text="指令重发次数" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                      Text="{Binding SystemConfigManager.robotConfig.CommandRetryCount,UpdateSourceTrigger=PropertyChanged}"/>
-
-                    <TextBlock Text="指令重发延迟" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                      Text="{Binding SystemConfigManager.robotConfig.CommandRetryDelay,UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-            </StackPanel>
-        </Border>
-    </Grid>
+            </Border>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

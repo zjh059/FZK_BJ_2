@@ -1,12 +1,12 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <LinearGradientBrush x:Key="FZK.Login.Background.Color">
-        <GradientStop Color="#03D8DE" Offset="0"/>
-        <GradientStop Color="#F704FE" Offset="1"/>
+        <GradientStop Color="#3DBFF6" Offset="0"/>
+        <GradientStop Color="#006CBE" Offset="1"/>
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="FZK.Main.Background.Color">
-        <GradientStop Color="#CCE4F7" Offset="0"/>
-        <GradientStop Color="#AFA3EC" Offset="1"/>
+        <GradientStop Color="#EEEEF2" Offset="0"/>
+        <GradientStop Color="#C2C3C9" Offset="1"/>
     </LinearGradientBrush>
     <VisualBrush x:Key="Border.Cell.Color" Viewport="0,0,50,50" ViewportUnits="Absolute" TileMode="Tile">
         <VisualBrush.Visual>

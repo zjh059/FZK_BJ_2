@@ -6,138 +6,180 @@
              xmlns:local="clr-namespace:FZK.Application.Config.Views"
              mc:Ignorable="d" 
              xmlns:prism="http://prismlibrary.com/"             
-			 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
-			 prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:vm="clr-namespace:FZK.Application.Config.ViewModels"
              d:DataContext="{d:DesignInstance vm:ConfigSoftwareViewModel}"
              d:DesignHeight="1000" d:DesignWidth="1800">
-    <!--<i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
-        </i:EventTrigger>
-    </i:Interaction.Triggers>-->
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="45"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Border Background="#F5F5F5">
-            <TextBlock Text="IP设置" VerticalAlignment="Center" Margin="15 0"/>
-        </Border>
-        <Border Grid.Row="1" Margin="5">
-            <StackPanel>
 
-                <!--PLC-->
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="PLC IP" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-               Text="{Binding SystemConfigManager.pLCConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
+    <UserControl.Resources>
+        <!-- 卡片样式 -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect ShadowDepth="2" BlurRadius="8" Opacity="0.15"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style>
 
-                    <TextBlock Text="端口号" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-               Text="{Binding SystemConfigManager.pLCConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
+        <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+
+        <Style x:Key="FormLabelStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,5,10,5"/>
+            <Setter Property="Foreground" Value="#4A5568"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <Style x:Key="FormTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#CBD5E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Margin" Value="0,0,15,0"/>
+            <Setter Property="Background" Value="#F7FAFC"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#3182CE"/>
+                    <Setter Property="Background" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="FormCheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,5,15,5"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#F9FAFB">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- 标题栏 -->
+            <Border Grid.Row="0" Background="White" Margin="0,0,0,20" 
+                    BorderThickness="0,0,0,1" BorderBrush="#E2E8F0">
+                <TextBlock Text="软件配置" FontSize="20" FontWeight="Bold" 
+                           Foreground="#1A202C" Margin="0,10,0,10"/>
+            </Border>
+
+            <!-- MES 配置卡片 -->
+            <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="20">
+                <StackPanel>
+                    <TextBlock Text="MES 配置" Style="{StaticResource SectionTitleStyle}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- 第一行：测试结果URL + 工位上报URL -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="测试结果URL" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.SoftwareConfig.TestResultUrl, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="工位上报URL" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.SoftwareConfig.ReportStationUrl, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- 第二行：工位编码 + 初始化URL -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="工位编码" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.SoftwareConfig.StationCode, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="初始化URL" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="1" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.SoftwareConfig.InitUrl, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- 第三行：工位ID + 启用SFC -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="工位ID" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.SoftwareConfig.StationID, UpdateSourceTrigger=PropertyChanged}"/>
+                        <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" 
+                                  Content="启用SFC" Style="{StaticResource FormCheckBoxStyle}"
+                                  IsChecked="{Binding SystemConfigManager.SoftwareConfig.IsSFC, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- 第四行：站点编码 + 用户编码 -->
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="站点编码" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.SoftwareConfig.siteCode, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="用户编码" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="3" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.SoftwareConfig.userCode, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- 第五行：密码 -->
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="密码" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.SoftwareConfig.password, UpdateSourceTrigger=PropertyChanged}"/>
+                    </Grid>
                 </StackPanel>
+            </Border>
 
-                <!--上扫码地址-->
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="左上相机" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.LeftUpScannerConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
+            <!-- 运行参数配置卡片 -->
+            <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="20">
+                <StackPanel>
+                    <TextBlock Text="运行参数配置" Style="{StaticResource SectionTitleStyle}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                    <TextBlock Text="右上相机" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.RightUpScannerConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
+                        <!-- 第一行 -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="PLC读取间隔 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.runConfig.PlcReadInterval}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="状态检查间隔 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.runConfig.StatusCheckInterval}"/>
+
+                        <!-- 第二行 -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="最大记录数" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.runConfig.MaxScanRecords}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="扫码重试次数" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="1" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.runConfig.ScanRetryCount}"/>
+
+                        <!-- 第三行 -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="重试延迟 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.runConfig.ScanRetryDelay}"/>
+                    </Grid>
                 </StackPanel>
-
-                <!--上扫码端口号-->
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="端口号" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.LeftUpScannerConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Text="端口号" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.RightUpScannerConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-
-
-                <!--下扫码地址-->
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="左下相机" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.LeftDownScannerConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
-
-                    <TextBlock Text="右下相机" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.RightDownScannerConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-
-                <!--下扫码端口号-->
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="端口号" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.LeftDownScannerConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Text="端口号" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.RightDownScannerConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-                
-                <!--料扫码-->
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="料扫码 IP" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.RobotScannerConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
-
-                    <TextBlock Text="端口号" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.RobotScannerConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-                <!--机械手-->
-                <StackPanel Orientation="Horizontal" Margin="30 10 15 0">
-                    <TextBlock Text="机械手 IP" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.robotConfig.IpAddress,UpdateSourceTrigger=PropertyChanged}"/>
-
-                    <TextBlock Text="端口号" Width="100" VerticalAlignment="Center" Margin="0 0 10 0"/>
-                    <TextBox Height="25" Width="200" Margin="0 0 10 0" 
-                             Text="{Binding SystemConfigManager.robotConfig.Port,UpdateSourceTrigger=PropertyChanged}"/>
-                </StackPanel>
-                <!-- 运行参数配置 -->
-                <Border Margin="30 20 15 0" BorderBrush="#CED4DA" BorderThickness="1" Padding="10">
-                    <StackPanel>
-                        <TextBlock Text="运行参数配置" FontWeight="Bold" Margin="0 0 0 10"/>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="120"/>
-                                <ColumnDefinition Width="150"/>
-                                <ColumnDefinition Width="120"/>
-                                <ColumnDefinition Width="150"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                                <RowDefinition/>
-                            </Grid.RowDefinitions>
-
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="PLC读取间隔(ms):" VerticalAlignment="Center" Margin="5"/>
-                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SystemConfigManager.RunConfig.PlcReadInterval}" Margin="5"/>
-
-                            <TextBlock Grid.Row="0" Grid.Column="2" Text="状态检查间隔(ms):" VerticalAlignment="Center" Margin="5"/>
-                            <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding SystemConfigManager.RunConfig.StatusCheckInterval}" Margin="5"/>
-
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="最大记录数:" VerticalAlignment="Center" Margin="5"/>
-                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SystemConfigManager.RunConfig.MaxScanRecords}" Margin="5"/>
-
-                            <TextBlock Grid.Row="1" Grid.Column="2" Text="扫码重试次数:" VerticalAlignment="Center" Margin="5"/>
-                            <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding SystemConfigManager.RunConfig.ScanRetryCount}" Margin="5"/>
-
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="重试延迟(ms):" VerticalAlignment="Center" Margin="5"/>
-                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SystemConfigManager.RunConfig.ScanRetryDelay}" Margin="5"/>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-            
-        </Border>
-    </Grid>
+            </Border>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

@@ -3,32 +3,42 @@ using FZK.Application.Share.Run;
 using FZK.Logger;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FZK.Application.Run.Service
 {
     public class MesService : IMesService
     {
-        private readonly HttpClient _httpClient;
-        private readonly string _mesBaseUrl; // 从配置读取
-        private readonly string _mesToken;   // 从配置读取
-        // 构造函数注入HttpClient和配置（可替换为你的配置管理器）
-        public MesService(HttpClient httpClient, ISystemConfigManager systemConfigManager)
-        {
-            _httpClient = httpClient;
-            _mesBaseUrl = systemConfigManager.SoftwareConfig.BaseUrl;
-            _mesToken = systemConfigManager.SoftwareConfig.Token;
+        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly string _testResultUrl;      // 完整 URL，例如 http://mes-server/api/TestResult
+        private readonly string _reportStationUrl;   // 完整 URL，例如 http://mes-server/api/ReportStation
+        private readonly string _stationCode;        // 工位编码
+        private readonly string _token;              // 认证令牌
 
-            // 设置MES接口默认请求头
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_mesToken}");
-            _httpClient.Timeout = TimeSpan.FromSeconds(10); // 超时时间
+        public MesService(ISystemConfigManager systemConfigManager)
+        {
+            // 从配置中获取 MES 相关配置（直接使用 SoftwareConfig 的属性）
+            var config = systemConfigManager.SoftwareConfig
+                         ?? throw new ArgumentNullException(nameof(systemConfigManager.SoftwareConfig), "软件配置未找到");
+
+            _testResultUrl = config.TestResultUrl
+                             ?? throw new ArgumentNullException(nameof(config.TestResultUrl), "TestResultUrl未配置");
+            _reportStationUrl = config.ReportStationUrl
+                                ?? throw new ArgumentNullException(nameof(config.ReportStationUrl), "ReportStationUrl未配置");
+            _stationCode = config.StationCode
+                           ?? throw new ArgumentNullException(nameof(config.StationCode), "StationCode未配置");
+            //_token = config.Token
+            //         ?? throw new ArgumentNullException(nameof(config.Token), "Token未配置");
+
+            //// 设置默认认证头
+            //_httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token}");
         }
+
         /// <summary>
-        /// 从MES查询主板码测试结果
+        /// 从 MES 查询主板码测试结果
         /// </summary>
         public async Task<bool> GetMesTestResult(string spCode)
         {
@@ -38,31 +48,16 @@ namespace FZK.Application.Run.Service
                 return false;
             }
 
-            try
-            {
-                var response = await _httpClient.GetAsync($"{_mesBaseUrl}/api/TestResult?spCode={spCode}");
-                if (response.IsSuccessStatusCode)
-                {
-                    string result = await response.Content.ReadAsStringAsync();
-                    var mesResult = JsonConvert.DeserializeObject<MesTestResultDto>(result);
-                    Logs.LogInfo($"MES查询成功：SP码={spCode}，结果={(mesResult.IsOk ? "OK" : "NG")}");
-                    return mesResult.IsOk;
-                }
-                else
-                {
-                    Logs.LogError($"MES查询失败：{response.StatusCode}，SP码={spCode}");
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError($"MES查询异常（SP码={spCode}）：{ex.Message}");
-                return false;
-            }
+            var uriBuilder = new UriBuilder(_testResultUrl) { Query = $"spCode={Uri.EscapeDataString(spCode)}" };
+            var response = await SendRequestAsync<MesReportResponseDto>(
+                async () => await _httpClient.GetAsync(uriBuilder.Uri), spCode, "查询测试结果").ConfigureAwait(false);
+
+            // 根据实际返回的 result 字段判断是否成功
+            return response != null && string.Equals(response.Result, "OK", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
-        /// 向MES报站（上报扫码结果）
+        /// 向 MES 报站（上报扫码结果）
         /// </summary>
         public async Task<bool> ReportStation(string spCode)
         {
@@ -72,42 +67,70 @@ namespace FZK.Application.Run.Service
                 return false;
             }
 
-            try
+            var reportDto = new MesReportDto
             {
-                var reportDto = new MesReportDto
-                {
-                    SPCode = spCode,
-                    StationCode = "WELD_01", // 焊接工位编码（从配置读取）
-                    ReportTime = DateTime.Now
-                };
+                productCode = spCode  
+            };
 
-                var content = new StringContent(
-                    JsonConvert.SerializeObject(reportDto),
-                    Encoding.UTF8,
-                    "application/json"
-                );
+            var content = new StringContent(
+                JsonConvert.SerializeObject(reportDto),
+                Encoding.UTF8,
+                "application/json"
+            );
 
-                var response = await _httpClient.PostAsync($"{_mesBaseUrl}/api/ReportStation", content);
+            var response = await SendRequestAsync<MesReportResponseDto>(
+                async () => await _httpClient.PostAsync(_reportStationUrl, content), spCode, "报站").ConfigureAwait(false);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    Logs.LogInfo($"MES报站成功：SP码={spCode}");
-                    return true;
-                }
-                else
-                {
-                    Logs.LogError($"MES报站失败：{response.StatusCode}，SP码={spCode}");
-                    return false;
-                }
-            }
-            catch (Exception ex)
+            // 根据实际返回的 result 字段判断是否成功
+            return response != null && string.Equals(response.Result, "OK", StringComparison.OrdinalIgnoreCase);
+        }
+
+
+        /// <summary>
+        /// 封装 HTTP 请求，统一处理异常、日志和超时
+        /// </summary>
+        private async Task<T> SendRequestAsync<T>(Func<Task<HttpResponseMessage>> requestFunc, string spCode, string operationName)
+            where T : class
+        {
+            // 使用 CancellationToken 控制超时（10秒）
+            using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)))
             {
-                Logs.LogError($"MES报站异常（SP码={spCode}）：{ex.Message}");
-                return false;
+                try
+                {
+                    // 执行请求（带取消令牌）
+                    var response = await requestFunc().WithCancellation(cts.Token).ConfigureAwait(false);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        var result = JsonConvert.DeserializeObject<T>(json);
+                        Logs.LogInfo($"MES {operationName} 成功：SP码={spCode}");
+                        return result;
+                    }
+
+                    // 处理非成功状态码
+                    Logs.LogError($"MES {operationName} 失败：HTTP {response.StatusCode}，SP码={spCode}");
+                    return null;
+                }
+                catch (OperationCanceledException) when (cts.Token.IsCancellationRequested)
+                {
+                    Logs.LogError($"MES {operationName} 超时（10秒），SP码={spCode}");
+                    return null;
+                }
+                catch (HttpRequestException ex)
+                {
+                    Logs.LogError($"MES {operationName} 网络异常（SP码={spCode}）：{ex.Message}");
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    Logs.LogError($"MES {operationName} 未知异常（SP码={spCode}）：{ex.Message}");
+                    return null;
+                }
             }
         }
 
-     
+        // 查询结果 DTO
         private class MesTestResultDto
         {
             public string SPCode { get; set; }
@@ -115,12 +138,43 @@ namespace FZK.Application.Run.Service
             public string ErrorMsg { get; set; }
         }
 
+        // 报站请求 DTO
         private class MesReportDto
         {
-            public string SPCode { get; set; }
-            public string StationCode { get; set; }
-            public DateTime ReportTime { get; set; }
+            public string productCode { get; set; }
+        }
+        private class MesReportResponseDto
+        {
+            [JsonProperty("result")]
+            public string Result { get; set; }
+
+            [JsonProperty("nextStation")]
+            public string NextStation { get; set; }
+
+            [JsonProperty("message")]
+            public string Message { get; set; }
+        }
+    }
+
+    /// <summary>
+    /// 扩展方法：为 Task 添加超时取消支持
+    /// </summary>
+    internal static class TaskExtensions
+    {
+        /// <summary>
+        /// 将 Task 与 CancellationToken 关联，当 token 取消时抛出 OperationCanceledException
+        /// </summary>
+        public static async Task<T> WithCancellation<T>(this Task<T> task, CancellationToken cancellationToken)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            using (cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).TrySetResult(true), tcs))
+            {
+                if (task != await Task.WhenAny(task, tcs.Task).ConfigureAwait(false))
+                {
+                    throw new OperationCanceledException(cancellationToken);
+                }
+            }
+            return await task.ConfigureAwait(false);
         }
     }
 }
-

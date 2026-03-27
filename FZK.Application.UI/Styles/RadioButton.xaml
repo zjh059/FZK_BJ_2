@@ -32,10 +32,10 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsChecked" Value="True">
-                <Setter Property="Background" Value="#00AE42"/>
+                <Setter Property="Background" Value="#00AF69"/>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#2B6DF7"/>
+                <Setter Property="Background" Value="#3FC1F7"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -98,8 +98,8 @@
                 <Setter Property="Background">
                     <Setter.Value>
                         <LinearGradientBrush>
-                            <GradientStop Color="#CCE4F7" Offset="0"/>
-                            <GradientStop Color="#AFA3EC" Offset="1"/>
+                            <GradientStop Color="#3DBFF6" Offset="0"/>
+                            <GradientStop Color="#006CBE" Offset="1"/>
                         </LinearGradientBrush>
                     </Setter.Value>
                 </Setter>

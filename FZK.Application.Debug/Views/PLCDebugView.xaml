@@ -6,231 +6,281 @@
              xmlns:local="clr-namespace:FZK.Application.Debug.Views"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="900"
-              xmlns:prism="http://prismlibrary.com/"             
-			 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
-			 prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:prism="http://prismlibrary.com/"             
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:vm="clr-namespace:FZK.Application.Debug.ViewModels"
-             d:DataContext="{d:DesignInstance vm:PLCDebugViewModel}"
-             >
+             d:DataContext="{d:DesignInstance vm:PLCDebugViewModel}">
+
     <UserControl.Resources>
-        <!-- 通用阴影 -->
-        <DropShadowEffect x:Key="CardShadow" BlurRadius="8" ShadowDepth="2" Opacity="0.15" Color="#CCCCCC"/>
+        <!-- 全局背景 -->
+        <SolidColorBrush x:Key="PageBackground" Color="#F9FAFB"/>
 
-        <!-- 按钮样式 -->
-        <Style x:Key="PrimaryButton" TargetType="Button">
-            <Setter Property="Background" Value="#3498DB"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="Padding" Value="12,5"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#BDC3C7"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="SuccessButton" TargetType="Button">
-            <Setter Property="Background" Value="#27AE60"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="Padding" Value="12,5"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#BDC3C7"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="DangerButton" TargetType="Button">
-            <Setter Property="Background" Value="#E74C3C"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="Padding" Value="12,5"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#BDC3C7"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="InfoButton" TargetType="Button">
-            <Setter Property="Background" Value="#1ABC9C"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="Padding" Value="12,5"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#BDC3C7"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <!-- GroupBox 样式 -->
-        <Style TargetType="GroupBox">
-            <Setter Property="Margin" Value="0,0,0,15"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+        <!-- 卡片样式（无圆角） -->
+        <Style x:Key="CardStyle" TargetType="Border">
             <Setter Property="Background" Value="White"/>
-            <Setter Property="Effect" Value="{StaticResource CardShadow}"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect ShadowDepth="2" BlurRadius="8" Opacity="0.15"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style>
+
+        <!-- 卡片标题样式 -->
+        <Style x:Key="CardTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+
+        <!-- 按钮样式（统一） -->
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#3182CE"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="5,0"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#95A5A6"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SuccessButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+            <Setter Property="Background" Value="#27AE60"/>
+        </Style>
+
+        <Style x:Key="DangerButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+            <Setter Property="Background" Value="#E74C3C"/>
+        </Style>
+
+        <Style x:Key="InfoButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+            <Setter Property="Background" Value="#1ABC9C"/>
+        </Style>
+
+        <!-- 标签样式 -->
+        <Style x:Key="FormLabelStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,5,10,5"/>
+            <Setter Property="Foreground" Value="#4A5568"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <!-- 文本框样式 -->
+        <Style x:Key="FormTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#CBD5E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Margin" Value="0,0,15,0"/>
+            <Setter Property="Background" Value="#F7FAFC"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#3182CE"/>
+                    <Setter Property="Background" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- 只读文本框样式 -->
+        <Style x:Key="ReadOnlyTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource FormTextBoxStyle}">
+            <Setter Property="Background" Value="#F0F0F0"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+        </Style>
+
+        <!-- 组合框样式 -->
+        <Style x:Key="FormComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#CBD5E0"/>
+            <Setter Property="Background" Value="#F7FAFC"/>
+            <Setter Property="Margin" Value="0,0,15,0"/>
+        </Style>
+
+        <!-- 日志文本框样式 -->
+        <Style x:Key="LogTextBoxStyle" TargetType="TextBox">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="Background" Value="#F8F9FA"/>
+            <Setter Property="FontFamily" Value="Consolas"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Height" Value="200"/>
+        </Style>
+
+        <!-- 状态圆点 -->
+        <Style x:Key="StatusDotStyle" TargetType="Ellipse">
+            <Setter Property="Width" Value="15"/>
+            <Setter Property="Height" Value="15"/>
+            <Setter Property="Margin" Value="5"/>
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Margin="15">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="{StaticResource PageBackground}">
+        <Grid Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- 连接配置 -->
-            <GroupBox Grid.Row="0" Header="连接配置">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="IP地址：" VerticalAlignment="Center"/>
-                    <TextBox Grid.Column="1" Width="120" Text="{Binding IPAdress}" Margin="5"/>
+            <!-- 1. 连接配置卡片 -->
+            <Border Grid.Row="0" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="连接配置" Style="{StaticResource CardTitleStyle}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="IP地址" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding IPAdress}" Width="120"/>
 
-                    <Label Grid.Column="2" Content="网络号：" VerticalAlignment="Center"/>
-                    <TextBox Grid.Column="3" Width="60" Text="{Binding NetworkNo}" Margin="5"/>
+                        <TextBlock Grid.Column="2" Text="网络号" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" Text="{Binding NetworkNo}" Width="60"/>
 
-                    <Label Grid.Column="4" Content="节点号：" VerticalAlignment="Center"/>
-                    <TextBox Grid.Column="5" Width="60" Text="{Binding NodeNo}" Margin="5"/>
+                        <TextBlock Grid.Column="4" Text="节点号" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Column="5" Style="{StaticResource FormTextBoxStyle}" Text="{Binding NodeNo}" Width="60"/>
 
-                    <Label Grid.Column="6" Content="端口：" VerticalAlignment="Center"/>
-                    <TextBox Grid.Column="7" Width="80" Text="{Binding Port}" Margin="5"/>
+                        <TextBlock Grid.Column="6" Text="端口" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Column="7" Style="{StaticResource FormTextBoxStyle}" Text="{Binding Port}" Width="80"/>
 
-                    <StackPanel Grid.Column="8" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="连接" Style="{StaticResource SuccessButton}" Command="{Binding ConnectPlcCommand}" Margin="5"/>
-                        <Button Content="断开" Style="{StaticResource DangerButton}" Command="{Binding DisconnectPlcCommand}" 
-                                IsEnabled="{Binding Connected}" Margin="5"/>
-                    </StackPanel>
-                </Grid>
-            </GroupBox>
+                        <StackPanel Grid.Column="8" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="连接" Style="{StaticResource SuccessButtonStyle}" Command="{Binding ConnectPlcCommand}" Margin="5"/>
+                            <Button Content="断开" Style="{StaticResource DangerButtonStyle}" Command="{Binding DisconnectPlcCommand}" 
+                                    IsEnabled="{Binding Connected}" Margin="5"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
 
-            <!-- 设备状态 -->
-            <GroupBox Grid.Row="1" Header="设备状态">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="连接状态：" VerticalAlignment="Center"/>
-                    <Ellipse Grid.Column="1" Width="15" Height="15" Fill="{Binding Connected, Converter={StaticResource BoolToColorConverter}}" Margin="5"/>
+            <!-- 2. 设备状态卡片 -->
+            <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="设备状态" Style="{StaticResource CardTitleStyle}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="连接状态：" Style="{StaticResource FormLabelStyle}"/>
+                        <Ellipse Grid.Column="1" Style="{StaticResource StatusDotStyle}" Fill="{Binding Connected, Converter={StaticResource BoolToColorConverter}}"/>
 
-                    <Label Grid.Column="2" Content="心跳值(DM9999)：" VerticalAlignment="Center" Margin="20,0,0,0"/>
-                    <TextBlock Grid.Column="3" Text="{Binding HeartbeatValue}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="2" Text="心跳值(DM9999)：" Style="{StaticResource FormLabelStyle}" Margin="20,0,0,0"/>
+                        <TextBlock Grid.Column="3" Text="{Binding HeartbeatValue}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
 
-                    <Ellipse Grid.Column="4" Width="15" Height="15" Fill="{Binding HeartbeatStateColor}" Margin="20,0,5,0"/>
-                    <TextBlock Grid.Column="5" Text="{Binding HeartbeatStateText}" FontSize="12" Foreground="Gray" VerticalAlignment="Center"/>
-                </Grid>
-            </GroupBox>
+                        <Ellipse Grid.Column="4" Style="{StaticResource StatusDotStyle}" Fill="{Binding HeartbeatStateColor}" Margin="20,0,5,0"/>
+                        <TextBlock Grid.Column="5" Text="{Binding HeartbeatStateText}" FontSize="12" Foreground="Gray" VerticalAlignment="Center"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
 
-            <!-- 地址监听 -->
-            <GroupBox Grid.Row="2" Header="地址监听">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="地址类型：" VerticalAlignment="Center"/>
-                    <ComboBox Grid.Column="1" Width="100" ItemsSource="{Binding MonitorAddressTypes}" 
-                              SelectedItem="{Binding MonitorAddressType}" Margin="5"/>
+            <!-- 3. 地址监听卡片 -->
+            <Border Grid.Row="2" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="地址监听" Style="{StaticResource CardTitleStyle}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="地址类型" Style="{StaticResource FormLabelStyle}"/>
+                        <ComboBox Grid.Column="1" Style="{StaticResource FormComboBoxStyle}" Width="100" 
+                                  ItemsSource="{Binding MonitorAddressTypes}" SelectedItem="{Binding MonitorAddressType}"/>
 
-                    <Label Grid.Column="2" Content="地址：" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                    <TextBox Grid.Column="3" Width="100" Text="{Binding MonitorAddress}" Margin="5"/>
+                        <TextBlock Grid.Column="2" Text="地址" Style="{StaticResource FormLabelStyle}" Margin="10,0,0,0"/>
+                        <TextBox Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" Width="100" Text="{Binding MonitorAddress}"/>
 
-                    <StackPanel Grid.Column="4" Orientation="Horizontal" Margin="10,0,0,0">
-                        <Button Content="开始监听" Style="{StaticResource InfoButton}" Command="{Binding StartMonitorCommand}" 
-                                IsEnabled="{Binding IsPlcConnected}" Margin="0,0,5,0"/>
-                        <Button Content="停止监听" Style="{StaticResource DangerButton}" Command="{Binding StopMonitorCommand}" 
-                                IsEnabled="{Binding IsMonitoring}" Margin="5,0,0,0"/>
-                    </StackPanel>
+                        <StackPanel Grid.Column="4" Orientation="Horizontal" Margin="10,0,0,0">
+                            <Button Content="开始监听" Style="{StaticResource InfoButtonStyle}" Command="{Binding StartMonitorCommand}" 
+                                    IsEnabled="{Binding IsPlcConnected}" Margin="0,0,5,0"/>
+                            <Button Content="停止监听" Style="{StaticResource DangerButtonStyle}" Command="{Binding StopMonitorCommand}" 
+                                    IsEnabled="{Binding IsMonitoring}" Margin="5,0,0,0"/>
+                        </StackPanel>
 
-                    <Label Grid.Column="5" Content="当前值：" VerticalAlignment="Center" Margin="20,0,0,0"/>
-                    <TextBlock Grid.Column="6" Text="{Binding MonitorValue}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="5" Text="当前值：" Style="{StaticResource FormLabelStyle}" Margin="20,0,0,0"/>
+                        <TextBlock Grid.Column="6" Text="{Binding MonitorValue}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
 
-                    <TextBlock Grid.Column="7" Text="{Binding MonitorTips}" FontSize="12" Foreground="Blue" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                </Grid>
-            </GroupBox>
+                        <TextBlock Grid.Column="7" Text="{Binding MonitorTips}" FontSize="12" Foreground="Blue" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
 
-            <!-- 单地址读写 -->
-            <GroupBox Grid.Row="3" Header="单地址读写">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="地址类型：" VerticalAlignment="Center"/>
-                    <ComboBox Grid.Column="1" Width="100" ItemsSource="{Binding PLCRegisterTypes}" 
-                              SelectedItem="{Binding RegisterTypes}" Margin="5"/>
+            <!-- 4. 单地址读写卡片 -->
+            <Border Grid.Row="3" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="单地址读写" Style="{StaticResource CardTitleStyle}"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="地址类型" Style="{StaticResource FormLabelStyle}"/>
+                        <ComboBox Grid.Column="1" Style="{StaticResource FormComboBoxStyle}" Width="100" 
+                                  ItemsSource="{Binding PLCRegisterTypes}" SelectedItem="{Binding RegisterTypes}"/>
 
-                    <Label Grid.Column="2" Content="地址：" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                    <TextBox Grid.Column="3" Width="100" Text="{Binding RwAddress, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                        <TextBlock Grid.Column="2" Text="地址" Style="{StaticResource FormLabelStyle}" Margin="10,0,0,0"/>
+                        <TextBox Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" Width="100" Text="{Binding RwAddress, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <StackPanel Grid.Column="4" Orientation="Horizontal" Margin="10,0,0,0">
-                        <Button Content="读取" Style="{StaticResource PrimaryButton}" Command="{Binding ReadCommand}" 
-                                IsEnabled="{Binding IsPlcConnected}" Margin="0,0,5,0"/>
-                        <TextBox Grid.Column="5" Width="80" Text="{Binding RwReadValue}" IsReadOnly="True" 
-                                 Background="#F0F0F0" VerticalAlignment="Center" Margin="5,0"/>
-                    </StackPanel>
+                        <StackPanel Grid.Column="4" Orientation="Horizontal" Margin="10,0,0,0">
+                            <Button Content="读取" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding ReadCommand}" 
+                                    IsEnabled="{Binding IsPlcConnected}" Margin="0,0,5,0"/>
+                            <TextBox Grid.Column="5" Style="{StaticResource ReadOnlyTextBoxStyle}" Width="80" Text="{Binding RwReadValue}" Margin="5,0"/>
+                        </StackPanel>
 
-                    <Label Grid.Column="6" Content="写入值：" VerticalAlignment="Center" Margin="20,0,0,0"/>
-                    <TextBox Grid.Column="7" Width="80" Text="{Binding RwWriteValue, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
-                    <Button Grid.Column="8" Content="写入" Style="{StaticResource SuccessButton}" 
-                            Command="{Binding WriteCommand}" IsEnabled="{Binding IsPlcConnected}" Margin="5"/>
-                </Grid>
-            </GroupBox>
+                        <TextBlock Grid.Column="6" Text="写入值：" Style="{StaticResource FormLabelStyle}" Margin="20,0,0,0"/>
+                        <TextBox Grid.Column="7" Style="{StaticResource FormTextBoxStyle}" Width="80" Text="{Binding RwWriteValue, UpdateSourceTrigger=PropertyChanged}" Margin="5"/>
+                        <Button Grid.Column="8" Content="写入" Style="{StaticResource SuccessButtonStyle}" 
+                                Command="{Binding WriteCommand}" IsEnabled="{Binding IsPlcConnected}" Margin="5"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
 
-            <!-- 操作日志 -->
-            <GroupBox Grid.Row="4" Header="操作日志">
-                <TextBox Text="{Binding OperationLog}" IsReadOnly="True" 
-                         VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
-                         Background="#F8F9FA" FontFamily="Consolas" FontSize="11" 
-                         Height="200" Padding="5"/>
-            </GroupBox>
+            <!-- 5. 操作日志卡片 -->
+            <Border Grid.Row="4" Style="{StaticResource CardStyle}">
+                <StackPanel>
+                    <TextBlock Text="操作日志" Style="{StaticResource CardTitleStyle}"/>
+                    <TextBox Style="{StaticResource LogTextBoxStyle}" Text="{Binding OperationLog}"/>
+                </StackPanel>
+            </Border>
         </Grid>
     </ScrollViewer>
 </UserControl>

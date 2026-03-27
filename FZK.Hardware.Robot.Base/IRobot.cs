@@ -64,5 +64,6 @@ namespace FZK.Hardware.Robot.Base
         /// 优雅关闭连接并释放资源
         /// </summary>
         void Close();
+        void ClearReceiveContent();
     }
 }

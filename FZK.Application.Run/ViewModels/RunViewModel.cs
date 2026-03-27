@@ -419,7 +419,7 @@ namespace FZK.Application.Run.ViewModels
                     // 边沿检测并处理
                     await ProcessJig1Logic(curD0, curD1, curD2);
                     await ProcessJig2Logic(curD3, curD4, curD5);
-                    //await ProcessRobotLogic();  
+                    await ProcessRobotLogic();
                     // 更新上次值
                     _lastD0 = curD0;
                     _lastD1 = curD1;
@@ -559,24 +559,6 @@ namespace FZK.Application.Run.ViewModels
             }
         }
 
-        private async void HeartbeatReadTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            if (_disposed || !IsRunning || IsNoHardwareMode) return;
-
-            try
-            {
-                int value = await _hardwareService.ReadPlcRegister(_plcAddr.HeartbeatMonitor);
-                // 更新到 UI 线程
-                await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
-                {
-                    PlcD110 = value.ToString();
-                });
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, "读取心跳寄存器 D110 失败");
-            }
-        }
         #endregion
 
         #region 治具1核心逻辑
@@ -1524,19 +1506,7 @@ namespace FZK.Application.Run.ViewModels
             }
         }
 
-        private async Task<string> GetBottomCodeBySPCode(string spCode)
-        {
-            try
-            {
-                var codeEntity = await Task.Run(() => _databaseManager.CodeEntities.FirstOrDefault(t => t.SPCode == spCode));
-                return codeEntity?.BottomCode ?? string.Empty;
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, $"[数据库] 根据主板码获取底板码失败 | 主板码={spCode}");
-                return string.Empty;
-            }
-        }
+    
 
         /// <summary>
         /// 更新治具使用次数

@@ -8,7 +8,7 @@ namespace FZK.Application.Share.Config
 {
     public class RunConfig
     {
-        public int PlcReadInterval { get; set; } = 200;
+        public int PlcReadInterval { get; set; } = 2000;
         public int StatusCheckInterval { get; set; } = 1000;
         public int MaxScanRecords { get; set; } = 1000;
         public int ScanRetryCount { get; set; } = 3;

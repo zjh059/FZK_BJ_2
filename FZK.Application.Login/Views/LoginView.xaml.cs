@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FZK.Core.Ioc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,34 @@ namespace FZK.Application.Login.Views
         public LoginView()
         {
             InitializeComponent();
+            //this.Loaded += (s, e) =>
+            //{
+            //    CNS.Checked += Checked;
+            //    CNT.Checked += Checked;
+            //    English.Checked += Checked;
+            //};
         }
+
+        //    private void Checked(object sender, RoutedEventArgs e)
+        //    {
+        //        if (sender is RadioButton button)
+        //        {
+        //            switch (button.Name)
+        //            {
+        //                case "CNS":
+        //                    PrismProvider.LanguageManager.Set(Core.Enums.LanguageType.CNS);
+        //                    break;
+        //                case "CNT":
+        //                    PrismProvider.LanguageManager.Set(Core.Enums.LanguageType.CNT);
+        //                    break;
+        //                case "English":
+        //                    PrismProvider.LanguageManager.Set(Core.Enums.LanguageType.English);
+        //                    break;
+        //                default:
+        //                    break;
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

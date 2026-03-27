@@ -72,9 +72,9 @@ namespace FZK.Application.Initialize.Services
             Task<bool> rightUpTask = !RightUpScanner.Initialized ? InitWithRetry(RightUpScanner, SystemConfigManager.RightUpScannerConfig) : null;
             Task<bool> leftDownTask = !LeftDownScanner.Initialized ? InitWithRetry(LeftDownScanner, SystemConfigManager.LeftDownScannerConfig) : null;
             Task<bool> rightDownTask = !RightDownScanner.Initialized ? InitWithRetry(RightDownScanner, SystemConfigManager.RightDownScannerConfig) : null;
-        //    Task<bool> spTask = !SPScanner.Initialized ? Task.Run(() => SPScanner.Init(SystemConfigManager.RobotScannerConfig)) : null;
+            Task<bool> spTask = !SPScanner.Initialized ? Task.Run(() => SPScanner.Init(SystemConfigManager.RobotScannerConfig)) : null;
             Task<bool> plcTask = !OmronPLC.Initialized ? Task.Run(() => OmronPLC.Init(SystemConfigManager.pLCConfig)) : null;
-          //  Task<bool> robotTask = !EpsonRobot.Initialized ? Task.Run(() => EpsonRobot.Init(SystemConfigManager.robotConfig)) : null;
+            Task<bool> robotTask = !EpsonRobot.Initialized ? Task.Run(() => EpsonRobot.Init(SystemConfigManager.robotConfig)) : null;
 
             // 2. 构建列表并过滤null
             var taskList = new List<Task<bool>> { leftUpTask, rightUpTask, leftDownTask, rightDownTask, plcTask }
@@ -91,9 +91,9 @@ namespace FZK.Application.Initialize.Services
             if (rightUpTask != null && !rightUpTask.Result) failList.Add("右上扫码模块");
             if (leftDownTask != null && !leftDownTask.Result) failList.Add("左下扫码模块");
             if (rightDownTask != null && !rightDownTask.Result) failList.Add("右下扫码模块");
-            //if (spTask != null && !spTask.Result) failList.Add("机械臂扫码模块");
+            if (spTask != null && !spTask.Result) failList.Add("机械臂扫码模块");
             if (plcTask != null && !plcTask.Result) failList.Add("PLC模块");
-          //  if (robotTask != null && !robotTask.Result) failList.Add("机械手模块");
+            if (robotTask != null && !robotTask.Result) failList.Add("机械手模块");
 
             // 5. 返回结果
             if (allSuccess)

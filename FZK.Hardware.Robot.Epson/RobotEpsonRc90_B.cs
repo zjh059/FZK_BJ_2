@@ -516,7 +516,10 @@ namespace FZK.Hardware.Robot.Epson
         {
             while (queue.TryDequeue(out _)) { }
         }
-
+        public void ClearReceiveContent()
+        {
+            ReceiveContent = string.Empty;
+        }
         #endregion
     }
 }

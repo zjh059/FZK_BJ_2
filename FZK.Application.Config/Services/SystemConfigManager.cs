@@ -42,8 +42,7 @@ namespace FZK.Application.Config.Services
         {
             ConfigManager = configManager;
             Load();
-        }
-
+        } 
         public void Load()
         {
             //加载JSON配置文件，反序列化成SystemConfigModel对象

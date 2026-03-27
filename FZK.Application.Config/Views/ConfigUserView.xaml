@@ -6,42 +6,114 @@
              xmlns:local="clr-namespace:FZK.Application.Config.Views"
              mc:Ignorable="d" 
              xmlns:prism="http://prismlibrary.com/"             
-			 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
-			 prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:vm="clr-namespace:FZK.Application.Config.ViewModels"
              d:DataContext="{d:DesignInstance vm:ConfigUserViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <!-- 卡片样式 -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect ShadowDepth="2" BlurRadius="8" Opacity="0.15"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style>
+
+        <Style x:Key="SectionTitleStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+
+        <!-- DataGrid 样式，使其与整体风格匹配 -->
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="RowHeight" Value="32"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#E2E8F0"/>
+            <Setter Property="VerticalGridLinesBrush" Value="Transparent"/>
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#F7FAFC"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="8,4"/>
+        </Style>
+
+        <Style TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Grid  Background="White" Margin="8">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="45"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Border Background="#F5F5F5">
-            <TextBlock Text="用户设置" VerticalAlignment="Center" Margin="15 0"/>
-        </Border>
-        <Border Grid.Row="1" Margin="15">
-            <Grid Margin="10">
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <DataGrid ItemsSource="{Binding Users}" CanUserAddRows="False" AutoGenerateColumns="False">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="用户名" Binding="{Binding UserName}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="密码" Binding="{Binding Password,UpdateSourceTrigger=PropertyChanged}"/>
-                        <DataGridTextColumn Header="角色" Binding="{Binding Role,UpdateSourceTrigger=PropertyChanged}"/>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <StackPanel Grid.Row="1" HorizontalAlignment="Left" Margin="0 10">
-                    <Button Content="保存" Width="100" Height="30" Command="{Binding UpdateUserCommand}"/>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#F9FAFB">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- 标题栏 -->
+            <Border Grid.Row="0" Background="White" Margin="0,0,0,20" 
+                    BorderThickness="0,0,0,1" BorderBrush="#E2E8F0">
+                <TextBlock Text="用户设置" FontSize="20" FontWeight="Bold" 
+                           Foreground="#1A202C" Margin="0,10,0,10"/>
+            </Border>
+
+            <!-- 用户列表卡片 -->
+            <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="20">
+                <StackPanel>
+                    <TextBlock Text="用户管理" Style="{StaticResource SectionTitleStyle}"/>
+                    <DataGrid ItemsSource="{Binding Users}" CanUserAddRows="False" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="用户名" Binding="{Binding UserName}" IsReadOnly="True" Width="*"/>
+                            <DataGridTextColumn Header="密码" Binding="{Binding Password, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                            <DataGridTextColumn Header="角色" Binding="{Binding Role, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                        <Button Content="保存" Width="100" Height="32" 
+                                Command="{Binding UpdateUserCommand}"
+                                Background="#3182CE" Foreground="White" 
+                                BorderThickness="0" Cursor="Hand">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="4"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                    </StackPanel>
                 </StackPanel>
-            </Grid>
-        </Border>
-    </Grid>
+            </Border>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

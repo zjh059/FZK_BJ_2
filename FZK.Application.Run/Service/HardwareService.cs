@@ -259,7 +259,7 @@ namespace FZK.Application.Run.Service
 
             return scanCode;
         }
-
+        string robotCmd = "";
         /// <summary>
         /// 获取机械臂指令（适配EPSON机械臂的接收数据）
         /// </summary>
@@ -277,8 +277,9 @@ namespace FZK.Application.Run.Service
                     }
                     Logs.LogInfo("[Robot] EPSON机械臂重连成功");
                 }
-
-                string robotCmd = await Task.Run(() => _hardwareManager.EpsonRobot.ReceiveContent?.Trim());
+                robotCmd = "";
+                robotCmd = await Task.Run(() => _hardwareManager.EpsonRobot.ReceiveContent?.Trim());
+                _hardwareManager.EpsonRobot.ClearReceiveContent();
                 if (string.IsNullOrEmpty(robotCmd))
                 {
                     Logs.LogDebug("[Robot] 未获取到机械臂指令");

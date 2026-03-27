@@ -15,7 +15,13 @@ namespace FZK.Application.Config.Models
     /// </summary>
     public class SystemConfigModel
     {
-        public SoftwareConfig SoftwareConfig { get; set; } = new SoftwareConfig();
+        public SoftwareConfig SoftwareConfig { get; set; } = new SoftwareConfig()
+        {
+            InitUrl = "http://localhost:5000/api/Product",
+            TestResultUrl = "http://localhost:5000/api/Product",
+            ReportStationUrl = "http://localhost:5000/api/Product",
+             
+        };
 
         public ScannerConfig LeftUpScannerConfig { get; set; } = new ScannerConfig()
         {
