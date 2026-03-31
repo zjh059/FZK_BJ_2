@@ -10,15 +10,18 @@
              d:DataContext="{d:DesignInstance vm:LoginViewModel}"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d" 
-             Background="{StaticResource FZK.Login.Background.Color}"
+             Background="#F0F0F0"
              d:DesignHeight="900" d:DesignWidth="1500" 
              >
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="5*"/>
             <ColumnDefinition Width="1"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="6*"/>
         </Grid.ColumnDefinitions>
+        <Grid Background="{StaticResource FZK.Login.Background.Color}">
+            
+        </Grid>
         <Border Grid.Column="1" Width="1" Background="AliceBlue" Margin="0 300 0 300"/>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock Text="焊接上下料" TextWrapping="Wrap" FontSize="80" Foreground="White" VerticalAlignment="Center"/>
@@ -36,7 +39,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <iconPacks:PackIconModern Grid.Row="0" Grid.ColumnSpan="2" Kind="CameraAuto" 
-                                      Foreground="White" Width="80" Height="60"/>
+                                      Foreground="#1679EC" Width="80" Height="60"/>
             <TextBox Grid.Row="1" Width="300" Height="45" FontSize="30" Margin="15"
                      Text="{Binding User.UserName,UpdateSourceTrigger=PropertyChanged}"/>
             <TextBox  Grid.Row="2" Width="300" Height="45" FontSize="30" Margin="15"

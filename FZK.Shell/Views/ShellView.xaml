@@ -21,6 +21,7 @@
             <i:InvokeCommandAction Command="{Binding LoadedCommand}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
+   
     <Grid>
         <ContentControl prism:RegionManager.RegionName="{x:Static core:Names.ShellRegion}"/>
     </Grid>

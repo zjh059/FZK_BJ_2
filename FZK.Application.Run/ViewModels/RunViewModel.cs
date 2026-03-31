@@ -3,6 +3,7 @@ using FZK.Application.Share.Config;
 using FZK.Application.Share.DebugFolder;
 using FZK.Application.Share.Init;
 using FZK.Application.Share.Run;
+using FZK.Core.Config;
 using FZK.Core.Enums;
 using FZK.Database.Base.Models;
 using FZK.Database.Base.Repositories;
@@ -51,6 +52,7 @@ namespace FZK.Application.Run.ViewModels
         private readonly ScannerConfig _rightDownScannerConfig;
         private readonly ScannerConfig _rightUpScannerConfig;
         private readonly ScannerConfig __robotScannerConfig; // 机械臂扫码枪
+        private readonly SoftwareConfig __softwareConfig; // 机械臂扫码枪
         private readonly int bottomCodeLength;
         //锁
         private readonly SemaphoreSlim _jig1ProcessLock = new SemaphoreSlim(1, 1);
@@ -98,7 +100,7 @@ namespace FZK.Application.Run.ViewModels
             _rightDownScannerConfig = systemConfigManager.RightDownScannerConfig ?? new ScannerConfig();
             _rightUpScannerConfig = systemConfigManager.RightUpScannerConfig ?? new ScannerConfig();
             __robotScannerConfig = systemConfigManager.RobotScannerConfig ?? new ScannerConfig();
-
+            __softwareConfig = systemConfigManager.SoftwareConfig ?? new SoftwareConfig();
             bottomCodeLength = _leftDownScannerConfig.SnLength;
             ScanRecords = new ObservableCollection<ScanRecord>();
 
@@ -291,7 +293,7 @@ namespace FZK.Application.Run.ViewModels
         private void OnToggleRun()
         {
             IsRunning = !IsRunning;
-           
+
             if (IsRunning)
             {
                 _lastD0 = _lastD1 = _lastD2 = _lastD3 = _lastD4 = _lastD5 = 0;
@@ -381,7 +383,7 @@ namespace FZK.Application.Run.ViewModels
         #region PLC读写
 
         private async void PlcReadTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {          
+        {
             if (_disposed || !IsRunning) return;
             if (!await _timerProcessLock.WaitAsync(0)) return;
             await System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
@@ -436,9 +438,9 @@ namespace FZK.Application.Run.ViewModels
                 catch (Exception ex)
                 {
                     Logs.LogError(ex, "PLC读取/处理异常");
-                   // await ResetPlcErrorRegisters();
+                    // await ResetPlcErrorRegisters();
                 }
-                
+
                 finally
                 {
                     _timerProcessLock.Release();
@@ -797,10 +799,18 @@ namespace FZK.Application.Run.ViewModels
                     // 写入扫码完成标志
                     await WritePlcRegister(_plcAddr.Jig1WeldResult, 1);
                     PlcD101 = 1;
-
+                    bool mesResult = false;
+                    if (__softwareConfig.IsSFC)
+                    {
+                        mesResult = await _mesService.GetMesTestResult(spCode);
+                    }
+                    else
+                    {
+                        mesResult = true;
+                    }
                     // MES查询主板码测试结果
-                    // bool mesResult = await _mesService.GetMesTestResult(spCode);
-                    bool mesResult = true;
+
+
                     int weldResult = mesResult ? 1 : 2;
                     await UpdateCodeEntityTestResult(spCode, weldResult);
                     string newCount = await UpdateBTEntityCount(bottomCode);
@@ -993,7 +1003,7 @@ namespace FZK.Application.Run.ViewModels
             {
                 _jig2ProcessLock.Release();
             }
-           
+
         }
 
         private async Task ProcessJig2Scan()
@@ -1178,8 +1188,15 @@ namespace FZK.Application.Run.ViewModels
                     await WritePlcRegister(_plcAddr.Jig2WeldResult, 1);
                     PlcD103 = 1;
 
-                    // bool mesResult = await _mesService.GetMesTestResult(spCode);
-                    bool mesResult = true;// await _mesService.GetMesTestResult(spCode);
+                    bool mesResult = false;
+                    if (__softwareConfig.IsSFC)
+                    {
+                        mesResult = await _mesService.GetMesTestResult(spCode);
+                    }
+                    else
+                    {
+                        mesResult = true;
+                    }
                     int weldResult = mesResult ? 1 : 2;
 
                     await UpdateCodeEntityTestResult(spCode, weldResult);
@@ -1506,7 +1523,7 @@ namespace FZK.Application.Run.ViewModels
             }
         }
 
-    
+
 
         /// <summary>
         /// 更新治具使用次数
