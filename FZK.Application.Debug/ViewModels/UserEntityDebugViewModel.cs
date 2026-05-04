@@ -1,5 +1,6 @@
 ﻿using FZK.Application.Debug.Service;
 using FZK.Application.Share.DebugFolder;
+using FZK.Application.Share.Language;
 using FZK.Database.Base.Models;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -91,7 +92,7 @@ namespace FZK.Application.Debug.ViewModels
         /// 表单标题
         /// </summary>
         [Reactive]
-        public string FormTitle { get; set; } = "新增用户";
+        public string FormTitle { get; set; } = MultiLang.Tip_AddUser;
 
         /// <summary>
         /// 当前编辑/新增的实体
@@ -154,7 +155,7 @@ namespace FZK.Application.Debug.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"数据刷新失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.Msg_RefreshFail}：{ex.Message}", MultiLang.Txt_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -188,7 +189,7 @@ namespace FZK.Application.Debug.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"筛选失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.Msg_FilterFail}：{ex.Message}", MultiLang.Txt_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -198,7 +199,7 @@ namespace FZK.Application.Debug.ViewModels
         private void OnAdd()
         {
             _isAddMode = true;
-            FormTitle = "新增用户";
+            FormTitle = MultiLang.Tip_AddUser;
             CurrentEntity = new UserEntity
             {
                 Role = 0, // 默认普通用户
@@ -231,17 +232,17 @@ namespace FZK.Application.Debug.ViewModels
                 var entity = _databaseManager.UserRepository.Get(id);
                 if (entity == null)
                 {
-                    MessageBox.Show("未找到指定的用户信息", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(MultiLang.Msg_UserNotFound, MultiLang.Txt_Tip, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                FormTitle = "编辑用户";
+                FormTitle = MultiLang.Tip_EditUser;
                 CurrentEntity = entity;
                 IsFormVisible = true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"加载编辑数据失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.Msg_LoadEditFail}：{ex.Message}", MultiLang.Txt_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -253,24 +254,24 @@ namespace FZK.Application.Debug.ViewModels
         {
             try
             {
-                var result = MessageBox.Show("确定要删除这个用户吗？", "确认删除",
+                var result = MessageBox.Show(MultiLang.Dlg_DelConfirm, MultiLang.Dlg_DelTitle,
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result != MessageBoxResult.Yes) return;
 
                 var entity = _databaseManager.UserRepository.Get(id);
                 if (entity == null)
                 {
-                    MessageBox.Show("未找到指定的用户信息", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(MultiLang.Msg_UserNotFound, MultiLang.Txt_Tip, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 _databaseManager.UserRepository.Delete(entity);
                 OnRefresh();
-                MessageBox.Show("删除成功", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(MultiLang.Msg_DelSuccess, MultiLang.Txt_Tip, MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"删除失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.Msg_DelFail}：{ex.Message}", MultiLang.Txt_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -281,17 +282,17 @@ namespace FZK.Application.Debug.ViewModels
         {
             try
             {
-                var result = MessageBox.Show("确定要删除选中的用户吗？", "确认批量删除",
+                var result = MessageBox.Show(MultiLang.Dlg_BatchDelConfirm, MultiLang.Dlg_BatchDelTitle,
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result != MessageBoxResult.Yes) return;
 
                 _databaseManager.UserRepository.Delete(SelectedUserEntity);
                 OnRefresh();
-                MessageBox.Show("批量删除成功", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(MultiLang.Msg_BatchDelSuccess, MultiLang.Txt_Tip, MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"批量删除失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.Msg_BatchDelFail}：{ex.Message}", MultiLang.Txt_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -303,12 +304,12 @@ namespace FZK.Application.Debug.ViewModels
             // 数据验证
             if (string.IsNullOrEmpty(CurrentEntity.UserName))
             {
-                MessageBox.Show("用户名不能为空", "验证提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(MultiLang.Msg_NameEmpty, MultiLang.Txt_Validate, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             if (string.IsNullOrEmpty(CurrentEntity.Password))
             {
-                MessageBox.Show("密码不能为空", "验证提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(MultiLang.Msg_PwdEmpty, MultiLang.Txt_Validate, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -318,7 +319,7 @@ namespace FZK.Application.Debug.ViewModels
                 var existUser = _databaseManager.UserRepository.Select(CurrentEntity.UserName);
                 if (existUser != null)
                 {
-                    MessageBox.Show($"用户名{CurrentEntity.UserName}已存在", "验证提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show($"{MultiLang.Msg_NameExist}：{CurrentEntity.UserName}", MultiLang.Txt_Validate, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
             }
@@ -326,6 +327,8 @@ namespace FZK.Application.Debug.ViewModels
             try
             {
                 int count = 0;
+                string opText = _isAddMode ? MultiLang.Txt_Add : MultiLang.Txt_Edit;
+
                 if (_isAddMode)
                 {
                     // 新增
@@ -339,19 +342,20 @@ namespace FZK.Application.Debug.ViewModels
 
                 if (count > 0)
                 {
-                    MessageBox.Show($"{(_isAddMode ? "新增" : "编辑")}成功", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show($"{opText}{MultiLang.Txt_Success}", MultiLang.Txt_Tip, MessageBoxButton.OK, MessageBoxImage.Information);
                     OnRefresh();
                     OnCancel();
                 }
                 else
                 {
-                    MessageBox.Show($"{(_isAddMode ? "新增" : "编辑")}失败", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"{opText}{MultiLang.Txt_Fail}", MultiLang.Txt_Error, MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{(_isAddMode ? "新增" : "编辑")}失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                string opText = _isAddMode ? MultiLang.Txt_Add : MultiLang.Txt_Edit;
+                MessageBox.Show($"{opText}{MultiLang.Txt_Fail}：{ex.Message}", MultiLang.Txt_Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

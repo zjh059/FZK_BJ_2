@@ -76,14 +76,14 @@
             <!-- 标题栏 -->
             <Border Grid.Row="0" Background="White" Margin="0,0,0,20" 
                     BorderThickness="0,0,0,1" BorderBrush="#E2E8F0">
-                <TextBlock Text="软件配置" FontSize="20" FontWeight="Bold" 
+                <TextBlock Text="{DynamicResource 软件配置}" FontSize="20" FontWeight="Bold" 
                            Foreground="#1A202C" Margin="0,10,0,10"/>
             </Border>
 
             <!-- MES 配置卡片 -->
             <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="20">
                 <StackPanel>
-                    <TextBlock Text="MES 配置" Style="{StaticResource SectionTitleStyle}"/>
+                    <TextBlock Text="{DynamicResource MES配置}" Style="{StaticResource SectionTitleStyle}"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -101,39 +101,39 @@
                         </Grid.RowDefinitions>
 
                         <!-- 第一行：测试结果URL + 工位上报URL -->
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="测试结果URL" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource 测试结果URL}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.SoftwareConfig.TestResultUrl, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Row="0" Grid.Column="2" Text="工位上报URL" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource 工位上报URL}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.SoftwareConfig.ReportStationUrl, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <!-- 第二行：工位编码 + 初始化URL -->
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="工位编码" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource 工位编码}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.SoftwareConfig.StationCode, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Row="1" Grid.Column="2" Text="初始化URL" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{DynamicResource 初始化URL}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="1" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.SoftwareConfig.InitUrl, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <!-- 第三行：工位ID + 启用SFC -->
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="工位ID" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource 工位ID}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.SoftwareConfig.StationID, UpdateSourceTrigger=PropertyChanged}"/>
                         <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" 
-                                  Content="启用SFC" Style="{StaticResource FormCheckBoxStyle}"
+                                  Content="{DynamicResource 启用SFC}" Style="{StaticResource FormCheckBoxStyle}"
                                   IsChecked="{Binding SystemConfigManager.SoftwareConfig.IsSFC, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <!-- 第四行：站点编码 + 用户编码 -->
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="站点编码" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource 站点编码}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.SoftwareConfig.siteCode, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Row="3" Grid.Column="2" Text="用户编码" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="{DynamicResource 用户编码}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="3" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.SoftwareConfig.userCode, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <!-- 第五行：密码 -->
-                        <TextBlock Grid.Row="4" Grid.Column="0" Text="密码" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource 密码}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.SoftwareConfig.password, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
@@ -143,7 +143,7 @@
             <!-- 运行参数配置卡片 -->
             <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="20">
                 <StackPanel>
-                    <TextBlock Text="运行参数配置" Style="{StaticResource SectionTitleStyle}"/>
+                    <TextBlock Text="{DynamicResource 运行参数配置}" Style="{StaticResource SectionTitleStyle}"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -158,23 +158,23 @@
                         </Grid.RowDefinitions>
 
                         <!-- 第一行 -->
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="PLC读取间隔 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource PLC读取间隔ms}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.runConfig.PlcReadInterval}"/>
-                        <TextBlock Grid.Row="0" Grid.Column="2" Text="状态检查间隔 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource 状态检查间隔ms}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.runConfig.StatusCheckInterval}"/>
 
                         <!-- 第二行 -->
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="最大记录数" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource 最大记录数}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.runConfig.MaxScanRecords}"/>
-                        <TextBlock Grid.Row="1" Grid.Column="2" Text="扫码重试次数" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{DynamicResource 扫码重试次数}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="1" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.runConfig.ScanRetryCount}"/>
 
                         <!-- 第三行 -->
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="重试延迟 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource 重试延迟ms}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.runConfig.ScanRetryDelay}"/>
                     </Grid>

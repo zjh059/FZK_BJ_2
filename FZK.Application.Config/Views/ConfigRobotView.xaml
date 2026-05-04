@@ -84,14 +84,14 @@
             <!-- 标题栏 -->
             <Border Grid.Row="0" Background="White" Margin="0,0,0,20" 
                     BorderThickness="0,0,0,1" BorderBrush="#E2E8F0">
-                <TextBlock Text="机械手设置" FontSize="20" FontWeight="Bold" 
+                <TextBlock Text="{DynamicResource 机械手设置}" FontSize="20" FontWeight="Bold" 
                            Foreground="#1A202C" Margin="0,10,0,10"/>
             </Border>
 
             <!-- 机械手配置卡片 -->
             <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="20">
                 <StackPanel>
-                    <TextBlock Text="连接与通信参数" Style="{StaticResource SectionTitleStyle}"/>
+                    <TextBlock Text="{DynamicResource 连接与通信参数}" Style="{StaticResource SectionTitleStyle}"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -109,47 +109,47 @@
                         </Grid.RowDefinitions>
 
                         <!-- 第一行：IP地址和端口 -->
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="IP地址" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource IP地址}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.robotConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Row="0" Grid.Column="2" Text="端口" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource 端口}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.robotConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <!-- 第二行：超时时间和重连间隔 -->
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="超时时间 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource 超时时间}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.robotConfig.Timeout, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Row="1" Grid.Column="2" Text="重连间隔 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{DynamicResource 重连间隔}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="1" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.robotConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <!-- 第三行：重连次数和心跳间隔 -->
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="重连次数" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource 重连次数}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.robotConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Row="2" Grid.Column="2" Text="心跳间隔 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="{DynamicResource 心跳间隔}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="2" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.robotConfig.HeartbeatInterval, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <!-- 第四行：心跳指令和响应内容 -->
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="心跳指令" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource 心跳指令}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.robotConfig.HeartbeatCommand, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Row="3" Grid.Column="2" Text="响应内容" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="2" Text="{DynamicResource 响应内容}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="3" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.robotConfig.HeartbeatResponse, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <!-- 第五行：指令超时时间和指令重发次数 -->
-                        <TextBlock Grid.Row="4" Grid.Column="0" Text="指令超时时间 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource 指令超时时间}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.robotConfig.CommandTimeout, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Row="4" Grid.Column="2" Text="指令重发次数" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="4" Grid.Column="2" Text="{DynamicResource 指令重发次数}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="4" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.robotConfig.CommandRetryCount, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <!-- 第六行：指令重发延迟（单独占一列） -->
-                        <TextBlock Grid.Row="5" Grid.Column="0" Text="指令重发延迟 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="{DynamicResource 指令重发延迟}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.robotConfig.CommandRetryDelay, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>

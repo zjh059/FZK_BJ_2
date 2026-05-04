@@ -1,5 +1,6 @@
-﻿
+﻿using FZK.Application.Share;
 using FZK.Application.Share.Init;
+using FZK.Application.Share.Language;
 using FZK.Application.Share.Login;
 using FZK.Core.Models;
 using Prism.Ioc;
@@ -30,6 +31,7 @@ namespace FZK.Application.Initialize.ViewModels
         private ISession Session { get; }
         private IModuleManager ModuleManager { get; }
         private IRegionManager RegionManager { get; }
+
         public InitializeViewModel(
             IRegionManager regionManager,
             IModuleManager moduleManager,
@@ -45,10 +47,10 @@ namespace FZK.Application.Initialize.ViewModels
             InitializeCommand = ReactiveCommand.CreateFromTask(OnLoadedCommand);
             OpenMainViewCommand = ReactiveCommand.Create(OnOpenMainViewCommand);
         }
+
         /// <summary>
         /// 跳过硬件加载，进入首页
         /// </summary>
-        /// <exception cref="NotImplementedException"></exception>
         private void OnOpenMainViewCommand()
         {
             ModuleManager.LoadModule(Names.MainModule);
@@ -68,7 +70,7 @@ namespace FZK.Application.Initialize.ViewModels
 
             if (!HardwareManager.Initialized)
             {
-                Message = "正在初始化所有硬件...";
+                Message = MultiLang.正在初始化所有硬件;
                 var result = await HardwareManager.InitAsync();//真正加载硬件
                 if (result.Success)
                 {
@@ -81,5 +83,5 @@ namespace FZK.Application.Initialize.ViewModels
                 }
             }
         }
-        }
+    }
 }

@@ -1,0 +1,20 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 下拉框样式（和输入框统一，移除Padding） -->
+    <Style x:Key="ComboBox.DBEntity.Style" TargetType="ComboBox">
+        <Setter Property="Margin" Value="0 0 8 0"/>
+        <Setter Property="BorderBrush" Value="#CED4DA"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    <!-- 组合框样式 -->
+    <Style x:Key="FormComboBoxStyle" TargetType="ComboBox">
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="BorderBrush" Value="#CBD5E0"/>
+        <Setter Property="Background" Value="#F7FAFC"/>
+        <Setter Property="Margin" Value="0,0,15,0"/>
+    </Style>
+</ResourceDictionary>

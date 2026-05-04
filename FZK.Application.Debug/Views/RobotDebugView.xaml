@@ -8,139 +8,13 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:converters="clr-namespace:FZK.Application.UI.Converters;assembly=FZK.Application.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="800"
+             d:DesignHeight="600" d:DesignWidth="900"
              d:DataContext="{d:DesignInstance vm:RobotDebugViewModel}"
              Background="#F9FAFB">
 
-    <UserControl.Resources>
-        <!-- 引用转换器 -->
-        <converters:BoolToVisibleConvert x:Key="BooleanToVisibilityConverter"/>
 
-        <!-- 全局背景 -->
-        <SolidColorBrush x:Key="PageBackground" Color="#F9FAFB"/>
 
-        <!-- 卡片样式（无圆角） -->
-        <Style x:Key="CardStyle" TargetType="Border">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#E0E0E0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect ShadowDepth="2" BlurRadius="8" Opacity="0.15"/>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Padding" Value="15"/>
-            <Setter Property="Margin" Value="0,0,0,20"/>
-        </Style>
-
-        <!-- 卡片标题样式 -->
-        <Style x:Key="CardTitleStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="#2C3E50"/>
-            <Setter Property="Margin" Value="0,0,0,15"/>
-        </Style>
-
-        <!-- 按钮样式（统一） -->
-        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#3182CE"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="Padding" Value="12,6"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Margin" Value="5,0"/>
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#95A5A6"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="SuccessButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
-            <Setter Property="Background" Value="#27AE60"/>
-        </Style>
-
-        <Style x:Key="DangerButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
-            <Setter Property="Background" Value="#E74C3C"/>
-        </Style>
-
-        <Style x:Key="WarningButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
-            <Setter Property="Background" Value="#F39C12"/>
-        </Style>
-
-        <Style x:Key="SecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
-            <Setter Property="Background" Value="#95A5A6"/>
-        </Style>
-
-        <!-- 表单标签样式 -->
-        <Style x:Key="FormLabelStyle" TargetType="TextBlock">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,5,10,5"/>
-            <Setter Property="Foreground" Value="#4A5568"/>
-            <Setter Property="FontSize" Value="13"/>
-        </Style>
-
-        <!-- 文本框样式 -->
-        <Style x:Key="FormTextBoxStyle" TargetType="TextBox">
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderBrush" Value="#CBD5E0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="8,4"/>
-            <Setter Property="Margin" Value="0,0,15,0"/>
-            <Setter Property="Background" Value="#F7FAFC"/>
-            <Style.Triggers>
-                <Trigger Property="IsFocused" Value="True">
-                    <Setter Property="BorderBrush" Value="#3182CE"/>
-                    <Setter Property="Background" Value="White"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <!-- 多行文本框样式 -->
-        <Style x:Key="MultiLineTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource FormTextBoxStyle}">
-            <Setter Property="Height" Value="Auto"/>
-            <Setter Property="AcceptsReturn" Value="True"/>
-            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="MinHeight" Value="100"/>
-        </Style>
-
-        <!-- 只读日志文本框样式 -->
-        <Style x:Key="LogTextBoxStyle" TargetType="TextBox">
-            <Setter Property="IsReadOnly" Value="True"/>
-            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="Background" Value="#F8F9FA"/>
-            <Setter Property="FontFamily" Value="Consolas"/>
-            <Setter Property="FontSize" Value="11"/>
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="BorderBrush" Value="#CBD5E0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-        </Style>
-
-        <!-- 组合框样式 -->
-        <Style x:Key="FormComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderBrush" Value="#CBD5E0"/>
-            <Setter Property="Background" Value="#F7FAFC"/>
-            <Setter Property="Margin" Value="0,0,15,0"/>
-        </Style>
-
-        <!-- 列表框样式 -->
-        <Style x:Key="ListBoxStyle" TargetType="ListBox">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#CBD5E0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="2"/>
-            <Setter Property="Margin" Value="0,0,0,0"/>
-        </Style>
-    </UserControl.Resources>
-
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="{StaticResource PageBackground}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="{StaticResource Page.Background.Color}">
         <Grid Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -150,29 +24,29 @@
             </Grid.RowDefinitions>
 
             <!-- 1. 模式选择与标题卡片 -->
-            <Border Grid.Row="0" Style="{StaticResource CardStyle}">
+            <Border Grid.Row="0" Style="{StaticResource Boder.MainStatus.CardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="网络调试工具 (TCP/UDP)" 
+                    <TextBlock Grid.Column="0" Text="{DynamicResource 网络调试工具}" 
                                FontSize="20" FontWeight="Bold" Foreground="#1A202C"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                        <RadioButton Content="服务器模式" IsChecked="{Binding IsServerMode}" Margin="5,0"/>
-                        <RadioButton Content="客户端模式" IsChecked="{Binding IsClientMode}" Margin="5,0"/>
-                        <TextBlock Text="协议：" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                        <RadioButton Content="{DynamicResource 服务器模式}" IsChecked="{Binding IsServerMode}" Margin="5,0"/>
+                        <RadioButton Content="{DynamicResource 客户端模式}" IsChecked="{Binding IsClientMode}" Margin="5,0"/>
+                        <TextBlock Text="{DynamicResource 协议}" Margin="10,0,0,0" VerticalAlignment="Center"/>
                         <ComboBox Width="80" SelectedItem="{Binding SelectedProtocol}"
                                   Style="{StaticResource FormComboBoxStyle}" Margin="5,0">
-                            <ComboBoxItem Content="TCP"/>
-                            <ComboBoxItem Content="UDP"/>
+                            <ComboBoxItem Content="{DynamicResource TCP}"/>
+                            <ComboBoxItem Content="{DynamicResource UDP}"/>
                         </ComboBox>
                     </StackPanel>
                 </Grid>
             </Border>
 
             <!-- 2. 连接配置卡片 -->
-            <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+            <Border Grid.Row="1" Style="{StaticResource Boder.MainStatus.CardStyle}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -185,20 +59,20 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- 服务器模式 -->
-                    <TextBlock Grid.Column="0" Text="监听IP：" Style="{StaticResource FormLabelStyle}"
+                    <TextBlock Grid.Column="0" Text="{DynamicResource 监听IP}" Style="{StaticResource FormLabelStyle}"
                                Visibility="{Binding IsServerMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <TextBox Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                              Text="{Binding ListenIp}" MinWidth="120"
                              Visibility="{Binding IsServerMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                     <!-- 客户端模式 -->
-                    <TextBlock Grid.Column="0" Text="目标IP：" Style="{StaticResource FormLabelStyle}"
+                    <TextBlock Grid.Column="0" Text="{DynamicResource 目标IP}" Style="{StaticResource FormLabelStyle}"
                                Visibility="{Binding IsClientMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <TextBox Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                              Text="{Binding TargetIp}" MinWidth="120"
                              Visibility="{Binding IsClientMode, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                    <TextBlock Grid.Column="2" Text="端口：" Style="{StaticResource FormLabelStyle}" Margin="10,0,0,0"/>
+                    <TextBlock Grid.Column="2" Text="{DynamicResource 端口}" Style="{StaticResource FormLabelStyle}" Margin="10,0,0,0"/>
                     <TextBox Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                              Text="{Binding Port}" MinWidth="80"/>
 
@@ -207,9 +81,9 @@
                         <TextBlock Text="{Binding ConnectionStatusText}" FontWeight="Medium" Margin="5,0,0,0"/>
                     </StackPanel>
 
-                    <Button Grid.Column="5" Content="{Binding StartButtonText}" Style="{StaticResource PrimaryButtonStyle}"
+                    <Button Grid.Column="5" Content="{Binding StartButtonText}" Style="{StaticResource Button.Main.ManualButtonStyle}"
                             Command="{Binding StartCommand}" IsEnabled="{Binding CanStart}" Margin="10,0,5,0"/>
-                    <Button Grid.Column="6" Content="{Binding StopButtonText}" Style="{StaticResource DangerButtonStyle}"
+                    <Button Grid.Column="6" Content="{Binding StopButtonText}" Style="{StaticResource Button.Main.DangerButtonStyle}"
                             Command="{Binding StopCommand}" IsEnabled="{Binding CanStop}"/>
                 </Grid>
             </Border>
@@ -222,7 +96,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- 左侧：客户端列表卡片 -->
-                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,10,0">
+                <Border Grid.Column="0" Style="{StaticResource Boder.MainStatus.CardStyle}" Margin="0,0,10,0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -233,10 +107,10 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Text="客户端连接列表" Style="{StaticResource CardTitleStyle}" Margin="0,0,0,0"/>
+                            <TextBlock Text="{DynamicResource 客户端连接列表}" Style="{StaticResource TextBlock.Run.SubTitleStyle}" Margin="0,0,0,0"/>
                             <StackPanel Grid.Column="1" Orientation="Horizontal">
                                 <TextBlock Text="{Binding ClientCountText}" VerticalAlignment="Center"/>
-                                <Button Content="清空列表" Style="{StaticResource SecondaryButtonStyle}" Width="80"
+                                <Button Content="{DynamicResource 清空列表}" Style="{StaticResource Button.Main.ManualButtonStyle}"  
                                         Command="{Binding ClearClientListCommand}" Margin="10,0,0,0"/>
                             </StackPanel>
                         </Grid>
@@ -250,8 +124,8 @@
                                             <ColumnDefinition Width="80"/>
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
-                                        <Button Grid.Column="1" Content="断开" Width="70"
-                                                Style="{StaticResource SecondaryButtonStyle}"
+                                        <Button Grid.Column="1" Content="{DynamicResource 断开}" Width="70"
+                                                Style="{StaticResource Button.Main.DangerButtonStyle}"
                                                 Command="{Binding DataContext.DisconnectClientCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
                                                 CommandParameter="{Binding}"/>
                                     </Grid>
@@ -262,7 +136,7 @@
                 </Border>
 
                 <!-- 右侧：发送区卡片 -->
-                <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="10,0,0,0">
+                <Border Grid.Column="1" Style="{StaticResource Boder.MainStatus.CardStyle}" Margin="10,0,0,0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -273,15 +147,15 @@
 
                         <!-- 发送选项 -->
                         <WrapPanel Grid.Row="0" Margin="0,0,0,12">
-                            <CheckBox Content="十六进制发送" IsChecked="{Binding IsHexSend}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                            <CheckBox Content="自动换行" IsChecked="{Binding IsAutoNewLine}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                            <CheckBox Content="发送后清空" IsChecked="{Binding IsClearAfterSend}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                            <TextBlock Text="编码：" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <CheckBox Content="{DynamicResource 十六进制发送}" IsChecked="{Binding IsHexSend}" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <CheckBox Content="{DynamicResource 自动换行}" IsChecked="{Binding IsAutoNewLine}" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <CheckBox Content="{DynamicResource 发送后清空}" IsChecked="{Binding IsClearAfterSend}" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                            <TextBlock Text="{DynamicResource 编码}" VerticalAlignment="Center" Margin="0,0,5,0"/>
                             <ComboBox Width="80" SelectedItem="{Binding SelectedEncoding}"
                                       Style="{StaticResource FormComboBoxStyle}">
-                                <ComboBoxItem Content="UTF-8"/>
-                                <ComboBoxItem Content="GB2312"/>
-                                <ComboBoxItem Content="ASCII"/>
+                                <ComboBoxItem Content="{DynamicResource UTF8}"/>
+                                <ComboBoxItem Content="{DynamicResource GB2312}"/>
+                                <ComboBoxItem Content="{DynamicResource ASCII}"/>
                             </ComboBox>
                         </WrapPanel>
 
@@ -297,14 +171,15 @@
                             </Grid.ColumnDefinitions>
                             <ComboBox Grid.Column="0" ItemsSource="{Binding QuickCommands}"
                                       SelectedItem="{Binding SelectedQuickCommand}"
-                                      Style="{StaticResource FormComboBoxStyle}"/>
-                            <Button Grid.Column="1" Content="加载指令库" Style="{StaticResource SuccessButtonStyle}"
-                                    Command="{Binding LoadCommandLibraryCommand}" Margin="10,0,0,0"/>
+                                      Style="{StaticResource FormComboBoxStyle}"
+                                      />
+                            <Button Grid.Column="1" Content="{DynamicResource 加载指令库}" Style="{StaticResource Button.Main.SuccessButtonStyle}" Width="120"
+                                    Command="{Binding LoadCommandLibraryCommand}" Margin="5,0,0,0"/>
                         </Grid>
 
                         <!-- 发送按钮 -->
                         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Content="发送" Style="{StaticResource PrimaryButtonStyle}"
+                            <Button Content="{DynamicResource 发送}" Style="{StaticResource PrimaryButtonStyle}"
                                     Command="{Binding SendDataCommand}" IsEnabled="{Binding CanSend}"/>
                             <Button Content="{Binding TimedSendButtonText}" Style="{StaticResource WarningButtonStyle}"
                                     Command="{Binding ToggleTimedSendCommand}"/>
@@ -314,7 +189,7 @@
             </Grid>
 
             <!-- 4. 日志/数据接收区卡片 -->
-            <Border Grid.Row="3" Style="{StaticResource CardStyle}">
+            <Border Grid.Row="3" Style="{StaticResource Boder.MainStatus.CardStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -324,13 +199,13 @@
 
                     <!-- 日志控制栏 -->
                     <WrapPanel Grid.Row="0" Margin="0,0,0,12">
-                        <CheckBox Content="显示时间戳" IsChecked="{Binding ShowTimestamp}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                        <CheckBox Content="显示收发标识" IsChecked="{Binding ShowSendRecvFlag}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                        <CheckBox Content="十六进制显示" IsChecked="{Binding IsHexDisplay}" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                        <CheckBox Content="{DynamicResource 显示时间戳}" IsChecked="{Binding ShowTimestamp}" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                        <CheckBox Content="{DynamicResource 显示收发标识}" IsChecked="{Binding ShowSendRecvFlag}" VerticalAlignment="Center" Margin="0,0,15,0"/>
+                        <CheckBox Content="{DynamicResource 十六进制显示}" IsChecked="{Binding IsHexDisplay}" VerticalAlignment="Center" Margin="0,0,15,0"/>
                         <TextBlock Text="{Binding ByteCountText}" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                        <Button Content="清空日志" Style="{StaticResource SecondaryButtonStyle}" Width="80"
+                        <Button Content="{DynamicResource 清空日志}" Style="{StaticResource Button.Main.ManualButtonStyle}"  
                                 Command="{Binding ClearLogCommand}" Margin="0,0,5,0"/>
-                        <Button Content="保存日志" Style="{StaticResource SecondaryButtonStyle}" Width="80"
+                        <Button Content="{DynamicResource 保存日志}" Style="{StaticResource Button.Main.ManualButtonStyle}"   
                                 Command="{Binding SaveLogCommand}"/>
                     </WrapPanel>
 
@@ -347,9 +222,9 @@
                         <TextBlock Grid.Column="0" Text="{Binding StatisticsText}" 
                                    FontSize="11" Foreground="#6C757D" VerticalAlignment="Center"/>
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
-                            <Button Content="导出配置" Style="{StaticResource SecondaryButtonStyle}"
+                            <Button Content="{DynamicResource 导出配置}" Style="{StaticResource Button.Main.ManualButtonStyle}"
                                     Command="{Binding ExportConfigCommand}" FontSize="11" Height="28" Padding="8,4"/>
-                            <Button Content="导入配置" Style="{StaticResource SecondaryButtonStyle}"
+                            <Button Content="{DynamicResource 导入配置}" Style="{StaticResource Button.Main.ManualButtonStyle}"
                                     Command="{Binding ImportConfigCommand}" FontSize="11" Height="28" Padding="8,4"/>
                         </StackPanel>
                     </Grid>

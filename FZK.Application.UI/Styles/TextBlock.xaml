@@ -1,0 +1,71 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 标题样式 -->
+    <Style x:Key="TitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="#1A202C"/>
+        <Setter Property="Margin" Value="0,0,0,20"/>
+    </Style>
+
+    <Style x:Key="TextBlock.Run.SubTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="#2C3E50"/>
+        <Setter Property="Margin" Value="0,0,0,12"/>
+    </Style>
+    <!-- 测试结果文本样式（修复触发器冲突：改用Tag判断，避免Text属性同时设置和判断） -->
+    <Style x:Key="ResultTextStyle" TargetType="TextBlock">
+        <Setter Property="Tag" Value="{Binding Result}"/>
+        <Style.Triggers>
+            <Trigger Property="Tag" Value="0">
+                <Setter Property="Foreground" Value="#6C757D"/>
+                <Setter Property="Text" Value="未测试"/>
+            </Trigger>
+            <Trigger Property="Tag" Value="1">
+                <Setter Property="Foreground" Value="#28A745"/>
+                <Setter Property="Text" Value="合格"/>
+            </Trigger>
+            <Trigger Property="Tag" Value="2">
+                <Setter Property="Foreground" Value="#DC3545"/>
+                <Setter Property="Text" Value="不合格"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    
+    <!-- 状态标签样式（无圆角） -->
+    <Style x:Key="Text.Block.StatusLabelStyle" TargetType="TextBlock">
+        <Setter Property="Padding" Value="8,4"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="MinWidth" Value="80"/>
+        <Setter Property="Height" Value="28"/>
+        <Setter Property="Background" Value="#F1F5F9"/>
+        <Setter Property="Foreground" Value="#1F2937"/>
+    </Style>
+
+    <Style x:Key="LabelStyle" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="0 0 5 0"/>
+        <Setter Property="Width" Value="80"/>
+        <Setter Property="TextAlignment" Value="Right"/>
+    </Style>
+
+    <!-- 卡片标题样式 -->
+    <Style x:Key="CardTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="#2C3E50"/>
+        <Setter Property="Margin" Value="0,0,0,15"/>
+    </Style>
+    <!-- 标签样式 -->
+    <Style x:Key="FormLabelStyle" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="0,5,10,5"/>
+        <Setter Property="Foreground" Value="#4A5568"/>
+        <Setter Property="FontSize" Value="13"/>
+    </Style>
+
+</ResourceDictionary>

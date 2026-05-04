@@ -1,4 +1,599 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- 通用 -->
+    <system:String x:Key="登录">登录</system:String>
+    <system:String x:Key="标题1">焊接上下料</system:String>
+    <system:String x:Key="标题2">扫码系统</system:String>
+    <system:String x:Key="开始">开始</system:String>
+    <system:String x:Key="设置">设置</system:String>
+    <system:String x:Key="PLC调试">PLC调试</system:String>
+    <system:String x:Key="扫码触发">扫码触发</system:String>
+    <system:String x:Key="机械臂调试">机械臂调试</system:String>
+    <system:String x:Key="数据管理">数据管理</system:String>
+    <system:String x:Key="切换用户">切换用户</system:String>
+
+    <!-- 设备运行页面 -->
+    <system:String x:Key="设备运行监控">设备运行监控</system:String>
+    <system:String x:Key="刷新状态">刷新状态</system:String>
+    <system:String x:Key="清空日志">清空日志</system:String>
+
+    <!-- PLC寄存器 -->
+    <system:String x:Key="PLC寄存器状态_实时监控">PLC寄存器状态（实时监控）</system:String>
+    <system:String x:Key="治具1_D0_底导向板扫码">治具1-D0（底/导向板扫码）</system:String>
+    <system:String x:Key="治具1_D1_焊接结果扫码">治具1-D1（焊接结果扫码）</system:String>
+    <system:String x:Key="治具1_D2_清零">治具1-D2（清零）</system:String>
+    <system:String x:Key="治具2_D3_底导向板扫码">治具2-D3（底/导向板扫码）</system:String>
+    <system:String x:Key="治具2_D4_焊接结果扫码">治具2-D4（焊接结果扫码）</system:String>
+    <system:String x:Key="治具2_D5_清零">治具2-D5（清零）</system:String>
+    <system:String x:Key="心跳监控_D110">心跳监控 D110</system:String>
+
+    <!-- 治具次数 -->
+    <system:String x:Key="治具1焊接使用次数_D108">治具1焊接使用次数（D108）</system:String>
+    <system:String x:Key="治具2焊接使用次数_D109">治具2焊接使用次数（D109）</system:String>
+    <system:String x:Key="次数上限">/40</system:String>
+
+    <!-- 扫码记录 -->
+    <system:String x:Key="扫码记录_实时更新">扫码记录（实时更新）</system:String>
+    <system:String x:Key="时间">时间</system:String>
+    <system:String x:Key="治具编号">治具编号</system:String>
+    <system:String x:Key="扫码类型">扫码类型</system:String>
+    <system:String x:Key="底板码">底板码</system:String>
+    <system:String x:Key="导向板码">导向板码</system:String>
+    <system:String x:Key="主板码">主板码</system:String>
+    <system:String x:Key="扫码结果">扫码结果</system:String>
+    <system:String x:Key="备注">备注</system:String>
+
+    <!-- 机械臂 & 日志 -->
+    <system:String x:Key="机械臂状态">机械臂状态</system:String>
+    <system:String x:Key="当前扫码位">当前扫码位：</system:String>
+    <system:String x:Key="最新报站结果">最新报站结果：</system:String>
+    <system:String x:Key="设备运行日志">设备运行日志</system:String>
+
+    <!-- 硬件状态 -->
+    <system:String x:Key="硬件连接状态_实时监控">硬件连接状态（实时监控）</system:String>
+    <system:String x:Key="欧姆龙PLC">欧姆龙PLC</system:String>
+    <system:String x:Key="左上扫码枪">左上扫码枪</system:String>
+    <system:String x:Key="左下扫码枪">左下扫码枪</system:String>
+    <system:String x:Key="右上扫码枪">右上扫码枪</system:String>
+    <system:String x:Key="右下扫码枪">右下扫码枪</system:String>
+    <system:String x:Key="机械臂扫码枪">机械臂扫码枪</system:String>
+    <system:String x:Key="EPSON机械臂">EPSON机械臂</system:String>
+    <!-- 初始化页面 -->
+    <system:String x:Key="重试">重试</system:String>
+    <system:String x:Key="跳过">跳过</system:String>
+
+    <!-- 底板码盖板码绑定管理 -->
+    <system:String x:Key="底板码盖板码绑定管理">底板码盖板码绑定管理</system:String>
+    <system:String x:Key="新增绑定">新增绑定</system:String>
+    <system:String x:Key="编辑选中">编辑选中</system:String>
+    <system:String x:Key="删除选中">删除选中</system:String>
+    <system:String x:Key="刷新数据">刷新数据</system:String>
+    <system:String x:Key="盖板码">盖板码</system:String>
+    <system:String x:Key="筛选数据">筛选数据</system:String>
+    <system:String x:Key="ID">ID</system:String>
+    <system:String x:Key="使用次数">使用次数</system:String>
+    <system:String x:Key="最后修改时间">最后修改时间</system:String>
+    <system:String x:Key="操作">操作</system:String>
+    <system:String x:Key="编辑">编辑</system:String>
+    <system:String x:Key="删除">删除</system:String>
+    <system:String x:Key="修改时间">修改时间</system:String>
+    <system:String x:Key="保存">保存</system:String>
+    <system:String x:Key="取消">取消</system:String>
+
+    <!-- 码值绑定管理（底板/盖板/主板） -->
+    <system:String x:Key="码值绑定管理_底板_盖板_主板">码值绑定管理（底板/盖板/主板）</system:String>
+    <system:String x:Key="批量删除">批量删除</system:String>
+    <system:String x:Key="导出Excel">导出Excel</system:String>
+    <system:String x:Key="导出CSV">导出CSV</system:String>
+    <system:String x:Key="测试结果">测试结果</system:String>
+    <system:String x:Key="插入时间">插入时间</system:String>
+    <system:String x:Key="未测试">未测试</system:String>
+    <system:String x:Key="合格">合格</system:String>
+    <system:String x:Key="不合格">不合格</system:String>
+
+    <!-- 数据库调试菜单 -->
+    <system:String x:Key="底板绑定">底板绑定</system:String>
+    <system:String x:Key="主板绑定">主板绑定</system:String>
+    <system:String x:Key="用户管理">用户管理</system:String>
+
+    <!-- PLC调试页面 -->
+    <system:String x:Key="连接配置">连接配置</system:String>
+    <system:String x:Key="IP地址">IP地址</system:String>
+    <system:String x:Key="网络号">网络号</system:String>
+    <system:String x:Key="节点号">节点号</system:String>
+    <system:String x:Key="端口">端口</system:String>
+    <system:String x:Key="连接">连接</system:String>
+    <system:String x:Key="断开">断开</system:String>
+    <system:String x:Key="设备状态">设备状态</system:String>
+    <system:String x:Key="连接状态">连接状态：</system:String>
+    <system:String x:Key="心跳值">心跳值(DM9999)：</system:String>
+    <system:String x:Key="地址监听">地址监听</system:String>
+    <system:String x:Key="地址类型">地址类型</system:String>
+    <system:String x:Key="地址">地址</system:String>
+    <system:String x:Key="开始监听">开始监听</system:String>
+    <system:String x:Key="停止监听">停止监听</system:String>
+    <system:String x:Key="当前值">当前值：</system:String>
+    <system:String x:Key="单地址读写">单地址读写</system:String>
+    <system:String x:Key="读取">读取</system:String>
+    <system:String x:Key="写入值">写入值：</system:String>
+    <system:String x:Key="写入">写入</system:String>
+    <system:String x:Key="操作日志">操作日志</system:String>
     
+    <!-- 网络调试工具（机器人/串口/TCP/UDP） -->
+    <system:String x:Key="网络调试工具">网络调试工具 (TCP/UDP)</system:String>
+    <system:String x:Key="服务器模式">服务器模式</system:String>
+    <system:String x:Key="客户端模式">客户端模式</system:String>
+    <system:String x:Key="协议">协议：</system:String>
+    <system:String x:Key="TCP">TCP</system:String>
+    <system:String x:Key="UDP">UDP</system:String>
+    <system:String x:Key="监听IP">监听IP：</system:String>
+    <system:String x:Key="目标IP">目标IP：</system:String>   
+    <system:String x:Key="客户端连接列表">客户端连接列表</system:String>
+    <system:String x:Key="清空列表">清空列表</system:String>   
+    <system:String x:Key="十六进制发送">十六进制发送</system:String>
+    <system:String x:Key="自动换行">自动换行</system:String>
+    <system:String x:Key="发送后清空">发送后清空</system:String>
+    <system:String x:Key="编码">编码：</system:String>
+    <system:String x:Key="UTF8">UTF-8</system:String>
+    <system:String x:Key="GB2312">GB2312</system:String>
+    <system:String x:Key="ASCII">ASCII</system:String>
+    <system:String x:Key="加载指令库">加载指令库</system:String>
+    <system:String x:Key="发送">发送</system:String>
+    <system:String x:Key="显示时间戳">显示时间戳</system:String>
+    <system:String x:Key="显示收发标识">显示收发标识</system:String>
+    <system:String x:Key="十六进制显示">十六进制显示</system:String>   
+    <system:String x:Key="保存日志">保存日志</system:String>
+    <system:String x:Key="导出配置">导出配置</system:String>
+    <system:String x:Key="导入配置">导入配置</system:String>
+
+    <!-- 扫码器调试页面 -->
+    <system:String x:Key="扫码器连接配置">扫码器连接配置</system:String>
+    <system:String x:Key="调试日志扫码数据">调试日志/扫码数据</system:String>
+    <system:String x:Key="发送指令到扫码器">发送指令到扫码器</system:String>
+    <system:String x:Key="发送指令">发送指令</system:String>
+    <system:String x:Key="解析后的数据">解析后的数据</system:String>
+    <system:String x:Key="自动解析数据">自动解析数据</system:String>
+    <!-- 用户管理调试页面 -->
+    <system:String x:Key="新增用户">新增用户</system:String>
+    <system:String x:Key="用户名">用户名：</system:String>
+    <system:String x:Key="角色">角色：</system:String>
+    <system:String x:Key="全部">全部</system:String>
+    <system:String x:Key="普通用户">普通用户</system:String>
+    <system:String x:Key="管理员">管理员</system:String>
+    <system:String x:Key="超级管理员">超级管理员</system:String>
+    <system:String x:Key="密码">密码：</system:String>
+
+    <!-- PLC配置页面 -->
+    <system:String x:Key="PLC设置">PLC 设置</system:String>
+    <system:String x:Key="基础连接配置">基础连接配置</system:String>
+    <system:String x:Key="超时时间">超时时间 (ms)</system:String>
+    <system:String x:Key="重连次数">重连次数</system:String>
+    <system:String x:Key="重连间隔">重连间隔 (ms)</system:String>
+    <system:String x:Key="指令间隔">指令间隔 (ms)</system:String>
+    <system:String x:Key="队列长度">队列长度</system:String>
+    <system:String x:Key="寄存器地址配置">寄存器地址配置</system:String>
+    <system:String x:Key="治具1寄存器地址">治具1寄存器地址</system:String>
+    <system:String x:Key="治具2寄存器地址">治具2寄存器地址</system:String>
+    <system:String x:Key="D0底导向扫码">D0 (底/导向扫码):</system:String>
+    <system:String x:Key="D1焊接扫码">D1 (焊接扫码):</system:String>
+    <system:String x:Key="D2清零">D2 (清零):</system:String>
+    <system:String x:Key="D100扫码完成">D100 (扫码完成):</system:String>
+    <system:String x:Key="D101焊接完成">D101 (焊接完成):</system:String>
+    <system:String x:Key="D106比对结果">D106 (比对结果):</system:String>
+    <system:String x:Key="D104焊接最终">D104 (焊接最终):</system:String>
+    <system:String x:Key="D108计数">D108 (计数):</system:String>
+    <system:String x:Key="D3底导向扫码">D3 (底/导向扫码):</system:String>
+    <system:String x:Key="D4焊接扫码">D4 (焊接扫码):</system:String>
+    <system:String x:Key="D5清零">D5 (清零):</system:String>
+    <system:String x:Key="D102扫码完成">D102 (扫码完成):</system:String>
+    <system:String x:Key="D103焊接完成">D103 (焊接完成):</system:String>
+    <system:String x:Key="D107比对结果">D107 (比对结果):</system:String>
+    <system:String x:Key="D105焊接最终">D105 (焊接最终):</system:String>
+    <system:String x:Key="D109计数">D109 (计数):</system:String>
+    <system:String x:Key="心跳监控配置">心跳监控配置</system:String>
+    <system:String x:Key="寄存器类型">寄存器类型</system:String>
+    <system:String x:Key="心跳间隔">心跳间隔 (ms)</system:String>
+    <system:String x:Key="启用心跳监控">启用心跳监控</system:String>
+
+    <!-- 机械手配置页面 -->
+    <system:String x:Key="机械手设置">机械手设置</system:String>
+    <system:String x:Key="连接与通信参数">连接与通信参数</system:String>
+    <system:String x:Key="心跳指令">心跳指令</system:String>
+    <system:String x:Key="响应内容">响应内容</system:String>
+    <system:String x:Key="指令超时时间">指令超时时间 (ms)</system:String>
+    <system:String x:Key="指令重发次数">指令重发次数</system:String>
+    <system:String x:Key="指令重发延迟">指令重发延迟 (ms)</system:String>
+
+    <!-- 扫码器配置页面 -->
+    <system:String x:Key="扫码器设置">扫码器设置</system:String>
+    <system:String x:Key="左上扫码器">左上扫码器</system:String>
+    <system:String x:Key="左下扫码器">左下扫码器</system:String>
+    <system:String x:Key="右上扫码器">右上扫码器</system:String>
+    <system:String x:Key="右下扫码器">右下扫码器</system:String>
+    <system:String x:Key="机械臂扫码器">机械臂扫码器</system:String>
+    <system:String x:Key="左上扫码器参数">左上扫码器参数</system:String>
+    <system:String x:Key="左下扫码器参数">左下扫码器参数</system:String>
+    <system:String x:Key="右上扫码器参数">右上扫码器参数</system:String>
+    <system:String x:Key="右下扫码器参数">右下扫码器参数</system:String>
+    <system:String x:Key="机械臂扫码器参数">机械臂扫码器参数</system:String>
+    <system:String x:Key="方向">方向</system:String>
+    <system:String x:Key="扫码延迟ms">扫码延迟 (ms)</system:String>
+    <system:String x:Key="触发指令">触发指令</system:String>
+    <system:String x:Key="最大重连次数">最大重连次数</system:String>
+    <system:String x:Key="重连延迟ms">重连延迟 (ms)</system:String>
+    <system:String x:Key="编码名称">编码名称</system:String>
+    <system:String x:Key="码值分隔符">码值分隔符</system:String>
+    <system:String x:Key="SN长度">SN长度</system:String>
+
+    <system:String x:Key="软件配置">软件配置</system:String>
+    <system:String x:Key="MES配置">MES 配置</system:String>
+    <system:String x:Key="测试结果URL">测试结果URL</system:String>
+    <system:String x:Key="工位上报URL">工位上报URL</system:String>
+    <system:String x:Key="工位编码">工位编码</system:String>
+    <system:String x:Key="初始化URL">初始化URL</system:String>
+    <system:String x:Key="工位ID">工位ID</system:String>
+    <system:String x:Key="启用SFC">启用SFC</system:String>
+    <system:String x:Key="站点编码">站点编码</system:String>
+    <system:String x:Key="用户编码">用户编码</system:String>
+    <system:String x:Key="运行参数配置">运行参数配置</system:String>
+    <system:String x:Key="PLC读取间隔ms">PLC读取间隔 (ms)</system:String>
+    <system:String x:Key="状态检查间隔ms">状态检查间隔 (ms)</system:String>
+    <system:String x:Key="最大记录数">最大记录数</system:String>
+    <system:String x:Key="扫码重试次数">扫码重试次数</system:String>
+    <system:String x:Key="重试延迟ms">重试延迟 (ms)</system:String>
+    <system:String x:Key="用户设置">用户设置</system:String>
+    <system:String x:Key="IP设置">IP设置</system:String>
+    <system:String x:Key="扫码设置">扫码设置</system:String>
+    <system:String x:Key="Robot设置">Robot设置</system:String>
+
+    <system:String x:Key="重复初始化硬件">重复初始化硬件</system:String>
+    <system:String x:Key="初始化硬件失败">初始化硬件失败</system:String>
+    <system:String x:Key="初始化硬件成功">初始化硬件成功</system:String>
+    <system:String x:Key="左上扫码模块">左上扫码模块</system:String>
+    <system:String x:Key="右上扫码模块">右上扫码模块</system:String>
+    <system:String x:Key="左下扫码模块">左下扫码模块</system:String>
+    <system:String x:Key="右下扫码模块">右下扫码模块</system:String>
+    <system:String x:Key="机械臂扫码模块">机械臂扫码模块</system:String>
+    <system:String x:Key="PLC模块">PLC模块</system:String>
+    <system:String x:Key="机械手模块">机械手模块</system:String>
+    <system:String x:Key="以下硬件模块初始化失败">以下硬件模块初始化失败</system:String>
+    <system:String x:Key="关闭欧姆龙PLC失败">关闭欧姆龙PLC失败</system:String>
+    <system:String x:Key="关闭EPSON机械臂失败">关闭EPSON机械臂失败</system:String>
+    <system:String x:Key="关闭扫码枪失败">关闭扫码枪失败</system:String>
+    <system:String x:Key="停止硬件过程中发生异常">停止硬件过程中发生异常</system:String>
+    <system:String x:Key="所有硬件已资源释放完成">所有硬件已停止，资源释放完成</system:String>
+    <system:String x:Key="停止硬件时发生未预期异常">停止硬件时发生未预期异常</system:String>
+    <system:String x:Key="Stop方法执行异常">Stop 方法执行异常</system:String>
+    <system:String x:Key="正在初始化所有硬件">正在初始化所有硬件...</system:String>
+    <system:String x:Key="设备启动中">设备启动中...</system:String>
+    <system:String x:Key="设备初始化完成">设备初始化完成</system:String>
+    <system:String x:Key="空闲">空闲</system:String>
+    <system:String x:Key="无">无</system:String>
+
+    <system:String x:Key="DeviceStarting">设备启动中...</system:String>
+    <system:String x:Key="DeviceInitCompleted">设备初始化完成</system:String>
+    <system:String x:Key="Idle">空闲</system:String>
+    <system:String x:Key="None">无</system:String>
+    <system:String x:Key="NoHardwareModeOn">无硬件模式（已开启）</system:String>
+    <system:String x:Key="NoHardwareModeOff">无硬件模式（关闭）</system:String>
+    <system:String x:Key="StartDevice">启动设备</system:String>
+    <system:String x:Key="StopDevice">停止设备</system:String>
+    <system:String x:Key="StatusCheckTimerFail">状态检查定时器执行失败</system:String>
+    <system:String x:Key="RefreshHardwareStatusError">刷新硬件连接状态异常</system:String>
+    <system:String x:Key="RefreshHardwareStatusFail">刷新硬件状态失败</system:String>
+    <system:String x:Key="DeviceStartedMonitorPLC">设备启动，开始实时监控PLC寄存器</system:String>
+    <system:String x:Key="DeviceStarted">设备启动</system:String>
+    <system:String x:Key="HardwareInitCompleted">硬件初始化完成</system:String>
+    <system:String x:Key="SkipHardwareInit">无硬件模式，跳过硬件初始化</system:String>
+    <system:String x:Key="DeviceStoppedStopMonitor">设备停止，停止监控PLC寄存器</system:String>
+    <system:String x:Key="DeviceStopping">设备停止...</system:String>
+    <system:String x:Key="StatusRefreshCompleted">设备状态刷新完成</system:String>
+    <system:String x:Key="StatusRefreshDone">状态刷新完成</system:String>
+    <system:String x:Key="RefreshStatusFail">刷新状态失败</system:String>
+    <system:String x:Key="RefreshFail">刷新失败</system:String>
+    <system:String x:Key="Error">错误</system:String>
+    <system:String x:Key="LogCleared">界面日志已清空</system:String>
+    <system:String x:Key="Jig1CountCleared">治具1使用次数已清零</system:String>
+    <system:String x:Key="Jig2CountCleared">治具2使用次数已清零</system:String>
+    <system:String x:Key="ClearJig1CountFail">清零治具1次数失败</system:String>
+    <system:String x:Key="ClearJig2CountFail">清零治具2次数失败</system:String>
+    <system:String x:Key="PLCReadProcessError">PLC读取/处理异常</system:String>
+    <system:String x:Key="ReadPLCRegisterFail">读取PLC寄存器失败</system:String>
+    <system:String x:Key="WritePLCD">写入PLC D</system:String>
+    <system:String x:Key="NoHardwareSimWritePLCD">无硬件模式：模拟写入PLC D</system:String>
+    <system:String x:Key="Success">成功</system:String>
+    <system:String x:Key="Fail">失败</system:String>
+    <system:String x:Key="Jig1ScanTriggered">[治具1]检测到底/顶部扫码触发</system:String>
+    <system:String x:Key="Jig1WeldTriggered">[治具1]检测到焊接结果扫码触发</system:String>
+    <system:String x:Key="Jig1ClearTriggered">[治具1]检测到清零触发</system:String>
+    <system:String x:Key="Jig1StartScanProcess">[治具1]开始底/顶部扫码流程</system:String>
+    <system:String x:Key="Jig1StartWeldProcess">[治具1]开始焊接结果扫码流程</system:String>
+    <system:String x:Key="Jig1StartClearProcess">[治具1]开始清零操作</system:String>
+    <system:String x:Key="Jig2ScanTriggered">[治具2]检测到底/顶部扫码触发</system:String>
+    <system:String x:Key="Jig2WeldTriggered">[治具2]检测到焊接结果扫码触发</system:String>
+    <system:String x:Key="Jig2ClearTriggered">[治具2]检测到清零触发</system:String>
+    <system:String x:Key="Jig2StartScanProcess">[治具2]开始底/顶部扫码流程</system:String>
+    <system:String x:Key="Jig2StartWeldProcess">[治具2]开始焊接结果扫码流程</system:String>
+    <system:String x:Key="Jig2StartClearProcess">[治具2]开始清零操作</system:String>
+    <system:String x:Key="Scanning">扫码中</system:String>
+    <system:String x:Key="ScanPosition">扫码位</system:String>
+    <system:String x:Key="RobotArrivedScanPos">[机械臂]收到指令：到达扫码位</system:String>
+    <system:String x:Key="DeviceResourceReleased">设备资源已释放</system:String>
+    <system:String x:Key="ManualTriggerLeftDownScan">手动触发左下扫码</system:String>
+    <system:String x:Key="ManualTriggerLeftUpScan">手动触发左上扫码</system:String>
+    <system:String x:Key="ManualTriggerRightUpScan">手动触发右上扫码</system:String>
+    <system:String x:Key="ManualTriggerRightDownScan">手动触发右下扫码</system:String>
+    <system:String x:Key="ManualTriggerRobotScan">手动触发机械臂扫码</system:String>
+    <system:String x:Key="ManualSimulate">[手动]模拟</system:String>
+    <system:String x:Key="Manual">[手动]</system:String>
+    <system:String x:Key="LeftDownScan">左下扫码</system:String>
+    <system:String x:Key="LeftUpScan">左上扫码</system:String>
+    <system:String x:Key="RightUpScan">右上扫码</system:String>
+    <system:String x:Key="RightDownScan">右下扫码</system:String>
+    <system:String x:Key="RobotScan">机械臂扫码</system:String>
+    <system:String x:Key="ArrivedScanPos">到达扫码位</system:String>
+    <system:String x:Key="Jig1ScanPos">治具1扫码位</system:String>
+    <system:String x:Key="SimRobotArrivedScanPos">模拟机械臂指令：到达扫码位</system:String>
+    <system:String x:Key="ReportSuccessSim">报站成功（模拟）</system:String>
+    <system:String x:Key="SimRobotReportSuccess">模拟机械臂报站结果：成功</system:String>
+    <system:String x:Key="SaveSuccess">保存成功</system:String>
+    <system:String x:Key="AddBindInfo">新增绑定信息</system:String>
+    <system:String x:Key="EditBindInfo">编辑绑定信息</system:String>
+    <system:String x:Key="DataLoadFailed">数据加载失败</system:String>
+    <system:String x:Key="FilterFailed">筛选失败</system:String>
+    <system:String x:Key="BindInfoNotFound">未找到指定的绑定信息</system:String>
+    <system:String x:Key="EditDataLoadFailed">加载编辑数据失败</system:String>
+    <system:String x:Key="ConfirmDelete">确认删除</system:String>
+    <system:String x:Key="ConfirmDeleteBindInfo">确定要删除这条绑定信息吗？</system:String>
+    <system:String x:Key="DeleteSuccess">删除成功</system:String>
+    <system:String x:Key="DeleteFailed">删除失败</system:String>
+    <system:String x:Key="ConfirmBatchDelete">确认批量删除</system:String>
+    <system:String x:Key="ConfirmBatchDeleteBindInfo">确定要删除选中的绑定信息吗？</system:String>
+    <system:String x:Key="BatchDeleteSuccess">批量删除成功</system:String>
+    <system:String x:Key="BatchDeleteFailed">批量删除失败</system:String>
+    <system:String x:Key="BottomCodeNotEmpty">底板码不能为空</system:String>
+    <system:String x:Key="TopCodeNotEmpty">盖板码不能为空</system:String>
+    <system:String x:Key="BottomCodeExists">底板码</system:String>
+    <system:String x:Key="Exists">已存在</system:String>
+    <system:String x:Key="Add">新增</system:String>
+    <system:String x:Key="Edit">编辑</system:String>
+    <system:String x:Key="Success2">成功</system:String>
+    <system:String x:Key="Fail2">失败</system:String>
+    <system:String x:Key="Tip">提示</system:String>
+    <system:String x:Key="ValidateTip">验证提示</system:String>
+    <system:String x:Key="AddCodeBind">新增码值绑定</system:String>
+    <system:String x:Key="EditCodeBind">编辑码值绑定</system:String>
+    <system:String x:Key="DataRefreshFailed">数据刷新失败</system:String>
+    <system:String x:Key="CodeBindNotFound">未找到指定的码值绑定信息</system:String>
+    <system:String x:Key="ConfirmDeleteCodeBind">确定要删除这条码值绑定信息吗？</system:String>
+    <system:String x:Key="ConfirmBatchDeleteCodeBind">确定要删除选中的码值绑定信息吗？</system:String>
+    <system:String x:Key="SPCodeNotEmpty">主板码不能为空</system:String>
+    <system:String x:Key="TestResultNotEmpty">测试结果不能为空</system:String>
+    <system:String x:Key="AddSuccess">新增成功</system:String>
+    <system:String x:Key="AddFailed">新增失败</system:String>
+    <system:String x:Key="EditSuccess">编辑成功</system:String>
+    <system:String x:Key="EditFailed">编辑失败</system:String>
+    <system:String x:Key="ExcelNotImplemented">Excel导出功能暂未实现</system:String>
+    <system:String x:Key="ExcelExportFailed">Excel导出失败</system:String>
+    <system:String x:Key="CsvNotImplemented">CSV导出功能暂未实现</system:String>
+    <system:String x:Key="CsvExportFailed">CSV导出失败</system:String>
+
+    <system:String x:Key="NotRunning">未运行</system:String>
+    <system:String x:Key="StartConnect">启动/连接</system:String>
+    <system:String x:Key="StopDisconnect">停止/断开</system:String>
+    <system:String x:Key="CurrentConnections">当前连接数</system:String>
+    <system:String x:Key="TimedSend">定时发送</system:String>
+    <system:String x:Key="StopTimedSend">停止定时</system:String>
+    <system:String x:Key="RecvBytes">接收字节数</system:String>
+    <system:String x:Key="SendBytes">发送字节数</system:String>
+    <system:String x:Key="TotalConnections">总连接数</system:String>
+    <system:String x:Key="MaxConcurrent">最大并发</system:String>
+    <system:String x:Key="TotalTransfer">累计收发</system:String>
+    <system:String x:Key="Cmd1_QueryStatus">常用指令1：查询状态</system:String>
+    <system:String x:Key="Cmd2_Reset">常用指令2：复位</system:String>
+    <system:String x:Key="Cmd3_Heartbeat">常用指令3：心跳包</system:String>
+    <system:String x:Key="Cmd4_Custom">常用指令4：自定义指令</system:String>
+    <system:String x:Key="InvalidPort">端口号格式错误，请输入有效的数字</system:String>
+    <system:String x:Key="TcpServerStarted">TCP服务器已启动，监听</system:String>
+    <system:String x:Key="TcpListenCanceled">TCP服务器监听已取消</system:String>
+    <system:String x:Key="TcpServerError">TCP服务器异常</system:String>
+    <system:String x:Key="ClientConnected">客户端已连接</system:String>
+    <system:String x:Key="UdpServerStarted">UDP服务器已启动，监听</system:String>
+    <system:String x:Key="Port">端口</system:String>
+    <system:String x:Key="UdpReceiveCanceled">UDP服务器接收已取消</system:String>
+    <system:String x:Key="UdpServerError">UDP服务器异常</system:String>
+    <system:String x:Key="TcpClientConnected">已连接到TCP服务器</system:String>
+    <system:String x:Key="UdpClientInited">UDP客户端已初始化，目标</system:String>
+    <system:String x:Key="Running">运行中</system:String>
+    <system:String x:Key="StartFailed">启动失败</system:String>
+    <system:String x:Key="StoppedDisconnected">已停止运行/断开连接</system:String>
+    <system:String x:Key="StopFailed">停止失败</system:String>
+    <system:String x:Key="MonitorCanceled">数据监听已取消</system:String>
+    <system:String x:Key="RecvError">数据接收异常</system:String>
+    <system:String x:Key="Disconnected">连接已断开</system:String>
+    <system:String x:Key="SendDataEmpty">发送数据不能为空</system:String>
+    <system:String x:Key="NoUdpClient">无UDP客户端连接，无法发送数据</system:String>
+    <system:String x:Key="SendSuccess">数据发送成功</system:String>
+    <system:String x:Key="SendFailed">数据发送失败</system:String>
+    <system:String x:Key="TimedSendStarted">定时发送已启动（间隔：1秒）</system:String>
+    <system:String x:Key="TimedSendStopped">定时发送已停止</system:String>
+    <system:String x:Key="Info">信息</system:String>
+    <system:String x:Key="Warning">警告</system:String>
+    <system:String x:Key="Recv">接收</system:String>
+    <system:String x:Key="Send">发送</system:String>
+    <system:String x:Key="ClientListCleared">客户端列表已清空</system:String>
+    <system:String x:Key="ClientDisconnected">已断开客户端</system:String>
+    <system:String x:Key="CmdLibLoaded">指令库加载成功（示例）</system:String>
+    <system:String x:Key="LogSaved">日志已保存到</system:String>
+    <system:String x:Key="LogSaveFailed">日志保存失败</system:String>
+    <system:String x:Key="ConfigExported">配置已导出到</system:String>
+    <system:String x:Key="ConfigExportFailed">配置导出失败</system:String>
+    <system:String x:Key="ConfigImported">配置已从</system:String>
+    <system:String x:Key="ConfigImportFailed">配置导入失败</system:String>
+    <system:String x:Key="LogFileFilter">文本文件 (*.txt)|*.txt|所有文件 (*.*)|*.*</system:String>
+    <system:String x:Key="ConfigFileFilter">配置文件 (*.config)|*.config|所有文件 (*.*)|*.*</system:String>
+
+
+    <system:String x:Key="NotConnected">未连接</system:String>
+    <system:String x:Key="Connected">已连接</system:String>
+    <system:String x:Key="CloseAutoParse">关闭自动解析</system:String>
+    <system:String x:Key="OpenAutoParse">开启自动解析</system:String>
+    <system:String x:Key="ConnectSuccess">扫码器连接成功</system:String>
+    <system:String x:Key="ConnectSuccessMsg">扫码器连接成功！</system:String>
+    <system:String x:Key="DebugConnected">调试：扫码器已连接...</system:String>
+    <system:String x:Key="ConnectFailed">扫码器连接失败</system:String>
+    <system:String x:Key="ConnectFailedMsg">扫码器连接失败</system:String>
+    <system:String x:Key="ConnectError">连接扫码器异常</system:String>
+    <system:String x:Key="ConnectErrorMsg">连接扫码器异常</system:String>
+    <system:String x:Key="DebugDisconnected">调试：扫码器已断开...</system:String>
+    <system:String x:Key="DisconnectedMsg">扫码器已断开连接！</system:String>
+    <system:String x:Key="DisconnectError">断开扫码器异常</system:String>
+    <system:String x:Key="DisconnectErrorMsg">断开扫码器异常</system:String>
+    <system:String x:Key="SendFailedDisconnected">扫码器连接已断开，发送失败！</system:String>
+    <system:String x:Key="SendCmd">扫码器发送指令</system:String>
+    <system:String x:Key="SendError">发送指令异常</system:String>
+    <system:String x:Key="SendErrorMsg">发送指令异常</system:String>
+    <system:String x:Key="SendFailedNotConnected">扫码器未连接，发送失败！</system:String>
+    <system:String x:Key="AutoParseOn">已开启自动解析</system:String>
+    <system:String x:Key="AutoParseOff">已关闭自动解析</system:String>
+    <system:String x:Key="RecvData">接收数据</system:String>
+    <system:String x:Key="ParseResult">解析结果</system:String>
+    <system:String x:Key="ParseFailed">解析失败</system:String>
+    <system:String x:Key="ParseError">解析数据异常</system:String>
+
+    <system:String x:Key="Tip_AddUser">新增用户</system:String>
+    <system:String x:Key="Tip_EditUser">编辑用户</system:String>
+    <system:String x:Key="Txt_Error">错误</system:String>
+    <system:String x:Key="Txt_Tip">提示</system:String>
+    <system:String x:Key="Txt_Validate">验证提示</system:String>
+    <system:String x:Key="Msg_RefreshFail">数据刷新失败</system:String>
+    <system:String x:Key="Msg_FilterFail">筛选失败</system:String>
+    <system:String x:Key="Msg_UserNotFound">未找到指定的用户信息</system:String>
+    <system:String x:Key="Msg_LoadEditFail">加载编辑数据失败</system:String>
+    <system:String x:Key="Dlg_DelTitle">确认删除</system:String>
+    <system:String x:Key="Dlg_DelConfirm">确定要删除这个用户吗？</system:String>
+    <system:String x:Key="Msg_DelSuccess">删除成功</system:String>
+    <system:String x:Key="Msg_DelFail">删除失败</system:String>
+    <system:String x:Key="Dlg_BatchDelTitle">确认批量删除</system:String>
+    <system:String x:Key="Dlg_BatchDelConfirm">确定要删除选中的用户吗？</system:String>
+    <system:String x:Key="Msg_BatchDelSuccess">批量删除成功</system:String>
+    <system:String x:Key="Msg_BatchDelFail">批量删除失败</system:String>
+    <system:String x:Key="Msg_NameEmpty">用户名不能为空</system:String>
+    <system:String x:Key="Msg_PwdEmpty">密码不能为空</system:String>
+    <system:String x:Key="Msg_NameExist">用户名已存在</system:String>
+    <system:String x:Key="Txt_Add">新增</system:String>
+    <system:String x:Key="Txt_Edit">编辑</system:String>
+    <system:String x:Key="Txt_Success">成功</system:String>
+    <system:String x:Key="Txt_Fail">失败</system:String>
+
+    <system:String x:Key="LoginFailed">用户名或密码错误</system:String>
+    <system:String x:Key="RegisterSuccess">注册新用户成功\r\n用户名:{0}\r\n密码:{1}</system:String>
+
+    <!-- ===== RunViewModel 新增（简体中文 CNS）===== -->
+    <system:String x:Key="AttemptWritePlcD">尝试写入 PLC D{0} = {1}</system:String>
+    <system:String x:Key="ClearSuccessRemark">清零成功</system:String>
+    <system:String x:Key="DbBtEntityNotFound">[数据库] 未找到BTEntity记录 | 底板码={0}</system:String>
+    <system:String x:Key="DbClearCountFailed">[数据库] 清空BTEntity Counts失败 | 底板码={0}</system:String>
+    <system:String x:Key="DbClearCountSuccess">[数据库] 清空BTEntity Counts | 底板码={0} | 次数重置为0</system:String>
+    <system:String x:Key="DbClearJigCountSuccess">[数据库] 治具{0}数据库计数已清零 | 底板码={1}</system:String>
+    <system:String x:Key="DbClearNoBottomCode">[数据库] 治具{0}清零失败：当前无有效的底板码</system:String>
+    <system:String x:Key="DbCodeEntityNotFound">[数据库] 未找到CodeEntity记录 | 主板码={0}</system:String>
+    <system:String x:Key="DbCountParseFail">[数据库] Counts解析失败 | 底板码={0} | 当前值={1}，默认设置为1</system:String>
+    <system:String x:Key="DbInsertCodeEntity">[数据库] 新增CodeEntity | 底板码={0} | 顶部码={1} | 主板码={2}</system:String>
+    <system:String x:Key="DbUpdateCodeEntity">[数据库] 更新CodeEntity | 底板码={0} | 主板码={1}</system:String>
+    <system:String x:Key="DbUpdateCountFailed">[数据库] 更新BTEntity Counts失败 | 底板码={0}</system:String>
+    <system:String x:Key="DbUpdateCountSuccess">[数据库] 更新BTEntity Counts | 底板码={0} | 更新次数={1}</system:String>
+    <system:String x:Key="DbUpdateTestResult">[数据库] 更新CodeEntity测试结果 | 主板码={0} | 结果={1}</system:String>
+    <system:String x:Key="DbUpdateTestResultFailed">[数据库] 更新CodeEntity测试结果失败 | 主板码={0}</system:String>
+    <system:String x:Key="DbUpsertCodeEntityFailed">[数据库] 更新/新增CodeEntity失败 | 底板码={0}</system:String>
+    <system:String x:Key="DbVerifyBottomTopFailed">[数据库] 验证底/顶部码失败 | 底板码={0}</system:String>
+    <system:String x:Key="ExceptionRemark">处理异常：{0}</system:String>
+    <system:String x:Key="Jig1">治具1</system:String>
+    <system:String x:Key="Jig1BottomScanFormatError">[治具1] 左下扫码结果格式异常：{0}，无法解析出两个码</system:String>
+    <system:String x:Key="Jig1ClearComplete">[治具1] 清零完成 | 底板码={0} | 使用次数已重置为0</system:String>
+    <system:String x:Key="Jig1ClearException">[治具1] 清零处理异常 | 底板码={0}</system:String>
+    <system:String x:Key="Jig1ClearFailNoCode">[治具1] 清零失败：扫码未获取到有效底板码</system:String>
+    <system:String x:Key="Jig1ClearParseFail">[治具1] 左下扫码结果无法解析出底板码：{0}</system:String>
+    <system:String x:Key="Jig1CountConvertFail">[治具1] Counts转换失败：{0} 无法转为整数，默认写入0</system:String>
+    <system:String x:Key="Jig1DetectedClearTrigger">[治具1] 检测到清零触发（D2上升沿）</system:String>
+    <system:String x:Key="Jig1DetectedScanTrigger">[治具1] 检测到底/顶部扫码触发（D0上升沿）</system:String>
+    <system:String x:Key="Jig1DetectedWeldTrigger">[治具1] 检测到焊接结果扫码触发（D1上升沿）</system:String>
+    <system:String x:Key="Jig1ScanException">[治具1] 底/顶部扫码处理异常 | 底板码={0} | 重试次数={1}</system:String>
+    <system:String x:Key="Jig1ScanFailRetryExhausted">[治具1] 扫码失败：多次重试后仍未获取到有效码值</system:String>
+    <system:String x:Key="Jig1ScanParseRetry">[治具1] 扫码解析失败，第{0}次重试...</system:String>
+    <system:String x:Key="Jig1VerifyFail">[治具1] 底/顶部码比对失败 | 底板码={0} | 顶部码={1}</system:String>
+    <system:String x:Key="Jig1VerifySuccess">[治具1] 底/顶部码比对成功 | 底板码={0} | 顶部码={1} | 主板码={2}</system:String>
+    <system:String x:Key="Jig1WeldComplete">[治具1] 焊接结果处理完成 | 底板码={0} | 主板码={1} | MES结果={2} | 使用次数={3}</system:String>
+    <system:String x:Key="Jig1WeldException">[治具1] 焊接结果扫码处理异常 | 底板码={0} | 主板码={1}</system:String>
+    <system:String x:Key="Jig1WeldParseFail">[治具1] 焊接扫码结果无法解析出底板码和主板码：{0}</system:String>
+    <system:String x:Key="Jig1WeldParseRetry">[治具1] 焊接扫码解析失败，第{0}次重试...</system:String>
+    <system:String x:Key="Jig1WeldScanFailRetryExhausted">[治具1] 焊接扫码失败：多次重试后仍未获取到有效码值</system:String>
+    <system:String x:Key="Jig2">治具2</system:String>
+    <system:String x:Key="Jig2BottomScanFormatError">[治具2] 右下扫码结果无法解析出底板码和主板码：{0}</system:String>
+    <system:String x:Key="Jig2ClearComplete">[治具2] 清零完成 | 底板码={0} | 使用次数已重置为0</system:String>
+    <system:String x:Key="Jig2ClearException">[治具2] 清零处理异常 | 底板码={0}</system:String>
+    <system:String x:Key="Jig2ClearFailNoCode">[治具2] 清零失败：扫码未获取到有效底板码</system:String>
+    <system:String x:Key="Jig2ClearParseFail">[治具2] 右下扫码结果无法解析出底板码：{0}</system:String>
+    <system:String x:Key="Jig2CountConvertFail">[治具2] Counts转换失败：{0} 无法转为整数，默认写入0</system:String>
+    <system:String x:Key="Jig2DetectedClearTrigger">[治具2] 检测到清零触发（D5上升沿）</system:String>
+    <system:String x:Key="Jig2DetectedScanTrigger">[治具2] 检测到底/顶部扫码触发（D3上升沿）</system:String>
+    <system:String x:Key="Jig2DetectedWeldTrigger">[治具2] 检测到焊接结果扫码触发（D4上升沿）</system:String>
+    <system:String x:Key="Jig2ScanException">[治具2] 底/顶部扫码处理异常 | 底板码={0}</system:String>
+    <system:String x:Key="Jig2ScanFailRetryExhausted">[治具2] 扫码失败：多次重试后仍未获取到有效码值</system:String>
+    <system:String x:Key="Jig2ScanParseRetry">[治具2] 双码解析失败，第{0}次重试...</system:String>
+    <system:String x:Key="Jig2VerifyFail">[治具2] 底/顶部码比对失败 | 底板码={0} | 顶部码={1}</system:String>
+    <system:String x:Key="Jig2VerifySuccess">[治具2] 底/顶部码比对成功 | 底板码={0} | 顶部码={1} | 主板码={2}</system:String>
+    <system:String x:Key="Jig2WeldComplete">[治具2] 焊接结果处理完成 | 底板码={0} | 主板码={1} | MES结果={2} | 使用次数={3}</system:String>
+    <system:String x:Key="Jig2WeldException">[治具2] 焊接结果扫码处理异常 | 底板码={0} | 主板码={1}</system:String>
+    <system:String x:Key="Jig2WeldParseFail">[治具2] 焊接扫码结果无法解析出底板码和主板码：{0}</system:String>
+    <system:String x:Key="Jig2WeldParseRetry">[治具2] 焊接扫码解析失败，第{0}次重试...</system:String>
+    <system:String x:Key="Jig2WeldScanFailRetryExhausted">[治具2] 焊接扫码失败：多次重试后仍未获取到有效码值</system:String>
+
+    <system:String x:Key="ManualScanException">手动触发{0}异常</system:String>
+    <system:String x:Key="ManualScanExceptionLog">[手动] {0} 异常：{1}</system:String>
+    <system:String x:Key="ManualScanFail">[手动] {0} 失败：未返回码值</system:String>
+    <system:String x:Key="ManualScanSuccess">[手动] {0} 成功：{1}</system:String>
+    <system:String x:Key="ManualSimulateLog">[手动] {0} 模拟扫码</system:String>
+    <system:String x:Key="ManualTriggerSuccessRemark">手动触发成功</system:String>
+    <system:String x:Key="MesNgRemark">MES查询NG</system:String>
+    <system:String x:Key="MesOkRemark">MES查询OK</system:String>
+    <system:String x:Key="Ng">NG</system:String>
+    <system:String x:Key="NoHardwareSimWritePlcD">无硬件模式：模拟写入PLC D{0} = {1}</system:String>
+    <system:String x:Key="Ok">OK</system:String>
+    <system:String x:Key="ParseFallbackOrder">[扫码解析] 码特征识别失败，按顺序假设 | 底板={0} | 主板={1}</system:String>
+    <system:String x:Key="ParseFallbackSingle">[扫码解析] 码特征识别失败，按顺序假设 | 底板={1} | 主板={0}</system:String>
+    <system:String x:Key="PlcWriteStatsFooter">=============================================</system:String>
+    <system:String x:Key="PlcWriteStatsHeader">========== PLC写入统计 (D100-D109) ==========</system:String>
+    <system:String x:Key="PlcWriteStatsLine">D{0}: 总次数={1}, 成功={2}, 失败={3}</system:String>
+    <system:String x:Key="ReportFail">报站失败</system:String>
+    <system:String x:Key="ReportFailRemark">报站失败</system:String>
+    <system:String x:Key="ReportSuccess">报站成功</system:String>
+    <system:String x:Key="ReportSuccessRemark">报站成功</system:String>
+    <system:String x:Key="ResetPlcErrorRegistersFail">重置PLC错误寄存器失败</system:String>
+    <system:String x:Key="Robot">机械臂</system:String>
+    <system:String x:Key="RobotLogicException">[机械臂] 逻辑处理异常</system:String>
+    <system:String x:Key="RobotReportComplete">[机械臂] 报站完成 | 结果={0}</system:String>
+    <system:String x:Key="RobotScanFailNoCode">[机械臂] 扫码失败：未获取到主板码</system:String>
+    <system:String x:Key="RobotScanSuccess">[机械臂] 扫码成功 | 主板码={0}</system:String>
+    <system:String x:Key="ScanFail">扫码失败</system:String>
+    <system:String x:Key="ScanFailRemark">扫码失败</system:String>
+    <system:String x:Key="ScanFailRetryExhaustedRemark">扫码失败（重试耗尽）</system:String>
+    <system:String x:Key="ScanTypeBottomTop">底/顶部扫码</system:String>
+    <system:String x:Key="ScanTypeClear">清零操作</system:String>
+    <system:String x:Key="ScanTypeReport">报站操作</system:String>
+    <system:String x:Key="ScanTypeWeldResult">焊接结果扫码</system:String>
+    <system:String x:Key="SimArrivedScanPos">到达扫码位（模拟）</system:String>
+    <system:String x:Key="SimJig1ScanPos">治具1扫码位（模拟）</system:String>
+    <system:String x:Key="SimReportSuccess">报站成功（模拟）</system:String>
+    <system:String x:Key="SimulateRemark">模拟扫码（无硬件模式）</system:String>
+    <system:String x:Key="StopHardwareFailed">停止硬件服务失败</system:String>
+    <system:String x:Key="VerifyFailRemark">比对失败</system:String>
+    <system:String x:Key="VerifySuccessRemark">比对成功</system:String>
+    <system:String x:Key="WritePlcDDetail">写入PLC D{0} = {1}</system:String>
+    <system:String x:Key="WritePlcDFailed">写入PLC寄存器D{0}失败</system:String>
+    <system:String x:Key="WritePlcDFailedDetail">写入 PLC D{0} 失败: {1}</system:String>
+    <system:String x:Key="WritePlcDSuccess">写入 PLC D{0} 成功</system:String>
+    <system:String x:Key="WritePlcDSuccessSim">写入 PLC D{0} 成功 (模拟)</system:String>
 </ResourceDictionary>

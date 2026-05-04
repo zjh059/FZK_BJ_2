@@ -20,12 +20,12 @@
             <ColumnDefinition Width="6*"/>
         </Grid.ColumnDefinitions>
         <Grid Background="{StaticResource FZK.Login.Background.Color}">
-            
+
         </Grid>
         <Border Grid.Column="1" Width="1" Background="AliceBlue" Margin="0 300 0 300"/>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-            <TextBlock Text="焊接上下料" TextWrapping="Wrap" FontSize="80" Foreground="White" VerticalAlignment="Center"/>
-            <TextBlock Text="扫码系统" TextWrapping="Wrap" FontSize="80" Foreground="White" VerticalAlignment="Center"/>
+            <TextBlock Text="{DynamicResource 标题1}" TextWrapping="Wrap" FontSize="80" Foreground="White" VerticalAlignment="Center"/>
+            <TextBlock Text="{DynamicResource 标题2}" TextWrapping="Wrap" FontSize="80" Foreground="White" VerticalAlignment="Center"/>
         </StackPanel>
         <Grid Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
@@ -36,15 +36,23 @@
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition Height="Auto"/>                
             </Grid.RowDefinitions>
+
             <iconPacks:PackIconModern Grid.Row="0" Grid.ColumnSpan="2" Kind="CameraAuto" 
-                                      Foreground="#1679EC" Width="80" Height="60"/>
+                           Foreground="#1679EC" Width="80" Height="60"/>
             <TextBox Grid.Row="1" Width="300" Height="45" FontSize="30" Margin="15"
-                     Text="{Binding User.UserName,UpdateSourceTrigger=PropertyChanged}"/>
+          Text="{Binding User.UserName,UpdateSourceTrigger=PropertyChanged}"/>
             <TextBox  Grid.Row="2" Width="300" Height="45" FontSize="30" Margin="15"
-                           Text="{Binding User.Password,UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Content="登录" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Width="125" Height="125" FontSize="30" Margin="15" Command="{Binding LoginCommand}"/>
+                Text="{Binding User.Password,UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="{DynamicResource 登录}" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2" Width="125" Height="125" FontSize="30" Margin="15" Command="{Binding LoginCommand}"/>
+           
+            <StackPanel Grid.Row="3" Grid.ColumnSpan="2" 
+                Orientation="Horizontal" HorizontalAlignment="Right" Margin="15,5">
+                <RadioButton x:Name="CNS" Content="简体中文" Margin="5" IsChecked="True" GroupName="Language"/>
+                <RadioButton x:Name="CNT" Content="繁體中文" Margin="5" GroupName="Language"/>
+                <RadioButton x:Name="English" Content="English" Margin="5" GroupName="Language"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

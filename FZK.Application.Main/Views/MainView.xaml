@@ -22,38 +22,38 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Background="#3B4446">
-                <RadioButton Content="开始" Style="{StaticResource RadioButton.Menu.Style}" IsChecked="True"
+                <RadioButton Content="{DynamicResource 开始}" Style="{StaticResource RadioButton.Menu.Style}" IsChecked="True"
                              Command="{Binding NavigationgToVewCommand}"
                              CommandParameter="{x:Static core:Names.RunView}">
                     <RadioButton.Tag>
                         <iconPacks:PackIconBoxIcons Kind="RegularHome" Width="20" Height="20" />
                     </RadioButton.Tag>
                 </RadioButton>
-                <RadioButton Content="设置" Style="{StaticResource RadioButton.Menu.Style}"
+                <RadioButton Content="{DynamicResource 设置}" Style="{StaticResource RadioButton.Menu.Style}"
                              Command="{Binding NavigationgToVewCommand}"
                              CommandParameter="{x:Static core:Names.ConfigView}">
                     <RadioButton.Tag>
                         <iconPacks:PackIconFeatherIcons Kind="Settings" Width="20" Height="20" />
                     </RadioButton.Tag>
                 </RadioButton>
-                <RadioButton Content="PLC调试" Style="{StaticResource RadioButton.Menu.Style}"
+                <RadioButton Content="{DynamicResource PLC调试}" Style="{StaticResource RadioButton.Menu.Style}"
                              Command="{Binding NavigationgToVewCommand}"
                              CommandParameter="{x:Static core:Names.PLCDebugView}">
 
                 </RadioButton>
-                <RadioButton Content="扫码触发" Style="{StaticResource RadioButton.Menu.Style}"
+                <RadioButton Content="{DynamicResource 扫码触发}" Style="{StaticResource RadioButton.Menu.Style}"
                                Command="{Binding NavigationgToVewCommand}"
                                CommandParameter="{x:Static core:Names.ScannerDebugView}">
                 </RadioButton>
-                <RadioButton Content="机械臂调试" Style="{StaticResource RadioButton.Menu.Style}"
+                <RadioButton Content="{DynamicResource 机械臂调试}" Style="{StaticResource RadioButton.Menu.Style}"
                                Command="{Binding NavigationgToVewCommand}"
                                CommandParameter="{x:Static core:Names.RobotDebugView}">
                 </RadioButton>
-                <RadioButton Content="数据管理" Style="{StaticResource RadioButton.Menu.Style}"
+                <RadioButton Content="{DynamicResource 数据管理}" Style="{StaticResource RadioButton.Menu.Style}"
                                Command="{Binding NavigationgToVewCommand}"
                                CommandParameter="{x:Static core:Names.DataBaseDebugView}">
                 </RadioButton>
-                <RadioButton Content="切换用户" Style="{StaticResource RadioButton.Menu.Style}"
+                <RadioButton Content="{DynamicResource 切换用户}" Style="{StaticResource RadioButton.Menu.Style}"
                                Command="{Binding LogoutCommand}">
                 </RadioButton>
             </StackPanel>

@@ -96,14 +96,14 @@
             <!-- 标题栏 -->
             <Border Grid.Row="0" Background="White" Margin="0,0,0,20" 
                     BorderThickness="0,0,0,1" BorderBrush="#E2E8F0">
-                <TextBlock Text="PLC 设置" FontSize="20" FontWeight="Bold" 
+                <TextBlock Text="{DynamicResource PLC设置}" FontSize="20" FontWeight="Bold" 
                            Foreground="#1A202C" Margin="0,10,0,10"/>
             </Border>
 
             <!-- 基础配置卡片 -->
             <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="20">
                 <StackPanel>
-                    <TextBlock Text="基础连接配置" Style="{StaticResource SectionTitleStyle}"/>
+                    <TextBlock Text="{DynamicResource 基础连接配置}" Style="{StaticResource SectionTitleStyle}"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -119,31 +119,31 @@
                         </Grid.RowDefinitions>
 
                         <!-- 第一行：IP地址和端口 -->
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="IP地址" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource IP地址}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.pLCConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Row="0" Grid.Column="2" Text="端口" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource 端口}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.pLCConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <!-- 第二行：超时时间和重连次数 -->
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="超时时间 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource 超时时间}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.pLCConfig.Timeout, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Row="1" Grid.Column="2" Text="重连次数" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{DynamicResource 重连次数}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="1" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.pLCConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <!-- 第三行：重连间隔和指令间隔 -->
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="重连间隔 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource 重连间隔}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.pLCConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Grid.Row="2" Grid.Column="2" Text="指令间隔 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="2" Grid.Column="2" Text="{DynamicResource 指令间隔}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="2" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.pLCConfig.SendInterval, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <!-- 第四行：队列长度 -->
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="队列长度" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource 队列长度}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.pLCConfig.MaxSendQueueLength, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
@@ -153,7 +153,7 @@
             <!-- 寄存器地址配置卡片（治具1、治具2并排） -->
             <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="20">
                 <StackPanel>
-                    <TextBlock Text="寄存器地址配置" Style="{StaticResource SectionTitleStyle}"/>
+                    <TextBlock Text="{DynamicResource 寄存器地址配置}" Style="{StaticResource SectionTitleStyle}"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -163,7 +163,7 @@
                         <!-- 治具1 -->
                         <Border Grid.Column="0" BorderBrush="#EDF2F7" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,10,0">
                             <StackPanel>
-                                <TextBlock Text="治具1寄存器地址" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="#2C5282"/>
+                                <TextBlock Text="{DynamicResource 治具1寄存器地址}" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="#2C5282"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="130"/>
@@ -180,28 +180,28 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="D0 (底/导向扫码):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource D0底导向扫码}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1TriggerScan}"/>
 
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="D1 (焊接扫码):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource D1焊接扫码}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1TriggerWeld}"/>
 
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="D2 (清零):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource D2清零}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1TriggerClear}"/>
 
-                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="D100 (扫码完成):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource D100扫码完成}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1ScanResult}"/>
 
-                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="D101 (焊接完成):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource D101焊接完成}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1WeldResult}"/>
 
-                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="D106 (比对结果):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="{DynamicResource D106比对结果}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1CompareResult}"/>
 
-                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="D104 (焊接最终):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource D104焊接最终}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1WeldFinalResult}"/>
 
-                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="D108 (计数):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="{DynamicResource D108计数}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="7" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1Count}"/>
                                 </Grid>
                             </StackPanel>
@@ -210,7 +210,7 @@
                         <!-- 治具2 -->
                         <Border Grid.Column="1" BorderBrush="#EDF2F7" BorderThickness="1" CornerRadius="6" Padding="12" Margin="10,0,0,0">
                             <StackPanel>
-                                <TextBlock Text="治具2寄存器地址" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="#2C5282"/>
+                                <TextBlock Text="{DynamicResource 治具2寄存器地址}" FontWeight="SemiBold" Margin="0,0,0,12" Foreground="#2C5282"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="130"/>
@@ -227,28 +227,28 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="D3 (底/导向扫码):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource D3底导向扫码}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2TriggerScan}"/>
 
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="D4 (焊接扫码):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource D4焊接扫码}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2TriggerWeld}"/>
 
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="D5 (清零):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource D5清零}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2TriggerClear}"/>
 
-                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="D102 (扫码完成):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource D102扫码完成}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2ScanResult}"/>
 
-                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="D103 (焊接完成):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource D103焊接完成}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2WeldResult}"/>
 
-                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="D107 (比对结果):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="{DynamicResource D107比对结果}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2CompareResult}"/>
 
-                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="D105 (焊接最终):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource D105焊接最终}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2WeldFinalResult}"/>
 
-                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="D109 (计数):" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="{DynamicResource D109计数}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="7" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2Count}"/>
                                 </Grid>
                             </StackPanel>
@@ -260,7 +260,7 @@
             <!-- 心跳配置卡片 -->
             <Border Grid.Row="3" Style="{StaticResource CardStyle}" Padding="20">
                 <StackPanel>
-                    <TextBlock Text="心跳监控配置" Style="{StaticResource SectionTitleStyle}"/>
+                    <TextBlock Text="{DynamicResource 心跳监控配置}" Style="{StaticResource SectionTitleStyle}"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -274,23 +274,23 @@
                         </Grid.RowDefinitions>
 
                         <!-- 第一行：寄存器类型 + 地址 -->
-                        <TextBlock Grid.Row="0" Grid.Column="0" Text="寄存器类型" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource 寄存器类型}" Style="{StaticResource FormLabelStyle}"/>
                         <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormComboBoxStyle}"
                                   ItemsSource="{Binding Source={StaticResource PLCRegisterTypeEnumValues}}"
                                   SelectedItem="{Binding SystemConfigManager.pLCConfig.HeartbeatRegisterType, UpdateSourceTrigger=PropertyChanged}"
                                   IsSynchronizedWithCurrentItem="True"/>
 
-                        <TextBlock Grid.Row="0" Grid.Column="2" Text="地址" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource 地址}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.pLCConfig.HeartbeatAddress, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <!-- 第二行：心跳间隔 + 启用开关 -->
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="心跳间隔 (ms)" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource 心跳间隔}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.pLCConfig.HeartbeatInterval, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <CheckBox Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" 
-                                  Content="启用心跳监控" Style="{StaticResource FormCheckBoxStyle}"
+                                  Content="{DynamicResource 启用心跳监控}" Style="{StaticResource FormCheckBoxStyle}"
                                   IsChecked="{Binding SystemConfigManager.pLCConfig.HeartbeatIsOpen, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
                 </StackPanel>

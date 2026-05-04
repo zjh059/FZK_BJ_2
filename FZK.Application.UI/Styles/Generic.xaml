@@ -9,5 +9,11 @@
         <ResourceDictionary Source="pack://application:,,,/FZK.Application.UI;component/Styles/Converters.xaml"/>
         <ResourceDictionary Source="pack://application:,,,/FZK.Application.UI;component/Styles/Word.xaml"/>
         <ResourceDictionary Source="pack://application:,,,/FZK.Application.UI;component/Styles/Ellipse.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/FZK.Application.UI;component/Styles/ToggleButton.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/FZK.Application.UI;component/Styles/Boder.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/FZK.Application.UI;component/Styles/TextBlock.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/FZK.Application.UI;component/Styles/DataGrid.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/FZK.Application.UI;component/Styles/TextBox.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/FZK.Application.UI;component/Styles/ComboBox.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

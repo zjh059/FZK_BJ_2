@@ -1,5 +1,6 @@
 ﻿using FZK.Application.Share.Config;
 using FZK.Application.Share.Init;
+using FZK.Application.Share.Language;
 using FZK.Hardware.Scanner.Base;
 using FZK.Logger;
 using ReactiveUI;
@@ -36,7 +37,7 @@ namespace FZK.Application.Debug.ViewModels
         /// 连接状态文本
         /// </summary>
         [Reactive]
-        public string StatusText { get; set; } = "未连接";
+        public string StatusText { get; set; } = MultiLang.NotConnected;
 
         /// <summary>
         /// 调试日志内容
@@ -66,7 +67,7 @@ namespace FZK.Application.Debug.ViewModels
         /// 自动解析按钮文本
         /// </summary>
         [Reactive]
-        public string AutoParseButtonText { get; set; } = "关闭自动解析";
+        public string AutoParseButtonText { get; set; } = MultiLang.CloseAutoParse;
 
         #region 命令定义
         public ICommand ConnectScannerCommand { get; }
@@ -100,9 +101,9 @@ namespace FZK.Application.Debug.ViewModels
             HardwareManager = hardwareManager;
 
             // 初始化扫码器实例（从硬件管理器获取，或新建实例）
-            _scanner = hardwareManager.SPScanner; // 如果硬件管理器有扫码器属性，可替换为 hardwareManager.Scanner
+            _scanner = hardwareManager.SPScanner;
 
-            // 初始化配置（从系统配置读取，若无则使用默认值）
+            // 初始化配置
             InitScannerConfig();
 
             // 初始化命令
@@ -126,17 +127,15 @@ namespace FZK.Application.Debug.ViewModels
         /// </summary>
         private void InitScannerConfig()
         {
-          
-                IPAdress = "192.168.1.100";
-                Port = "8080";
-                _scannerConfig = new ScannerConfig
-                {
-                    IpAddress = IPAdress,
-                    Port = int.Parse(Port),
-                    DelayTime = 100,
-                    TriggerCommand = string.Empty
-                };
-            
+            IPAdress = "192.168.1.100";
+            Port = "8080";
+            _scannerConfig = new ScannerConfig
+            {
+                IpAddress = IPAdress,
+                Port = int.Parse(Port),
+                DelayTime = 100,
+                TriggerCommand = string.Empty
+            };
         }
         #endregion
 
@@ -161,23 +160,23 @@ namespace FZK.Application.Debug.ViewModels
 
                     if (result)
                     {
-                        Logs.LogInfo($"扫码器连接成功：{IPAdress}:{Port}");
-                        Logs.LogInfo("调试：扫码器已连接...");
-                        MessageBox.Show("扫码器连接成功！");
+                        Logs.LogInfo($"{MultiLang.ConnectSuccess}：{IPAdress}:{Port}");
+                        Logs.LogInfo(MultiLang.DebugConnected);
+                        MessageBox.Show(MultiLang.ConnectSuccessMsg);
                     }
                     else
                     {
-                        Logs.LogInfo($"扫码器连接失败：{_scanner.Message}");
-                        MessageBox.Show($"扫码器连接失败：{_scanner.Message}");
+                        Logs.LogInfo($"{MultiLang.ConnectFailed}：{_scanner.Message}");
+                        MessageBox.Show($"{MultiLang.ConnectFailedMsg}：{_scanner.Message}");
                     }
                 }
                 catch (Exception ex)
                 {
                     Connected = false;
                     UpdateStatusText();
-                    Logs.LogInfo($"连接扫码器异常：{ex.Message}");
+                    Logs.LogInfo($"{MultiLang.ConnectError}：{ex.Message}");
                     Logs.LogError(ex);
-                    MessageBox.Show($"连接扫码器异常：{ex.Message}");
+                    MessageBox.Show($"{MultiLang.ConnectErrorMsg}：{ex.Message}");
                 }
             }
         }
@@ -194,15 +193,15 @@ namespace FZK.Application.Debug.ViewModels
                     _scanner.Close();
                     Connected = _scanner.Connected;
                     UpdateStatusText();
-                    Logs.LogInfo("扫码器已断开连接");
-                    Logs.LogInfo("调试：扫码器已断开...");
-                    MessageBox.Show("扫码器已断开连接！");
+                    Logs.LogInfo(MultiLang.Disconnected);
+                    Logs.LogInfo(MultiLang.DebugDisconnected);
+                    MessageBox.Show(MultiLang.DisconnectedMsg);
                 }
                 catch (Exception ex)
                 {
-                    Logs.LogInfo($"断开扫码器异常：{ex.Message}");
+                    Logs.LogInfo($"{MultiLang.DisconnectError}：{ex.Message}");
                     Logs.LogError(ex);
-                    MessageBox.Show($"断开扫码器异常：{ex.Message}");
+                    MessageBox.Show($"{MultiLang.DisconnectErrorMsg}：{ex.Message}");
                 }
             }
         }
@@ -216,7 +215,7 @@ namespace FZK.Application.Debug.ViewModels
             {
                 if (string.IsNullOrWhiteSpace(SendData))
                 {
-                    MessageBox.Show("发送指令不能为空！");
+                    MessageBox.Show(MultiLang.SendDataEmpty);
                     return;
                 }
 
@@ -228,23 +227,23 @@ namespace FZK.Application.Debug.ViewModels
                     {
                         Connected = false;
                         UpdateStatusText();
-                        MessageBox.Show("扫码器连接已断开，发送失败！");
+                        MessageBox.Show(MultiLang.SendFailedDisconnected);
                         return;
                     }
                     _scanner.TriggerAsync();
-                    Logs.LogInfo($"发送指令成功：{SendData}");
-                    MessageBox.Show($"扫码器发送指令：{SendData}");
+                    Logs.LogInfo($"{MultiLang.SendSuccess}：{SendData}");
+                    MessageBox.Show($"{MultiLang.SendCmd}：{SendData}");
                 }
                 catch (Exception ex)
                 {
-                    Logs.LogInfo($"发送指令异常：{ex.Message}");
+                    Logs.LogInfo($"{MultiLang.SendError}：{ex.Message}");
                     Logs.LogError(ex);
-                    MessageBox.Show($"发送指令异常：{ex.Message}");
+                    MessageBox.Show($"{MultiLang.SendErrorMsg}：{ex.Message}");
                 }
             }
             else
             {
-                MessageBox.Show("扫码器未连接，发送失败！");
+                MessageBox.Show(MultiLang.SendFailedNotConnected);
             }
         }
 
@@ -254,7 +253,7 @@ namespace FZK.Application.Debug.ViewModels
         private void OnClearLogCommand()
         {
             LogText = string.Empty;
-            Logs.LogInfo("日志已清空");
+            Logs.LogInfo(MultiLang.LogCleared);
         }
 
         /// <summary>
@@ -263,8 +262,8 @@ namespace FZK.Application.Debug.ViewModels
         private void OnToggleAutoParseCommand()
         {
             IsAutoParse = !IsAutoParse;
-            AutoParseButtonText = IsAutoParse ? "关闭自动解析" : "开启自动解析";
-            Logs.LogInfo(IsAutoParse ? "已开启自动解析" : "已关闭自动解析");
+            AutoParseButtonText = IsAutoParse ? MultiLang.CloseAutoParse : MultiLang.OpenAutoParse;
+            Logs.LogInfo(IsAutoParse ? MultiLang.AutoParseOn : MultiLang.AutoParseOff);
 
             // 关闭自动解析时清空解析结果
             if (!IsAutoParse)
@@ -280,10 +279,8 @@ namespace FZK.Application.Debug.ViewModels
         /// </summary>
         private void UpdateStatusText()
         {
-            StatusText = Connected ? "已连接" : "未连接";
+            StatusText = Connected ? MultiLang.Connected : MultiLang.NotConnected;
         }
-
-
 
         /// <summary>
         /// 启动数据监听
@@ -295,7 +292,7 @@ namespace FZK.Application.Debug.ViewModels
             {
                 while (true)
                 {
-                    await Task.Delay(50); // 50ms轮询一次
+                    await Task.Delay(50);
 
                     if (Connected && !string.IsNullOrEmpty(_scanner.Content))
                     {
@@ -303,7 +300,7 @@ namespace FZK.Application.Debug.ViewModels
                         System.Windows.Application.Current.Dispatcher.Invoke(() =>
                         {
                             // 添加接收日志
-                            Logs.LogInfo($"接收数据：{receivedData}");
+                            Logs.LogInfo($"{MultiLang.RecvData}：{receivedData}");
 
                             // 自动解析数据
                             if (IsAutoParse)
@@ -325,24 +322,15 @@ namespace FZK.Application.Debug.ViewModels
         {
             try
             {
-                // 基础解析逻辑，可根据实际扫码器返回格式修改
-                ParsedData = $"解析结果：{Environment.NewLine}{data}";
-
-                // 示例：如果是JSON格式
-                // if (data.StartsWith("{"))
-                // {
-                //     var jsonObj = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(data);
-                //     ParsedData = $"条码：{jsonObj.barcode}{Environment.NewLine}时间：{jsonObj.time}";
-                // }
+                // 基础解析逻辑
+                ParsedData = $"{MultiLang.ParseResult}：{Environment.NewLine}{data}";
             }
             catch (Exception ex)
             {
-                ParsedData = $"解析失败：{ex.Message}";
-                Logs.LogInfo($"解析数据异常：{ex.Message}");
+                ParsedData = $"{MultiLang.ParseFailed}：{ex.Message}";
+                Logs.LogInfo($"{MultiLang.ParseError}：{ex.Message}");
             }
         }
         #endregion
     }
-
-
 }

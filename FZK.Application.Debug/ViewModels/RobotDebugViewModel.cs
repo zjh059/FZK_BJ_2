@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using FZK.Application.Share.Language;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
@@ -60,16 +61,16 @@ namespace FZK.Application.Debug.ViewModels
         public string Port { get; set; } = "8888";
 
         [Reactive]
-        public string ConnectionStatusText { get; set; } = "未运行";
+        public string ConnectionStatusText { get; set; } = MultiLang.NotRunning;
 
         [Reactive]
         public Brush ConnectionStatusColor { get; set; } = Brushes.Red;
 
         [Reactive]
-        public string StartButtonText { get; set; } = "启动/连接";
+        public string StartButtonText { get; set; } = MultiLang.StartConnect;
 
         [Reactive]
-        public string StopButtonText { get; set; } = "停止/断开";
+        public string StopButtonText { get; set; } = MultiLang.StopDisconnect;
 
         [Reactive]
         public bool CanStart { get; set; } = true;
@@ -82,7 +83,7 @@ namespace FZK.Application.Debug.ViewModels
         [Reactive]
         public ObservableCollection<string> ConnectedClients { get; set; } = new ObservableCollection<string>();
 
-        public string ClientCountText => $"当前连接数：{ConnectedClients.Count}";
+        public string ClientCountText => $"{MultiLang.CurrentConnections}：{ConnectedClients.Count}";
         #endregion
 
         #region 发送数据属性
@@ -104,9 +105,9 @@ namespace FZK.Application.Debug.ViewModels
         [Reactive]
         public List<string> QuickCommands { get; set; } = new List<string>
         {
-            "常用指令1：查询状态",
-            "常用指令2：复位",
-            "常用指令3：心跳包"
+            MultiLang.Cmd1_QueryStatus,
+            MultiLang.Cmd2_Reset,
+            MultiLang.Cmd3_Heartbeat
         };
 
         [Reactive]
@@ -116,7 +117,7 @@ namespace FZK.Application.Debug.ViewModels
         public bool CanSend { get; set; } = false;
 
         [Reactive]
-        public string TimedSendButtonText { get; set; } = "定时发送";
+        public string TimedSendButtonText { get; set; } = MultiLang.TimedSend;
 
         [Reactive]
         public bool IsTimedSendEnabled { get; set; } = false;
@@ -138,13 +139,13 @@ namespace FZK.Application.Debug.ViewModels
         [Reactive]
         public long SendByteCount { get; set; } = 0;
 
-        public string ByteCountText => $"接收字节数：{RecvByteCount} | 发送字节数：{SendByteCount}";
+        public string ByteCountText => $"{MultiLang.RecvBytes}：{RecvByteCount} | {MultiLang.SendBytes}：{SendByteCount}";
 
         [Reactive]
         public string LogText { get; set; } = string.Empty;
 
         [Reactive]
-        public string StatisticsText { get; set; } = "总连接数：0 | 最大并发：0 | 累计收发：0 字节";
+        public string StatisticsText { get; set; } = $"{MultiLang.TotalConnections}：0 | {MultiLang.MaxConcurrent}：0 | {MultiLang.TotalTransfer}：0 字节";
         #endregion
 
         #region 网络通信核心对象
@@ -218,7 +219,7 @@ namespace FZK.Application.Debug.ViewModels
             {
                 if (!int.TryParse(Port, out int port))
                 {
-                    AddLog("端口号格式错误，请输入有效的数字", LogType.Error);
+                    AddLog(MultiLang.InvalidPort, LogType.Error);
                     return;
                 }
 
@@ -235,7 +236,7 @@ namespace FZK.Application.Debug.ViewModels
                         var ip = IPAddress.Parse(ListenIp);
                         _tcpListener = new TcpListener(ip, port);
                         _tcpListener.Start();
-                        AddLog($"TCP服务器已启动，监听 {ListenIp}:{port}", LogType.Info);
+                        AddLog($"{MultiLang.TcpServerStarted} {ListenIp}:{port}", LogType.Info);
 
                         // 异步监听客户端连接（改用Task.Run + 循环检测取消令牌）
                         _ = Task.Run(async () =>
@@ -264,18 +265,18 @@ namespace FZK.Application.Debug.ViewModels
                                             this.RaisePropertyChanged(nameof(ClientCountText));
                                         });
 
-                                        AddLog($"客户端 {clientEndPoint} 已连接", LogType.Info);
+                                        AddLog($"{MultiLang.ClientConnected} {clientEndPoint}", LogType.Info);
                                         _ = Task.Run(async () => await HandleTcpClientDataAsync(client, clientEndPoint), _cts.Token);
                                     }
                                 }
                             }
                             catch (OperationCanceledException)
                             {
-                                AddLog("TCP服务器监听已取消", LogType.Info);
+                                AddLog(MultiLang.TcpListenCanceled, LogType.Info);
                             }
                             catch (Exception ex)
                             {
-                                AddLog($"TCP服务器异常：{ex.Message}", LogType.Error);
+                                AddLog($"{MultiLang.TcpServerError}：{ex.Message}", LogType.Error);
                             }
                         }, _cts.Token);
                     }
@@ -283,7 +284,7 @@ namespace FZK.Application.Debug.ViewModels
                     {
                         // UDP服务器模式
                         _udpClient = new UdpClient(port);
-                        AddLog($"UDP服务器已启动，监听 {port} 端口", LogType.Info);
+                        AddLog($"{MultiLang.UdpServerStarted} {port} {MultiLang.Port}", LogType.Info);
 
                         _ = Task.Run(async () =>
                         {
@@ -309,11 +310,11 @@ namespace FZK.Application.Debug.ViewModels
                             }
                             catch (OperationCanceledException)
                             {
-                                AddLog("UDP服务器接收已取消", LogType.Info);
+                                AddLog(MultiLang.UdpReceiveCanceled, LogType.Info);
                             }
                             catch (Exception ex)
                             {
-                                AddLog($"UDP服务器异常：{ex.Message}", LogType.Error);
+                                AddLog($"{MultiLang.UdpServerError}：{ex.Message}", LogType.Error);
                             }
                         }, _cts.Token);
                     }
@@ -325,23 +326,23 @@ namespace FZK.Application.Debug.ViewModels
                     {
                         _tcpClient = new TcpClient();
                         await _tcpClient.ConnectAsync(TargetIp, port);
-                        AddLog($"已连接到TCP服务器 {TargetIp}:{port}", LogType.Info);
+                        AddLog($"{MultiLang.TcpClientConnected} {TargetIp}:{port}", LogType.Info);
                         _ = Task.Run(async () => await HandleTcpClientDataAsync(_tcpClient, "服务器"), _cts.Token);
                     }
                     else
                     {
                         _udpClient = new UdpClient();
-                        AddLog($"UDP客户端已初始化，目标 {TargetIp}:{port}", LogType.Info);
+                        AddLog($"{MultiLang.UdpClientInited} {TargetIp}:{port}", LogType.Info);
                     }
                 }
 
-                ConnectionStatusText = "运行中";
+                ConnectionStatusText = MultiLang.Running;
                 ConnectionStatusColor = Brushes.Green;
             }
             catch (Exception ex)
             {
-                AddLog($"启动失败：{ex.Message}", LogType.Error);
-                ConnectionStatusText = "启动失败";
+                AddLog($"{MultiLang.StartFailed}：{ex.Message}", LogType.Error);
+                ConnectionStatusText = MultiLang.StartFailed;
                 ConnectionStatusColor = Brushes.OrangeRed;
                 CanStart = true;
                 CanStop = false;
@@ -363,7 +364,7 @@ namespace FZK.Application.Debug.ViewModels
                     _timedSendTimer.Dispose();
                     _timedSendTimer = null;
                     IsTimedSendEnabled = false;
-                    TimedSendButtonText = "定时发送";
+                    TimedSendButtonText = MultiLang.TimedSend;
                 }
 
                 if (_tcpListener != null)
@@ -392,17 +393,17 @@ namespace FZK.Application.Debug.ViewModels
                 ConnectedClients.Clear();
                 this.RaisePropertyChanged(nameof(ClientCountText));
 
-                ConnectionStatusText = "未运行";
+                ConnectionStatusText = MultiLang.NotRunning;
                 ConnectionStatusColor = Brushes.Red;
                 CanStart = true;
                 CanStop = false;
                 CanSend = false;
 
-                AddLog("已停止运行/断开连接", LogType.Info);
+                AddLog(MultiLang.StoppedDisconnected, LogType.Info);
             }
             catch (Exception ex)
             {
-                AddLog($"停止失败：{ex.Message}", LogType.Error);
+                AddLog($"{MultiLang.StopFailed}：{ex.Message}", LogType.Error);
             }
         }
 
@@ -438,11 +439,11 @@ namespace FZK.Application.Debug.ViewModels
             }
             catch (OperationCanceledException)
             {
-                AddLog($"[{clientId}] 数据监听已取消", LogType.Info);
+                AddLog($"[{clientId}] {MultiLang.MonitorCanceled}", LogType.Info);
             }
             catch (Exception ex)
             {
-                AddLog($"[{clientId}] 数据接收异常：{ex.Message}", LogType.Error);
+                AddLog($"[{clientId}] {MultiLang.RecvError}：{ex.Message}", LogType.Error);
             }
             finally
             {
@@ -461,7 +462,7 @@ namespace FZK.Application.Debug.ViewModels
                 });
 
                 client.Close();
-                AddLog($"[{clientId}] 连接已断开", LogType.Info);
+                AddLog($"[{clientId}] {MultiLang.Disconnected}", LogType.Info);
             }
         }
 
@@ -472,7 +473,7 @@ namespace FZK.Application.Debug.ViewModels
         {
             if (string.IsNullOrEmpty(SendData))
             {
-                AddLog("发送数据不能为空", LogType.Warning);
+                AddLog(MultiLang.SendDataEmpty, LogType.Warning);
                 return;
             }
 
@@ -522,7 +523,7 @@ namespace FZK.Application.Debug.ViewModels
                         }
                         else
                         {
-                            AddLog("无UDP客户端连接，无法发送数据", LogType.Warning);
+                            AddLog(MultiLang.NoUdpClient, LogType.Warning);
                             return;
                         }
                     }
@@ -552,11 +553,11 @@ namespace FZK.Application.Debug.ViewModels
                     SendData = string.Empty;
                 }
 
-                AddLog("数据发送成功", LogType.Info);
+                AddLog(MultiLang.SendSuccess, LogType.Info);
             }
             catch (Exception ex)
             {
-                AddLog($"数据发送失败：{ex.Message}", LogType.Error);
+                AddLog($"{MultiLang.SendFailed}：{ex.Message}", LogType.Error);
             }
         }
 
@@ -569,16 +570,16 @@ namespace FZK.Application.Debug.ViewModels
 
             if (IsTimedSendEnabled)
             {
-                TimedSendButtonText = "停止定时";
+                TimedSendButtonText = MultiLang.StopTimedSend;
                 _timedSendTimer = new Timer(async _ => await OnSendDataAsync(), null, 0, 1000);
-                AddLog("定时发送已启动（间隔：1秒）", LogType.Info);
+                AddLog(MultiLang.TimedSendStarted, LogType.Info);
             }
             else
             {
-                TimedSendButtonText = "定时发送";
+                TimedSendButtonText = MultiLang.TimedSend;
                 _timedSendTimer?.Dispose();
                 _timedSendTimer = null;
-                AddLog("定时发送已停止", LogType.Info);
+                AddLog(MultiLang.TimedSendStopped, LogType.Info);
             }
         }
         #endregion
@@ -593,13 +594,13 @@ namespace FZK.Application.Debug.ViewModels
             switch (logType)
             {
                 case LogType.Info:
-                    logPrefix = "[信息] ";
+                    logPrefix = $"[{MultiLang.Info}] ";
                     break;
                 case LogType.Warning:
-                    logPrefix = "[警告] ";
+                    logPrefix = $"[{MultiLang.Warning}] ";
                     break;
                 case LogType.Error:
-                    logPrefix = "[错误] ";
+                    logPrefix = $"[{MultiLang.Error}] ";
                     break;
                 default:
                     logPrefix = "";
@@ -613,7 +614,7 @@ namespace FZK.Application.Debug.ViewModels
         private void AddLogData(byte[] data, string target, bool isRecv)
         {
             var timestamp = ShowTimestamp ? $"[{DateTime.Now:HH:mm:ss.fff}] " : "";
-            var flag = ShowSendRecvFlag ? (isRecv ? "[接收] " : "[发送] ") : "";
+            var flag = ShowSendRecvFlag ? (isRecv ? $"[{MultiLang.Recv}] " : $"[{MultiLang.Send}] ") : "";
             var dataStr = IsHexDisplay ? BytesToHexString(data) : GetEncoding(SelectedEncoding).GetString(data);
 
             var logLine = $"{timestamp}{flag}[{target}] {dataStr}\r\n";
@@ -624,7 +625,7 @@ namespace FZK.Application.Debug.ViewModels
         {
             ConnectedClients.Clear();
             this.RaisePropertyChanged(nameof(ClientCountText));
-            AddLog("客户端列表已清空", LogType.Info);
+            AddLog(MultiLang.ClientListCleared, LogType.Info);
         }
 
         private void OnDisconnectClient(string clientId)
@@ -635,22 +636,22 @@ namespace FZK.Application.Debug.ViewModels
                 ConnectedClients.Remove(clientId);
                 _connectedTcpClients.Remove(clientId);
                 this.RaisePropertyChanged(nameof(ClientCountText));
-                AddLog($"已断开客户端 {clientId}", LogType.Info);
+                AddLog($"{MultiLang.ClientDisconnected} {clientId}", LogType.Info);
                 UpdateStatistics();
             }
         }
 
         private void OnLoadCommandLibrary()
         {
-            AddLog("指令库加载成功（示例）", LogType.Info);
-            QuickCommands.Add("常用指令4：自定义指令");
+            AddLog(MultiLang.CmdLibLoaded, LogType.Info);
+            QuickCommands.Add(MultiLang.Cmd4_Custom);
             this.RaisePropertyChanged(nameof(QuickCommands));
         }
 
         private void OnClearLog()
         {
             LogText = string.Empty;
-            AddLog("日志已清空", LogType.Info);
+            AddLog(MultiLang.LogCleared, LogType.Info);
         }
 
         private void OnSaveLog()
@@ -659,7 +660,7 @@ namespace FZK.Application.Debug.ViewModels
             {
                 var saveFileDialog = new Microsoft.Win32.SaveFileDialog
                 {
-                    Filter = "文本文件 (*.txt)|*.txt|所有文件 (*.*)|*.*",
+                    Filter = MultiLang.LogFileFilter,
                     FileName = $"NetDebugLog_{DateTime.Now:yyyyMMddHHmmss}.txt",
                     DefaultExt = ".txt"
                 };
@@ -667,12 +668,12 @@ namespace FZK.Application.Debug.ViewModels
                 if (saveFileDialog.ShowDialog() == true)
                 {
                     File.WriteAllText(saveFileDialog.FileName, LogText, Encoding.UTF8);
-                    AddLog($"日志已保存到：{saveFileDialog.FileName}", LogType.Info);
+                    AddLog($"{MultiLang.LogSaved}：{saveFileDialog.FileName}", LogType.Info);
                 }
             }
             catch (Exception ex)
             {
-                AddLog($"日志保存失败：{ex.Message}", LogType.Error);
+                AddLog($"{MultiLang.LogSaveFailed}：{ex.Message}", LogType.Error);
             }
         }
 
@@ -682,7 +683,7 @@ namespace FZK.Application.Debug.ViewModels
             {
                 var saveFileDialog = new Microsoft.Win32.SaveFileDialog
                 {
-                    Filter = "配置文件 (*.config)|*.config|所有文件 (*.*)|*.*",
+                    Filter = MultiLang.ConfigFileFilter,
                     FileName = "NetDebugConfig.config",
                     DefaultExt = ".config"
                 };
@@ -702,12 +703,12 @@ namespace FZK.Application.Debug.ViewModels
                     };
 
                     File.WriteAllLines(saveFileDialog.FileName, configLines, Encoding.UTF8);
-                    AddLog($"配置已导出到：{saveFileDialog.FileName}", LogType.Info);
+                    AddLog($"{MultiLang.ConfigExported}：{saveFileDialog.FileName}", LogType.Info);
                 }
             }
             catch (Exception ex)
             {
-                AddLog($"配置导出失败：{ex.Message}", LogType.Error);
+                AddLog($"{MultiLang.ConfigExportFailed}：{ex.Message}", LogType.Error);
             }
         }
 
@@ -717,7 +718,7 @@ namespace FZK.Application.Debug.ViewModels
             {
                 var openFileDialog = new Microsoft.Win32.OpenFileDialog
                 {
-                    Filter = "配置文件 (*.config)|*.config|所有文件 (*.*)|*.*",
+                    Filter = MultiLang.ConfigFileFilter,
                     DefaultExt = ".config"
                 };
 
@@ -759,19 +760,19 @@ namespace FZK.Application.Debug.ViewModels
                         }
                     }
 
-                    AddLog($"配置已从：{openFileDialog.FileName} 导入", LogType.Info);
+                    AddLog($"{MultiLang.ConfigImported}：{openFileDialog.FileName}", LogType.Info);
                 }
             }
             catch (Exception ex)
             {
-                AddLog($"配置导入失败：{ex.Message}", LogType.Error);
+                AddLog($"{MultiLang.ConfigImportFailed}：{ex.Message}", LogType.Error);
             }
         }
 
         private void UpdateStatistics()
         {
             var totalBytes = RecvByteCount + SendByteCount;
-            StatisticsText = $"总连接数：{_totalConnectionCount} | 最大并发：{_maxConcurrentCount} | 累计收发：{totalBytes} 字节";
+            StatisticsText = $"{MultiLang.TotalConnections}：{_totalConnectionCount} | {MultiLang.MaxConcurrent}：{_maxConcurrentCount} | {MultiLang.TotalTransfer}：{totalBytes} 字节";
         }
 
         private Encoding GetEncoding(string encodingName)

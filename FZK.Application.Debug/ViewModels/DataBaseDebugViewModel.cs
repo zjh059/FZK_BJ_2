@@ -19,7 +19,6 @@ namespace FZK.Application.Debug.ViewModels
     {
         public ICommand LoadedCommand { get; }
         public ICommand NavigatonToViewCommand { get; }
-        public ICommand SaveConfigCommand { get; }
 
         private IRegionManager RegionManager { get; }
         [Reactive]

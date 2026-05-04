@@ -4,10 +4,12 @@
         <GradientStop Color="#3DBFF6" Offset="0"/>
         <GradientStop Color="#006CBE" Offset="1"/>
     </LinearGradientBrush>
+    
     <LinearGradientBrush x:Key="FZK.Main.Background.Color">
         <GradientStop Color="#EEEEF2" Offset="0"/>
         <GradientStop Color="#C2C3C9" Offset="1"/>
     </LinearGradientBrush>
+    
     <VisualBrush x:Key="Border.Cell.Color" Viewport="0,0,50,50" ViewportUnits="Absolute" TileMode="Tile">
         <VisualBrush.Visual>
             <Rectangle Width="50" Height="50" Opacity="0.5">
@@ -32,4 +34,6 @@
             </Rectangle>
         </VisualBrush.Visual>
     </VisualBrush>
+
+    <SolidColorBrush x:Key="Page.Background.Color" Color="#F9FAFB"/>
 </ResourceDictionary>

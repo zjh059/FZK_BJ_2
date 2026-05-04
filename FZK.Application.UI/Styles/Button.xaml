@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
     <Style x:Key="Button.Icon.Style" TargetType="Button">
         <Setter Property="Template">
             <Setter.Value>
@@ -16,6 +17,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
     <Style x:Key="ManualButtonStyle" TargetType="Button">
         <Setter Property="Margin" Value="0 0 8 0"/>
         <Setter Property="Background" Value="#007BFF"/>
@@ -30,5 +32,51 @@
                 <Setter Property="Background" Value="#6C757D"/>
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <!-- 硬件状态标签（无圆角） -->
+    <Style x:Key="Button.HardwareStatus.Style" TargetType="TextBlock">
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="MinWidth" Value="100"/>
+        <Setter Property="Height" Value="32"/>
+    </Style>
+
+
+    <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="#3182CE"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin" Value="5,0"/>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="#95A5A6"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="Button.Main.SuccessButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+        <Setter Property="Background" Value="#27AE60"/>
+        <Setter Property="Width" Value="100"/>
+    </Style>
+
+    <Style x:Key="Button.Main.DangerButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+        <Setter Property="Background" Value="#E74C3C"/>
+        <Setter Property="Width" Value="100"/>
+    </Style>
+
+    <Style x:Key="Button.Main.ManualButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+        <Setter Property="Background" Value="#3182CE"/>
+        <Setter Property="Width" Value="100"/>
+    </Style>
+
+    <Style x:Key="WarningButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+        <Setter Property="Background" Value="#F39C12"/>
     </Style>
 </ResourceDictionary>

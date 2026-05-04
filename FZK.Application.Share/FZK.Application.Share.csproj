@@ -48,6 +48,7 @@
     <Compile Include="Enums\RunStatus.cs" />
     <Compile Include="Init\IHardwareManager.cs" />
     <Compile Include="Init\InitResult.cs" />
+    <Compile Include="Language\MultiLang.cs" />
     <Compile Include="Login\ISession.cs" />
     <Compile Include="Models\InitSuccessEvent.cs" />
     <Compile Include="Models\LoginEvent.cs" />

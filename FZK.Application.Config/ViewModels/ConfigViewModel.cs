@@ -1,4 +1,5 @@
 ﻿using FZK.Application.Share.Config;
+using FZK.Application.Share.Language;
 using FZK.Application.Share.Login;
 using FZK.Core.Models;
 using Prism.Regions;
@@ -41,7 +42,7 @@ namespace FZK.Application.Config.ViewModels
         private void OnSaveConfigCommand()
         {
             SystemConfigManager.Save();
-            MessageBox.Show("保存成功");
+            MessageBox.Show(MultiLang.SaveSuccess);
         }
 
         private void OnNavigatonToViewCommand(string view)

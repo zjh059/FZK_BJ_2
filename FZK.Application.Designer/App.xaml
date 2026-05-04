@@ -6,7 +6,8 @@
     <Application.Resources>
         <ResourceDictionary >
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/FZK.Application.UI;component/Styles/Generic.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/FZK.Application.UI;component/Language/CNS.xaml"/>
+                <ResourceDictionary Source="/FZK.Application.UI;component/Styles/Generic.xaml"/>                
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

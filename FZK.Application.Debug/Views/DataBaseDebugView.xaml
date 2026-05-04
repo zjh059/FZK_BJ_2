@@ -25,7 +25,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel Background="White">
-            <RadioButton Content="底板绑定"
+            <RadioButton Content="{DynamicResource 底板绑定}"
                          Command="{Binding NavigatonToViewCommand}"
                          Style="{StaticResource RadioButton.Menu.Config.Style}"
                          CommandParameter="{x:Static core:Names.BTEntityDebugView}">
@@ -33,7 +33,7 @@
                     <iconPacks:PackIconMaterialDesign Kind="KeyboardArrowRight" Width="20" Height="20"/>
                 </RadioButton.Tag>
             </RadioButton>
-            <RadioButton Content="主板绑定"
+            <RadioButton Content="{DynamicResource 主板绑定}"
                          Command="{Binding NavigatonToViewCommand}"
                          CommandParameter="{x:Static core:Names.CodeEntityDebugView}"
                          Style="{StaticResource RadioButton.Menu.Config.Style}"
@@ -42,7 +42,7 @@
                     <iconPacks:PackIconMaterialDesign Kind="KeyboardArrowRight" Width="20" Height="20"/>
                 </RadioButton.Tag>
             </RadioButton>
-            <RadioButton Content="用户管理"
+            <RadioButton Content="{DynamicResource 用户管理}"
                Command="{Binding NavigatonToViewCommand}"
                CommandParameter="{x:Static core:Names.UserEntityDebugView}"
                Style="{StaticResource RadioButton.Menu.Config.Style}"
@@ -51,14 +51,7 @@
                     <iconPacks:PackIconMaterialDesign Kind="KeyboardArrowRight" Width="20" Height="20"/>
                 </RadioButton.Tag>
             </RadioButton>
-            <RadioButton Content="保存"
-                         Command="{Binding SaveConfigCommand}"
-                          Style="{StaticResource RadioButton.Menu.Config.Style}"
-                         >
-                <RadioButton.Tag>
-                    <iconPacks:PackIconMaterialDesign Kind="KeyboardArrowRight" Width="20" Height="20"/>
-                </RadioButton.Tag>
-            </RadioButton>
+
         </StackPanel>
         <ContentControl Grid.Column="1" prism:RegionManager.RegionName="{x:Static core:Names.DBRegion}"/>
     </Grid>

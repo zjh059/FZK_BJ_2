@@ -48,13 +48,16 @@
     <Compile Include="Enums\LanguageType.cs" />
     <Compile Include="Enums\RobotCommand.cs" />
     <Compile Include="Enums\RoleType.cs" />
+    <Compile Include="Extensions\DependencyExtension.cs" />
     <Compile Include="Extensions\EnumExtension.cs" />
+    <Compile Include="Helpers\Assert.cs" />
     <Compile Include="Helpers\GridBorderHelper.cs" />
     <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Ioc\DialogViewModelBase.cs" />
     <Compile Include="Ioc\ExposedServiceAttribute.cs" />
     <Compile Include="Ioc\PrismProvider.cs" />
     <Compile Include="Language\ILanguageManager.cs" />
+    <Compile Include="Language\LanguageManager.cs" />
     <Compile Include="Models\Names.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

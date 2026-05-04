@@ -1,5 +1,5 @@
-﻿
-using FZK.Application.Share.DebugFolder;
+﻿using FZK.Application.Share.DebugFolder;
+using FZK.Application.Share.Language;
 using FZK.Database.Base.Models;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -97,7 +97,7 @@ namespace FZK.Application.Debug.ViewModels
         /// 表单标题
         /// </summary>
         [Reactive]
-        public string FormTitle { get; set; } = "新增绑定信息";
+        public string FormTitle { get; set; } = MultiLang.AddBindInfo;
 
         /// <summary>
         /// 当前编辑/新增的实体
@@ -153,7 +153,7 @@ namespace FZK.Application.Debug.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"数据加载失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.DataLoadFailed}：{ex.Message}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -207,7 +207,7 @@ namespace FZK.Application.Debug.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"筛选失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.FilterFailed}：{ex.Message}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -217,7 +217,7 @@ namespace FZK.Application.Debug.ViewModels
         private void OnAdd()
         {
             _isAddMode = true;
-            FormTitle = "新增绑定信息";
+            FormTitle = MultiLang.AddBindInfo;
             CurrentEntity = new BTEntity
             {
                 Counts = "0",
@@ -249,17 +249,17 @@ namespace FZK.Application.Debug.ViewModels
                 var entity = _btDataManager.BTRepository.Get(id);
                 if (entity == null)
                 {
-                    MessageBox.Show("未找到指定的绑定信息", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(MultiLang.BindInfoNotFound, MultiLang.Tip, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                FormTitle = "编辑绑定信息";
+                FormTitle = MultiLang.EditBindInfo;
                 CurrentEntity = entity;
                 IsFormVisible = true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"加载编辑数据失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.EditDataLoadFailed}：{ex.Message}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -271,24 +271,24 @@ namespace FZK.Application.Debug.ViewModels
         {
             try
             {
-                var result = MessageBox.Show("确定要删除这条绑定信息吗？", "确认删除",
+                var result = MessageBox.Show(MultiLang.ConfirmDeleteBindInfo, MultiLang.ConfirmDelete,
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result != MessageBoxResult.Yes) return;
 
                 var entity = _btDataManager.BTRepository.Get(id);
                 if (entity == null)
                 {
-                    MessageBox.Show("未找到指定的绑定信息", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(MultiLang.BindInfoNotFound, MultiLang.Tip, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 _btDataManager.BTRepository.Delete(entity);
                 OnRefresh(); // 刷新数据
-                MessageBox.Show("删除成功", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(MultiLang.DeleteSuccess, MultiLang.Tip, MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"删除失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.DeleteFailed}：{ex.Message}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -299,17 +299,17 @@ namespace FZK.Application.Debug.ViewModels
         {
             try
             {
-                var result = MessageBox.Show("确定要删除选中的绑定信息吗？", "确认批量删除",
+                var result = MessageBox.Show(MultiLang.ConfirmBatchDeleteBindInfo, MultiLang.ConfirmBatchDelete,
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result != MessageBoxResult.Yes) return;
 
                 _btDataManager.BTRepository.Delete(SelectedBTEntity);
                 OnRefresh(); // 刷新数据
-                MessageBox.Show("批量删除成功", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(MultiLang.BatchDeleteSuccess, MultiLang.Tip, MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"批量删除失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.BatchDeleteFailed}：{ex.Message}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -321,13 +321,13 @@ namespace FZK.Application.Debug.ViewModels
             // 数据验证（对齐BOMViewModel的验证逻辑）
             if (string.IsNullOrEmpty(CurrentEntity.BottomCode))
             {
-                MessageBox.Show("底板码不能为空", "验证提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(MultiLang.BottomCodeNotEmpty, MultiLang.ValidateTip, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (string.IsNullOrEmpty(CurrentEntity.TopCode))
             {
-                MessageBox.Show("盖板码不能为空", "验证提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(MultiLang.TopCodeNotEmpty, MultiLang.ValidateTip, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -335,7 +335,7 @@ namespace FZK.Application.Debug.ViewModels
             var existEntity = _btDataManager.BTRepository.Select(CurrentEntity.BottomCode);
             if (_isAddMode && existEntity != null)
             {
-                MessageBox.Show($"底板码{CurrentEntity.BottomCode}已存在", "验证提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"{MultiLang.BottomCodeExists}{CurrentEntity.BottomCode}", MultiLang.ValidateTip, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -357,18 +357,18 @@ namespace FZK.Application.Debug.ViewModels
 
                 if (count > 0)
                 {
-                    MessageBox.Show($"{(_isAddMode ? "新增" : "编辑")}成功", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show($"{(_isAddMode ? MultiLang.Add : MultiLang.Edit)}{MultiLang.Success2}", MultiLang.Tip, MessageBoxButton.OK, MessageBoxImage.Information);
                     OnRefresh(); // 刷新数据
                     OnCancel(); // 关闭表单
                 }
                 else
                 {
-                    MessageBox.Show($"{(_isAddMode ? "新增" : "编辑")}失败", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"{(_isAddMode ? MultiLang.Add : MultiLang.Edit)}{MultiLang.Fail2}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{(_isAddMode ? "新增" : "编辑")}失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{(_isAddMode ? MultiLang.Add : MultiLang.Edit)}{MultiLang.Fail2}：{ex.Message}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

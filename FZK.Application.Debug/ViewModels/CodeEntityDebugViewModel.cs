@@ -1,5 +1,6 @@
 ﻿using FZK.Application.Debug.Service;
 using FZK.Application.Share.DebugFolder;
+using FZK.Application.Share.Language;
 using FZK.Database.Base.Models;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -96,7 +97,7 @@ namespace FZK.Application.Debug.ViewModels
         /// 表单标题
         /// </summary>
         [Reactive]
-        public string FormTitle { get; set; } = "新增码值绑定";
+        public string FormTitle { get; set; } = MultiLang.AddCodeBind;
 
         /// <summary>
         /// 当前编辑/新增的实体
@@ -163,7 +164,7 @@ namespace FZK.Application.Debug.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"数据刷新失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.DataRefreshFailed}：{ex.Message}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -199,7 +200,7 @@ namespace FZK.Application.Debug.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"筛选失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.FilterFailed}：{ex.Message}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -209,7 +210,7 @@ namespace FZK.Application.Debug.ViewModels
         private void OnAdd()
         {
             _isAddMode = true;
-            FormTitle = "新增码值绑定";
+            FormTitle = MultiLang.AddCodeBind;
             CurrentEntity = new CodeEntity
             {
                 Result = "0", // 默认未测试
@@ -241,17 +242,17 @@ namespace FZK.Application.Debug.ViewModels
                 var entity = _databaseManager.CodeRepository.Get(id);
                 if (entity == null)
                 {
-                    MessageBox.Show("未找到指定的码值绑定信息", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(MultiLang.CodeBindNotFound, MultiLang.Tip, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                FormTitle = "编辑码值绑定";
+                FormTitle = MultiLang.EditCodeBind;
                 CurrentEntity = entity;
                 IsFormVisible = true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"加载编辑数据失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.EditDataLoadFailed}：{ex.Message}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -263,24 +264,24 @@ namespace FZK.Application.Debug.ViewModels
         {
             try
             {
-                var result = MessageBox.Show("确定要删除这条码值绑定信息吗？", "确认删除",
+                var result = MessageBox.Show(MultiLang.ConfirmDeleteCodeBind, MultiLang.ConfirmDelete,
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result != MessageBoxResult.Yes) return;
 
                 var entity = _databaseManager.CodeRepository.Get(id);
                 if (entity == null)
                 {
-                    MessageBox.Show("未找到指定的码值绑定信息", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(MultiLang.CodeBindNotFound, MultiLang.Tip, MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 _databaseManager.CodeRepository.Delete(entity);
                 OnRefresh();
-                MessageBox.Show("删除成功", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(MultiLang.DeleteSuccess, MultiLang.Tip, MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"删除失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.DeleteFailed}：{ex.Message}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -291,17 +292,17 @@ namespace FZK.Application.Debug.ViewModels
         {
             try
             {
-                var result = MessageBox.Show("确定要删除选中的码值绑定信息吗？", "确认批量删除",
+                var result = MessageBox.Show(MultiLang.ConfirmBatchDeleteCodeBind, MultiLang.ConfirmBatchDelete,
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result != MessageBoxResult.Yes) return;
 
                 _databaseManager.CodeRepository.Delete(SelectedCodeEntity);
                 OnRefresh();
-                MessageBox.Show("批量删除成功", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(MultiLang.BatchDeleteSuccess, MultiLang.Tip, MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"批量删除失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.BatchDeleteFailed}：{ex.Message}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -313,22 +314,22 @@ namespace FZK.Application.Debug.ViewModels
             // 数据验证
             if (string.IsNullOrEmpty(CurrentEntity.BottomCode))
             {
-                MessageBox.Show("底板码不能为空", "验证提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(MultiLang.BottomCodeNotEmpty, MultiLang.ValidateTip, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             if (string.IsNullOrEmpty(CurrentEntity.TopCode))
             {
-                MessageBox.Show("盖板码不能为空", "验证提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(MultiLang.TopCodeNotEmpty, MultiLang.ValidateTip, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             if (string.IsNullOrEmpty(CurrentEntity.SPCode))
             {
-                MessageBox.Show("主板码不能为空", "验证提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(MultiLang.SPCodeNotEmpty, MultiLang.ValidateTip, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             if (string.IsNullOrEmpty(CurrentEntity.Result))
             {
-                MessageBox.Show("测试结果不能为空", "验证提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(MultiLang.TestResultNotEmpty, MultiLang.ValidateTip, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -340,11 +341,11 @@ namespace FZK.Application.Debug.ViewModels
                     var count = _databaseManager.CodeRepository.Insert(CurrentEntity);
                     if (count > 0)
                     {
-                        MessageBox.Show("新增成功", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show(MultiLang.AddSuccess, MultiLang.Tip, MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     else
                     {
-                        MessageBox.Show("新增失败", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(MultiLang.AddFailed, MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
                 }
@@ -353,11 +354,11 @@ namespace FZK.Application.Debug.ViewModels
                     var count = _databaseManager.CodeRepository.Update(CurrentEntity);
                     if (count > 0)
                     {
-                        MessageBox.Show("编辑成功", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show(MultiLang.EditSuccess, MultiLang.Tip, MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     else
                     {
-                        MessageBox.Show("编辑失败", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(MultiLang.EditFailed, MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
                 }
@@ -368,7 +369,7 @@ namespace FZK.Application.Debug.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{(_isAddMode ? "新增" : "编辑")}失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{(_isAddMode ? MultiLang.Add : MultiLang.Edit)}{MultiLang.Fail2}：{ex.Message}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -389,11 +390,11 @@ namespace FZK.Application.Debug.ViewModels
             try
             {
                 // 此处可添加Excel导出逻辑
-                MessageBox.Show("Excel导出功能暂未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(MultiLang.ExcelNotImplemented, MultiLang.Tip, MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Excel导出失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.ExcelExportFailed}：{ex.Message}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -405,11 +406,11 @@ namespace FZK.Application.Debug.ViewModels
             try
             {
                 // 此处可添加CSV导出逻辑
-                MessageBox.Show("CSV导出功能暂未实现", "提示", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(MultiLang.CsvNotImplemented, MultiLang.Tip, MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"CSV导出失败：{ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{MultiLang.CsvExportFailed}：{ex.Message}", MultiLang.Error, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         #endregion

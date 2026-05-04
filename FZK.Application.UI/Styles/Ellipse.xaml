@@ -5,7 +5,6 @@
         <Setter Property="Width" Value="12"/>
         <Setter Property="Height" Value="12"/>
         <Setter Property="Margin" Value="0 0 5 0"/>
-        <Setter Property="Fill" Value="{Binding IsConnected, Converter={StaticResource BoolToColorConverter}}"/>
     </Style>
     <Style x:Key="ProcessStepDotStyle" TargetType="Ellipse">
         <Setter Property="Width" Value="10"/>

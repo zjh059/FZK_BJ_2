@@ -7,107 +7,9 @@
              mc:Ignorable="d" 
              xmlns:vm="clr-namespace:FZK.Application.Debug.ViewModels"
              d:DataContext="{d:DesignInstance vm:ScannerDebugViewModel}"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="900" d:DesignWidth="800">
 
-    <UserControl.Resources>
-        <!-- 全局背景 -->
-        <SolidColorBrush x:Key="PageBackground" Color="#F9FAFB"/>
-
-        <!-- 卡片样式（无圆角） -->
-        <Style x:Key="CardStyle" TargetType="Border">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#E0E0E0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect ShadowDepth="2" BlurRadius="8" Opacity="0.15"/>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Padding" Value="15"/>
-            <Setter Property="Margin" Value="0,0,0,20"/>
-        </Style>
-
-        <!-- 卡片标题样式 -->
-        <Style x:Key="CardTitleStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="#2C3E50"/>
-            <Setter Property="Margin" Value="0,0,0,15"/>
-        </Style>
-
-        <!-- 按钮样式（统一） -->
-        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="#3182CE"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="Padding" Value="12,6"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Margin" Value="5,0"/>
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#95A5A6"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="SuccessButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
-            <Setter Property="Background" Value="#27AE60"/>
-        </Style>
-
-        <Style x:Key="DangerButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
-            <Setter Property="Background" Value="#E74C3C"/>
-        </Style>
-
-        <Style x:Key="InfoButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
-            <Setter Property="Background" Value="#1ABC9C"/>
-        </Style>
-
-        <!-- 标签样式 -->
-        <Style x:Key="FormLabelStyle" TargetType="TextBlock">
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,5,10,5"/>
-            <Setter Property="Foreground" Value="#4A5568"/>
-            <Setter Property="FontSize" Value="13"/>
-        </Style>
-
-        <!-- 文本框样式 -->
-        <Style x:Key="FormTextBoxStyle" TargetType="TextBox">
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderBrush" Value="#CBD5E0"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="8,4"/>
-            <Setter Property="Margin" Value="0,0,15,0"/>
-            <Setter Property="Background" Value="#F7FAFC"/>
-            <Style.Triggers>
-                <Trigger Property="IsFocused" Value="True">
-                    <Setter Property="BorderBrush" Value="#3182CE"/>
-                    <Setter Property="Background" Value="White"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <!-- 只读文本框样式（日志区域） -->
-        <Style x:Key="ReadOnlyTextBoxStyle" TargetType="TextBox">
-            <Setter Property="IsReadOnly" Value="True"/>
-            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
-            <Setter Property="Background" Value="#F8F9FA"/>
-            <Setter Property="FontFamily" Value="Consolas"/>
-            <Setter Property="FontSize" Value="11"/>
-            <Setter Property="Padding" Value="5"/>
-        </Style>
-
-        <!-- 状态标签样式 -->
-        <Style x:Key="StatusTextStyle" TargetType="TextBlock">
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Margin" Value="5,0,0,0"/>
-        </Style>
-    </UserControl.Resources>
-
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="{StaticResource PageBackground}">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Background="{StaticResource Page.Background.Color}">
         <Grid Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -118,9 +20,9 @@
             </Grid.RowDefinitions>
 
             <!-- 1. 连接配置卡片 -->
-            <Border Grid.Row="0" Style="{StaticResource CardStyle}">
+            <Border Grid.Row="0" Style="{StaticResource Boder.MainStatus.CardStyle}">
                 <StackPanel>
-                    <TextBlock Text="扫码器连接配置" Style="{StaticResource CardTitleStyle}"/>
+                    <TextBlock Text="{DynamicResource 扫码器连接配置}" Style="{StaticResource TextBlock.Run.SubTitleStyle}"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -129,21 +31,21 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="IP地址" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBlock Grid.Column="0" Text="{DynamicResource IP地址}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding IPAdress, UpdateSourceTrigger=PropertyChanged}"
                                  MinWidth="120"/>
 
-                        <TextBlock Grid.Column="2" Text="端口" Style="{StaticResource FormLabelStyle}" Margin="10,0,0,0"/>
+                        <TextBlock Grid.Column="2" Text="{DynamicResource 端口}" Style="{StaticResource FormLabelStyle}" Margin="10,0,0,0"/>
                         <TextBox Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}"
                                  MinWidth="80"/>
 
                         <StackPanel Grid.Column="4" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Content="连接" Style="{StaticResource SuccessButtonStyle}" 
+                            <Button Content="{DynamicResource 连接}" Style="{StaticResource Button.Main.SuccessButtonStyle}" 
                                     Command="{Binding ConnectScannerCommand}" 
                                     Visibility="{Binding Connected, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"/>
-                            <Button Content="断开" Style="{StaticResource DangerButtonStyle}" 
+                            <Button Content="{DynamicResource 断开}" Style="{StaticResource Button.Main.DangerButtonStyle}" 
                                     Command="{Binding DisconnectScannerCommand}" 
                                     Visibility="{Binding Connected, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                         </StackPanel>
@@ -152,27 +54,27 @@
             </Border>
 
             <!-- 2. 状态显示卡片 -->
-            <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+            <Border Grid.Row="1" Style="{StaticResource Boder.MainStatus.CardStyle}">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="连接状态：" Style="{StaticResource FormLabelStyle}" Margin="0,0,5,0"/>
+                    <TextBlock Text="{DynamicResource 连接状态}" Style="{StaticResource FormLabelStyle}" Margin="0,0,5,0"/>
                     <TextBlock Text="{Binding StatusText}" Style="{StaticResource StatusTextStyle}"
                                Foreground="{Binding Connected, Converter={StaticResource BoolToColorConverter}}"/>
                 </StackPanel>
             </Border>
 
             <!-- 3. 调试日志/扫码数据卡片 -->
-            <Border Grid.Row="2" Style="{StaticResource CardStyle}">
+            <Border Grid.Row="2" Style="{StaticResource Boder.MainStatus.CardStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="调试日志/扫码数据" Style="{StaticResource CardTitleStyle}" Margin="0,0,0,12"/>
+                    <TextBlock Text="{DynamicResource 调试日志扫码数据}" Style="{StaticResource TextBlock.Run.SubTitleStyle}" Margin="0,0,0,12"/>
                     <TextBox Grid.Row="1" Style="{StaticResource ReadOnlyTextBoxStyle}" 
                              Text="{Binding LogText}" Height="200"/>
-                    <Button Grid.Row="2" Content="清空日志" Style="{StaticResource PrimaryButtonStyle}" 
-                            Command="{Binding ClearLogCommand}" Width="80" HorizontalAlignment="Right" Margin="0,10,0,0"/>
+                    <Button Grid.Row="2" Content="{DynamicResource 清空日志}" Style="{StaticResource PrimaryButtonStyle}" 
+                            Command="{Binding ClearLogCommand}"   HorizontalAlignment="Right" Margin="0,10,0,0"/>
                 </Grid>
             </Border>
 
@@ -184,30 +86,30 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- 左侧：发送指令卡片 -->
-                <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,10,0">
+                <Border Grid.Column="0" Style="{StaticResource Boder.MainStatus.CardStyle}" Margin="0,0,10,0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="发送指令到扫码器" Style="{StaticResource CardTitleStyle}" Margin="0,0,0,12"/>
+                        <TextBlock Text="{DynamicResource 发送指令到扫码器}" Style="{StaticResource CardTitleStyle}" Margin="0,0,0,12"/>
                         <TextBox Grid.Row="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SendData, UpdateSourceTrigger=PropertyChanged}"
                                  MinHeight="80" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
-                        <Button Grid.Row="2" Content="发送指令" Style="{StaticResource InfoButtonStyle}" 
-                                Command="{Binding SendDataCommand}" Width="80" HorizontalAlignment="Right" Margin="0,10,0,0"/>
+                        <Button Grid.Row="2" Content="{DynamicResource 发送指令}" Style="{StaticResource Button.Main.ManualButtonStyle}" 
+                                Command="{Binding SendDataCommand}"   HorizontalAlignment="Right" Margin="0,10,0,0"/>
                     </Grid>
                 </Border>
 
                 <!-- 右侧：解析后的数据卡片 -->
-                <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="10,0,0,0">
+                <Border Grid.Column="1" Style="{StaticResource Boder.MainStatus.CardStyle}" Margin="10,0,0,0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="解析后的数据" Style="{StaticResource CardTitleStyle}" Margin="0,0,0,12"/>
+                        <TextBlock Text="{DynamicResource 解析后的数据}" Style="{StaticResource CardTitleStyle}" Margin="0,0,0,12"/>
                         <TextBox Grid.Row="1" Style="{StaticResource ReadOnlyTextBoxStyle}" 
                                  Text="{Binding ParsedData}"
                                  Height="Auto"/>
@@ -216,9 +118,9 @@
             </Grid>
 
             <!-- 5. 底部操作按钮卡片 -->
-            <Border Grid.Row="4" Style="{StaticResource CardStyle}" Margin="0,0,0,0">
+            <Border Grid.Row="4" Style="{StaticResource Boder.MainStatus.CardStyle}" Margin="0,0,0,0">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="自动解析数据" Style="{StaticResource PrimaryButtonStyle}" 
+                    <Button Content="{DynamicResource 自动解析数据}" Style="{StaticResource PrimaryButtonStyle}" 
                             Command="{Binding ToggleAutoParseCommand}" Width="120"/>
                 </StackPanel>
             </Border>

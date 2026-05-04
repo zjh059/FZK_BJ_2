@@ -25,7 +25,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel Background="White">
-            <RadioButton Content="IP设置"
+            <RadioButton Content="{DynamicResource IP设置}"
                          Command="{Binding NavigatonToViewCommand}"
                          Style="{StaticResource RadioButton.Menu.Config.Style}"
                          CommandParameter="{x:Static core:Names.ConfigSoftwareView}">
@@ -33,7 +33,7 @@
                     <iconPacks:PackIconMaterialDesign Kind="KeyboardArrowRight" Width="20" Height="20"/>
                 </RadioButton.Tag>
             </RadioButton>
-            <RadioButton Content="PLC设置"
+            <RadioButton Content="{DynamicResource PLC设置}"
                          Command="{Binding NavigatonToViewCommand}"
                          CommandParameter="{x:Static core:Names.ConfigPLCView}"
                          Style="{StaticResource RadioButton.Menu.Config.Style}"
@@ -42,7 +42,7 @@
                     <iconPacks:PackIconMaterialDesign Kind="KeyboardArrowRight" Width="20" Height="20"/>
                 </RadioButton.Tag>
             </RadioButton>
-            <RadioButton Content="扫码设置"
+            <RadioButton Content="{DynamicResource 扫码设置}"
                          Command="{Binding NavigatonToViewCommand}"
                          CommandParameter="{x:Static core:Names.ConfigScannerView}"
                           Style="{StaticResource RadioButton.Menu.Config.Style}"
@@ -52,7 +52,7 @@
                 </RadioButton.Tag>
             </RadioButton>
 
-            <RadioButton Content="Robot设置"
+            <RadioButton Content="{DynamicResource Robot设置}"
                          Command="{Binding NavigatonToViewCommand}"
                          CommandParameter="{x:Static core:Names.ConfigRobotView}"
                          Style="{StaticResource RadioButton.Menu.Config.Style}"
@@ -62,7 +62,7 @@
                 </RadioButton.Tag>
             </RadioButton>
 
-            <RadioButton Content="用户设置"
+            <RadioButton Content="{DynamicResource 用户设置}"
                          Command="{Binding NavigatonToViewCommand}"
                          CommandParameter="{x:Static core:Names.ConfigUserView}"
                           Style="{StaticResource RadioButton.Menu.Config.Style}"
@@ -72,7 +72,7 @@
                 </RadioButton.Tag>
             </RadioButton>
 
-            <RadioButton Content="保存"
+            <RadioButton Content="{DynamicResource 保存}"
                          Command="{Binding SaveConfigCommand}"
                           Style="{StaticResource RadioButton.Menu.Config.Style}"
                          >

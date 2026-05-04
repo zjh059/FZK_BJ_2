@@ -5,4 +5,8 @@
     <converters:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter"/>
     <converters:NGToRedColorConverter x:Key="NGToRedColorConverter"/>
     <converters:BoolToVisibleConvert x:Key="BoolToVisibleConvert"/>
+    <converters:StatusToColorConverter x:Key="StatusToColorConverter"/>
+    <converters:ResultToTextConverter x:Key="ResultToTextConverter"/>
+    <converters:BoolToTextConverter x:Key="BoolToTextConverter" TrueText="已连接" FalseText="未连接"/>
+  
 </ResourceDictionary>

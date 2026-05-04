@@ -127,15 +127,15 @@
             <Style.Triggers>
                 <Trigger Property="Tag" Value="0">
                     <Setter Property="Foreground" Value="#6C757D"/>
-                    <Setter Property="Text" Value="普通用户"/>
+                    <Setter Property="Text" Value="{DynamicResource 普通用户}"/>
                 </Trigger>
                 <Trigger Property="Tag" Value="1">
                     <Setter Property="Foreground" Value="#28A745"/>
-                    <Setter Property="Text" Value="管理员"/>
+                    <Setter Property="Text" Value="{DynamicResource 管理员}"/>
                 </Trigger>
                 <Trigger Property="Tag" Value="2">
                     <Setter Property="Foreground" Value="#007BFF"/>
-                    <Setter Property="Text" Value="超级管理员"/>
+                    <Setter Property="Text" Value="{DynamicResource 超级管理员}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -157,17 +157,17 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="用户管理" Style="{StaticResource TitleStyle}"/>
+            <TextBlock Grid.Column="0" Text="{DynamicResource 用户管理}" Style="{StaticResource TitleStyle}"/>
 
             <!-- 功能按钮组 -->
             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                <Button Content="新增用户" Style="{StaticResource ButtonPrimaryStyle}" 
+                <Button Content="{DynamicResource 新增用户}" Style="{StaticResource ButtonPrimaryStyle}" 
                         Command="{Binding AddCommand}" Margin="0 0 8 0"/>
-                <Button Content="编辑选中" Style="{StaticResource ButtonPrimaryStyle}" x:Name="EditBtn"
+                <Button Content="{DynamicResource 编辑选中}" Style="{StaticResource ButtonPrimaryStyle}" x:Name="EditBtn"
                         Command="{Binding EditCommand}" IsEnabled="{Binding CanEdit}" Margin="0 0 8 0"/>
-                <Button Content="批量删除" Style="{StaticResource ButtonDangerStyle}" x:Name="BatchDeleteBtn"
+                <Button Content="{DynamicResource 批量删除}" Style="{StaticResource ButtonDangerStyle}" x:Name="BatchDeleteBtn"
                         Command="{Binding BatchDeleteCommand}" IsEnabled="{Binding CanDelete}" Margin="0 0 8 0"/>
-                <Button Content="刷新数据" Style="{StaticResource ButtonSuccessStyle}" 
+                <Button Content="{DynamicResource 刷新数据}" Style="{StaticResource ButtonSuccessStyle}" 
                         Command="{Binding RefreshCommand}" Margin="0 0 8 0"/>
             </StackPanel>
         </Grid>
@@ -182,21 +182,21 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="用户名：" Style="{StaticResource LabelStyle}" Margin="0 5 0 5"/>
+            <TextBlock Grid.Column="0" Text="{DynamicResource 用户名}" Style="{StaticResource LabelStyle}" Margin="0 5 0 5"/>
             <TextBox Grid.Column="1" Style="{StaticResource TextBoxStyle}" x:Name="FilterUserName" Width="180"
                      Text="{Binding FilterUserName, UpdateSourceTrigger=PropertyChanged}" Margin="0 5 0 5"/>
 
-            <TextBlock Grid.Column="2" Text="角色：" Style="{StaticResource LabelStyle}" Margin="0 5 0 5"/>
+            <TextBlock Grid.Column="2" Text="{DynamicResource 角色}" Style="{StaticResource LabelStyle}" Margin="0 5 0 5"/>
             <ComboBox Grid.Column="3" Style="{StaticResource ComboBoxStyle}" x:Name="FilterRole" Width="180"
                       SelectedValue="{Binding FilterRole, UpdateSourceTrigger=PropertyChanged}"
                       SelectedValuePath="Tag" Margin="0 5 0 5">
-                <ComboBoxItem Tag="-1" Content="全部"/>
-                <ComboBoxItem Tag="0" Content="普通用户"/>
-                <ComboBoxItem Tag="1" Content="管理员"/>
-                <ComboBoxItem Tag="2" Content="超级管理员"/>
+                <ComboBoxItem Tag="-1" Content="{DynamicResource 全部}"/>
+                <ComboBoxItem Tag="0" Content="{DynamicResource 普通用户}"/>
+                <ComboBoxItem Tag="1" Content="{DynamicResource 管理员}"/>
+                <ComboBoxItem Tag="2" Content="{DynamicResource 超级管理员}"/>
             </ComboBox>
 
-            <Button Grid.Column="4" Content="筛选数据" Style="{StaticResource ButtonPrimaryStyle}" 
+            <Button Grid.Column="4" Content="{DynamicResource 筛选数据}" Style="{StaticResource ButtonPrimaryStyle}" 
                     Command="{Binding FilterCommand}" HorizontalAlignment="Left" Margin="0 5 0 5"/>
         </Grid>
 
@@ -207,13 +207,13 @@
                   ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}">
             <DataGrid.Columns>
                 <!-- 主键ID列 -->
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60" SortMemberPath="Id"/>
+                <DataGridTextColumn Header="{DynamicResource ID}" Binding="{Binding Id}" Width="60" SortMemberPath="Id"/>
                 <!-- 用户名列 -->
-                <DataGridTextColumn Header="用户名" Binding="{Binding UserName}" Width="180" SortMemberPath="UserName"/>
+                <DataGridTextColumn Header="{DynamicResource 用户名}" Binding="{Binding UserName}" Width="180" SortMemberPath="UserName"/>
                 <!-- 密码列（脱敏显示） -->
-                <DataGridTextColumn Header="密码" Binding="{Binding Password, Converter={StaticResource PasswordMaskConverter}}" Width="180" SortMemberPath="Password"/>
+                <DataGridTextColumn Header="{DynamicResource 密码}" Binding="{Binding Password, Converter={StaticResource PasswordMaskConverter}}" Width="180" SortMemberPath="Password"/>
                 <!-- 角色列 -->
-                <DataGridTemplateColumn Header="角色" Width="120" SortMemberPath="Role">
+                <DataGridTemplateColumn Header="{DynamicResource 角色}" Width="120" SortMemberPath="Role">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Style="{StaticResource RoleTextStyle}" HorizontalAlignment="Center"/>
@@ -221,14 +221,14 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <!-- 行内操作列 -->
-                <DataGridTemplateColumn Header="操作" Width="160">
+                <DataGridTemplateColumn Header="{DynamicResource 操作}" Width="160">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Content="编辑" Style="{StaticResource ButtonPrimaryStyle}" Width="70" 
+                                <Button Content="{DynamicResource 编辑}" Style="{StaticResource ButtonPrimaryStyle}" Width="70" 
                                         Command="{Binding DataContext.EditItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                         CommandParameter="{Binding Id}" Margin="0 0 5 0"/>
-                                <Button Content="删除" Style="{StaticResource ButtonDangerStyle}" Width="70" 
+                                <Button Content="{DynamicResource 删除}" Style="{StaticResource ButtonDangerStyle}" Width="70" 
                                         Command="{Binding DataContext.DeleteItemCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                         CommandParameter="{Binding Id}"/>
                             </StackPanel>
@@ -266,31 +266,31 @@
                     </Grid.RowDefinitions>
 
                     <!-- 用户名 -->
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="用户名：" Style="{StaticResource LabelStyle}" Margin="0 5 0 5"/>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource 用户名}" Style="{StaticResource LabelStyle}" Margin="0 5 0 5"/>
                     <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource TextBoxStyle}" x:Name="TxtUserName" Width="280"
                              Text="{Binding CurrentEntity.UserName, UpdateSourceTrigger=PropertyChanged}" Margin="0 5 0 5"/>
 
                     <!-- 密码 -->
-                    <TextBlock Grid.Row="0" Grid.Column="2" Text="密码：" Style="{StaticResource LabelStyle}" Margin="0 5 0 5"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource 密码}" Style="{StaticResource LabelStyle}" Margin="0 5 0 5"/>
                     <PasswordBox Grid.Row="0" Grid.Column="3" x:Name="PwdPassword" Width="280" Height="32" Margin="0 5 0 5"
              local:PasswordBoxHelper.BindPassword="{Binding CurrentEntity.Password, Mode=TwoWay}"/>
 
                     <!-- 角色 -->
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="角色：" Style="{StaticResource LabelStyle}" Margin="0 5 0 5"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource 角色}" Style="{StaticResource LabelStyle}" Margin="0 5 0 5"/>
                     <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ComboBoxStyle}" x:Name="CmbRole" Width="280"
                               SelectedValue="{Binding CurrentEntity.Role, UpdateSourceTrigger=PropertyChanged}"
                               SelectedValuePath="Tag" Margin="0 5 0 5">
-                        <ComboBoxItem Tag="0" Content="普通用户"/>
-                        <ComboBoxItem Tag="1" Content="管理员"/>
-                        <ComboBoxItem Tag="2" Content="超级管理员"/>
+                        <ComboBoxItem Tag="0" Content="{DynamicResource 普通用户}"/>
+                        <ComboBoxItem Tag="1" Content="{DynamicResource 管理员}"/>
+                        <ComboBoxItem Tag="2" Content="{DynamicResource 超级管理员}"/>
                     </ComboBox>
                 </Grid>
 
                 <!-- 表单操作按钮 -->
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 10 0 10">
-                    <Button Content="保存" Style="{StaticResource ButtonSuccessStyle}" 
+                    <Button Content="{DynamicResource 保存}" Style="{StaticResource ButtonSuccessStyle}" 
                             Command="{Binding SaveCommand}" Margin="0 0 10 0"/>
-                    <Button Content="取消" Style="{StaticResource ButtonPrimaryStyle}" 
+                    <Button Content="{DynamicResource 取消}" Style="{StaticResource ButtonPrimaryStyle}" 
                             Command="{Binding CancelCommand}"/>
                 </StackPanel>
             </Grid>
