@@ -62,8 +62,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="RunModule.cs" />
+    <Compile Include="Service\DatabaseService.cs" />
     <Compile Include="Service\HardwareService.cs" />
+    <Compile Include="Service\JigFlowEngine.cs" />
     <Compile Include="Service\MesService.cs" />
+    <Compile Include="Service\PlcService.cs" />
+    <Compile Include="Service\RobotCoordinator.cs" />
     <Compile Include="ViewModels\RunViewModel.cs" />
     <Compile Include="Views\RunView.xaml.cs">
       <DependentUpon>RunView.xaml</DependentUpon>

@@ -54,8 +54,13 @@
     <Compile Include="Models\LoginEvent.cs" />
     <Compile Include="Models\LogoutEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Run\IDatabaseService.cs" />
     <Compile Include="Run\IHardwareService.cs" />
+    <Compile Include="Run\IJigFlowEngine.cs" />
     <Compile Include="Run\IMesService.cs" />
+    <Compile Include="Run\IPlcService.cs" />
+    <Compile Include="Run\IRobotCoordinator.cs" />
+    <Compile Include="Run\JigConfig.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
