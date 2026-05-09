@@ -60,10 +60,10 @@ namespace FZK.Application.Initialize.Services
                 Success = false
             };
 
-            Task<bool> leftUpTask = !LeftUpScanner.Initialized ? InitWithRetry(LeftUpScanner, SystemConfigManager.LeftUpScannerConfig) : null;
-            Task<bool> rightUpTask = !RightUpScanner.Initialized ? InitWithRetry(RightUpScanner, SystemConfigManager.RightUpScannerConfig) : null;
-            Task<bool> leftDownTask = !LeftDownScanner.Initialized ? InitWithRetry(LeftDownScanner, SystemConfigManager.LeftDownScannerConfig) : null;
-            Task<bool> rightDownTask = !RightDownScanner.Initialized ? InitWithRetry(RightDownScanner, SystemConfigManager.RightDownScannerConfig) : null;
+            Task<bool> leftUpTask = !LeftUpScanner.Initialized ? InitWithRetry(LeftUpScanner, SystemConfigManager.Jig1UpScannerConfig) : null;
+            Task<bool> rightUpTask = !RightUpScanner.Initialized ? InitWithRetry(RightUpScanner, SystemConfigManager.Jig2UpScannerConfig) : null;
+            Task<bool> leftDownTask = !LeftDownScanner.Initialized ? InitWithRetry(LeftDownScanner, SystemConfigManager.Jig1DownScannerConfig) : null;
+            Task<bool> rightDownTask = !RightDownScanner.Initialized ? InitWithRetry(RightDownScanner, SystemConfigManager.Jig2DownScannerConfig) : null;
             Task<bool> spTask = !SPScanner.Initialized ? Task.Run(() => SPScanner.Init(SystemConfigManager.RobotScannerConfig)) : null;
             Task<bool> plcTask = !OmronPLC.Initialized ? Task.Run(() => OmronPLC.Init(SystemConfigManager.pLCConfig)) : null;
             Task<bool> robotTask = !EpsonRobot.Initialized ? Task.Run(() => EpsonRobot.Init(SystemConfigManager.robotConfig)) : null;

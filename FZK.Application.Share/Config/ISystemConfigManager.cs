@@ -15,10 +15,10 @@ namespace FZK.Application.Share.Config
         /// 保存系统参数
         /// </summary>
         void Save();
-        ScannerConfig LeftUpScannerConfig { get; }
-        ScannerConfig RightUpScannerConfig { get; }
-        ScannerConfig LeftDownScannerConfig { get; }
-        ScannerConfig RightDownScannerConfig { get; }
+        ScannerConfig Jig1UpScannerConfig { get; }
+        ScannerConfig Jig2UpScannerConfig { get; }
+        ScannerConfig Jig1DownScannerConfig { get; }
+        ScannerConfig Jig2DownScannerConfig { get; }
         ScannerConfig RobotScannerConfig { get; }
         PLCConfig pLCConfig { get; }
         PlcAddressConfig plcAddressConfig { get; }

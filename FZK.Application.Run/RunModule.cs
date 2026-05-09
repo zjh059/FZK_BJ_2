@@ -3,6 +3,7 @@ using FZK.Application.Run.Views;
 using FZK.Application.Share.Config;
 using FZK.Application.Share.Run;
 using FZK.Core.Models;
+using Prism.Events;
 using Prism.Ioc;
 using Prism.Modularity;
 using System;
@@ -32,6 +33,7 @@ namespace FZK.Application.Run
             containerRegistry.Register<IPlcService, PlcService>();
             containerRegistry.Register<IDatabaseService, DatabaseService>();
             containerRegistry.Register<IRobotCoordinator, RobotCoordinator>();
+            containerRegistry.RegisterSingleton<IEventAggregator, EventAggregator>();
         }
     }
 }

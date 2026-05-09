@@ -21,13 +21,13 @@ namespace FZK.Application.Config.Services
 
         private IConfigManager ConfigManager { get; }
 
-        public ScannerConfig LeftUpScannerConfig => Config.LeftUpScannerConfig;
+        public ScannerConfig Jig1UpScannerConfig => Config.LeftUpScannerConfig;
 
-        public ScannerConfig RightUpScannerConfig => Config.RightUpScannerConfig;
+        public ScannerConfig Jig2UpScannerConfig => Config.RightUpScannerConfig;
 
-        public ScannerConfig LeftDownScannerConfig => Config.LeftDownScannerConfig;
+        public ScannerConfig Jig1DownScannerConfig => Config.LeftDownScannerConfig;
 
-        public ScannerConfig RightDownScannerConfig => Config.RightDownScannerConfig;
+        public ScannerConfig Jig2DownScannerConfig => Config.RightDownScannerConfig;
 
         public ScannerConfig RobotScannerConfig => Config.RobotScannerConfig;
 
@@ -68,28 +68,28 @@ namespace FZK.Application.Config.Services
         /// </summary>
         public void elsSquare()
         {
-            var delaytime = LeftUpScannerConfig.DelayTime;
-            RightUpScannerConfig.DelayTime = delaytime;
-            LeftDownScannerConfig.DelayTime = delaytime;
-            RightDownScannerConfig.DelayTime = delaytime;
+            var delaytime = Jig1UpScannerConfig.DelayTime;
+            Jig2UpScannerConfig.DelayTime = delaytime;
+            Jig1DownScannerConfig.DelayTime = delaytime;
+            Jig2DownScannerConfig.DelayTime = delaytime;
             RobotScannerConfig.DelayTime = delaytime;
 
-            var triggerCommand = LeftUpScannerConfig.TriggerCommand;
-            RightUpScannerConfig.TriggerCommand = triggerCommand;
-            LeftDownScannerConfig.TriggerCommand = triggerCommand;
-            RightDownScannerConfig.TriggerCommand = triggerCommand;
+            var triggerCommand = Jig1UpScannerConfig.TriggerCommand;
+            Jig2UpScannerConfig.TriggerCommand = triggerCommand;
+            Jig1DownScannerConfig.TriggerCommand = triggerCommand;
+            Jig2DownScannerConfig.TriggerCommand = triggerCommand;
             RobotScannerConfig.TriggerCommand = triggerCommand;
 
-            var maxReconnectCount = LeftUpScannerConfig.MaxReconnectCount;
-            RightUpScannerConfig.MaxReconnectCount = maxReconnectCount;
-            LeftDownScannerConfig.MaxReconnectCount = maxReconnectCount;
-            RightDownScannerConfig.MaxReconnectCount = maxReconnectCount;
+            var maxReconnectCount = Jig1UpScannerConfig.MaxReconnectCount;
+            Jig2UpScannerConfig.MaxReconnectCount = maxReconnectCount;
+            Jig1DownScannerConfig.MaxReconnectCount = maxReconnectCount;
+            Jig2DownScannerConfig.MaxReconnectCount = maxReconnectCount;
             RobotScannerConfig.MaxReconnectCount = maxReconnectCount;
 
-            var reconnectDelay = LeftUpScannerConfig.ReconnectDelay;
-            RightUpScannerConfig.ReconnectDelay = reconnectDelay;
-            LeftDownScannerConfig.ReconnectDelay = reconnectDelay;
-            RightDownScannerConfig.ReconnectDelay = reconnectDelay;
+            var reconnectDelay = Jig1UpScannerConfig.ReconnectDelay;
+            Jig2UpScannerConfig.ReconnectDelay = reconnectDelay;
+            Jig1DownScannerConfig.ReconnectDelay = reconnectDelay;
+            Jig2DownScannerConfig.ReconnectDelay = reconnectDelay;
             RobotScannerConfig.ReconnectDelay = reconnectDelay;
         }
     }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -46,6 +46,7 @@
     <Compile Include="Config\SoftwareConfig.cs" />
     <Compile Include="DebugFolder\IDatabaseManager.cs" />
     <Compile Include="Enums\RunStatus.cs" />
+    <Compile Include="Events\UILogEvent.cs" />
     <Compile Include="Init\IHardwareManager.cs" />
     <Compile Include="Init\InitResult.cs" />
     <Compile Include="Language\MultiLang.cs" />

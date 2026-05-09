@@ -1,13 +1,17 @@
-﻿using FZK.Application.Share.Init;
+﻿using FZK.Application.Share.Events;
+using FZK.Application.Share.Init;
 using FZK.Application.Share.Run;
 using FZK.Hardware.PLC.Base;
 using FZK.Hardware.Robot.Base;
 using FZK.Hardware.Robot.Epson;
 using FZK.Hardware.Scanner.Base;
 using FZK.Logger;
+using Newtonsoft.Json.Linq;
+using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using static Unity.Storage.RegistrationSet;
 
@@ -16,22 +20,21 @@ namespace FZK.Application.Run.Service
     /// <summary>
     /// 硬件服务实现类（适配真实硬件：欧姆龙PLC+康耐视扫码枪+EPSON机械臂）
     /// 核心：复用HardwareManager已初始化的硬件实例，不重复Init
-    /// 适配：C# 7.3（移除switch expression，改用传统switch语句）
     /// </summary>
     public class HardwareService : IHardwareService
     {
-        // 复用已初始化的硬件管理器
         private readonly IHardwareManager _hardwareManager;
-        private const int MaxRetries = 3; // 写入PLC最大重试次数
+        private const int MaxRetries = 3; // 写入PLC最大重试次数        
+        private readonly IEventAggregator _eventAggregator;
 
-        /// <summary>
-        /// 构造函数注入已初始化的HardwareManager
-        /// </summary>
-        public HardwareService(IHardwareManager hardwareManager)
+        public HardwareService(
+            IHardwareManager hardwareManager,
+            IEventAggregator eventAggregator
+            )
         {
             _hardwareManager = hardwareManager ?? throw new ArgumentNullException(nameof(hardwareManager));
-            // 硬件初始化已在应用启动时完成，此处不再重复初始化
-            Logs.LogInfo("[HardwareService] 服务初始化完成，复用硬件实例");
+            _eventAggregator = eventAggregator;
+            Logs.LogInfo("[HardwareService] 服务初始化完成");
         }
 
         #region IHardwareService接口实现
@@ -41,7 +44,6 @@ namespace FZK.Application.Run.Service
         /// </summary>
         public void Init()
         {
-            Logs.LogInfo("[HardwareService] 开始尝试重连硬件...");
             Task.Run(async () =>
             {
                 try
@@ -50,10 +52,14 @@ namespace FZK.Application.Run.Service
                     if (result.Success)
                     {
                         Logs.LogInfo("[HardwareService] 硬件重连成功");
+                        //_eventAggregator.GetEvent<UILogEvent>().Publish("重连成功");
+
                     }
                     else
                     {
                         Logs.LogError($"[HardwareService] 硬件重连失败：{result.Message}");
+                        
+
                     }
                 }
                 catch (Exception ex)
@@ -88,8 +94,7 @@ namespace FZK.Application.Run.Service
                     }
                     Logs.LogInfo("[PLC] 重连成功，继续读取寄存器");
                 }
-
-                // 批量读取（默认读取DM寄存器）
+                              
                 int minAddr = addresses.Min();
                 int maxAddr = addresses.Max();
                 long range = (long)maxAddr - minAddr + 1;
@@ -123,9 +128,8 @@ namespace FZK.Application.Run.Service
                     {
                         Logs.LogError($"[PLC] 地址{address}计算索引{index}超出范围");
                     }
-                }
-
-                Logs.LogDebug($"[PLC] 读取DM寄存器成功 | 地址：{string.Join(",", addresses)} | 值：{string.Join(",", result.Values)}");
+                }              
+                Logs.LogInfo($"[PLC] 读取DM寄存器成功 | 地址：{string.Join(",", addresses)} | 值：{string.Join(",", result.Values)}");
                 await Task.Delay(100); // 适当延时，避免过于频繁
             }
             catch (Exception ex)
@@ -164,7 +168,7 @@ namespace FZK.Application.Run.Service
                     {
                         throw new Exception($"写入DM{address} = {value} 返回失败");
                     }
-
+                    _eventAggregator.GetEvent<UILogEvent>().Publish($"[PLC] 写入DM{address} = {value} 成功");
                     Logs.LogDebug($"[PLC] 写入DM{address} = {value} 成功");
                     return; // 成功返回
                 }
@@ -240,9 +244,12 @@ namespace FZK.Application.Run.Service
                     if (string.IsNullOrEmpty(scanCode))
                     {
                         Logs.LogWarn($"[Scanner] {scannerType}扫码枪触发成功但未返回有效码值");
+                        _eventAggregator.GetEvent<UILogEvent>().Publish("...");
+
                     }
                     else
                     {
+                        _eventAggregator.GetEvent<UILogEvent>().Publish($"[Scanner] {scannerType}扫码成功：{scanCode}");
                         Logs.LogDebug($"[Scanner] {scannerType}扫码成功：{scanCode}");
                     }
                 }
@@ -322,6 +329,7 @@ namespace FZK.Application.Run.Service
                 {
                     throw new Exception($"发送机械臂响应{responseCmd}失败");
                 }
+                _eventAggregator.GetEvent<UILogEvent>().Publish("发送机械臂:"+success);
 
                 Logs.LogInfo($"[Robot] 发送机械臂响应：{(success ? "成功(OK)" : "失败(NG)")}");
             }
@@ -373,7 +381,7 @@ namespace FZK.Application.Run.Service
 
                 if (values != null && values.Count == 1)
                 {
-                    Logs.LogDebug($"[PLC] 读取DM{address} = {values[0]}");
+                    Logs.LogDebug($"[PLC] 读取DM{address} = {values[0]}"); 
                     return values[0];
                 }
                 else

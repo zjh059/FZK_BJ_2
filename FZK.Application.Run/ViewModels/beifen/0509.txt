@@ -1,4 +1,4 @@
-﻿using FZK.Application.Run.Service;
+using FZK.Application.Run.Service;
 using FZK.Application.Share.Config;
 using FZK.Application.Share.DebugFolder;
 using FZK.Application.Share.Events;
@@ -112,10 +112,10 @@ namespace FZK.Application.Run.ViewModels
             _plcAddr = systemConfigManager.plcAddressConfig ?? new PlcAddressConfig();
             _runConfig = systemConfigManager.runConfig ?? new RunConfig();
             _robotConfig = systemConfigManager.robotConfig ?? new RobotConfig();
-            _leftDownScannerConfig = systemConfigManager.Jig1DownScannerConfig ?? new ScannerConfig();
-            _leftUpScannerConfig = systemConfigManager.Jig1UpScannerConfig ?? new ScannerConfig();
-            _rightDownScannerConfig = systemConfigManager.Jig2DownScannerConfig ?? new ScannerConfig();
-            _rightUpScannerConfig = systemConfigManager.Jig2UpScannerConfig ?? new ScannerConfig();
+            _leftDownScannerConfig = systemConfigManager.LeftDownScannerConfig ?? new ScannerConfig();
+            _leftUpScannerConfig = systemConfigManager.LeftUpScannerConfig ?? new ScannerConfig();
+            _rightDownScannerConfig = systemConfigManager.RightDownScannerConfig ?? new ScannerConfig();
+            _rightUpScannerConfig = systemConfigManager.RightUpScannerConfig ?? new ScannerConfig();
             __robotScannerConfig = systemConfigManager.RobotScannerConfig ?? new ScannerConfig();
             _softwareConfig = systemConfigManager.SoftwareConfig ?? new SoftwareConfig();
             bottomCodeLength = _leftDownScannerConfig.SnLength;
@@ -130,17 +130,17 @@ namespace FZK.Application.Run.ViewModels
                 TriggerScanAddr = _plcAddr.Jig1TriggerScan,
                 TriggerWeldAddr = _plcAddr.Jig1TriggerWeld,
                 TriggerClearAddr = _plcAddr.Jig1TriggerClear,
-                ScanFinishAddr = _plcAddr.Jig1ScanFinish,
-                WeldFinishAddr = _plcAddr.Jig1WeldFinish,
-                ScanResultAddr = _plcAddr.Jig1ScanResult,
-                WeldResultAddr = _plcAddr.Jig1WeldResult,
-                CountsAddr = _plcAddr.Jig1Counts,
+                ScanResultAddr = 100,
+                WeldResultAddr = 101,
+                CompareResultAddr = 106,
+                WeldFinalAddr = 104,
+                CountAddr = 108,
                 BottomScanner = ScannerType.治具1下,
                 TopScanner = ScannerType.治具1上
             };
             _jig1Engine = new JigFlowEngine(
                 jig1Config, _plcService, hardwareService, _databaseService, mesService,
-                _runConfig, systemConfigManager.Jig1DownScannerConfig,
+                _runConfig, systemConfigManager.LeftDownScannerConfig,
                 IsNoHardwareMode, _softwareConfig.IsSFC,
                  record => AddScanRecordAsync(record),
                  msg => AppendLog(msg));
@@ -152,20 +152,20 @@ namespace FZK.Application.Run.ViewModels
                 TriggerScanAddr = _plcAddr.Jig2TriggerScan,
                 TriggerWeldAddr = _plcAddr.Jig2TriggerWeld,
                 TriggerClearAddr = _plcAddr.Jig2TriggerClear,
-                ScanFinishAddr = _plcAddr.Jig2ScanFinish,
-                WeldFinishAddr = _plcAddr.Jig2WeldFinish,
-                ScanResultAddr = _plcAddr.Jig2ScanResult,
-                WeldResultAddr = _plcAddr.Jig2WeldResult,
-                CountsAddr = _plcAddr.Jig2Counts,
+                ScanResultAddr = 102,
+                WeldResultAddr = 103,
+                CompareResultAddr = 107,
+                WeldFinalAddr = 105,
+                CountAddr = 109,
                 BottomScanner = ScannerType.治具2下,
                 TopScanner = ScannerType.治具2上
             };
             _jig2Engine = new JigFlowEngine(
                 jig2Config, _plcService, hardwareService, _databaseService, mesService,
-                _runConfig, systemConfigManager.Jig2DownScannerConfig,
+                _runConfig, systemConfigManager.RightDownScannerConfig,
                 IsNoHardwareMode, _softwareConfig.IsSFC,
-                record => AddScanRecordAsync(record),
-                msg => AppendLog(msg));
+    record => AddScanRecordAsync(record),
+    msg => AppendLog(msg));
 
 
 
@@ -177,6 +177,15 @@ namespace FZK.Application.Run.ViewModels
             ClearLogCommand = ReactiveCommand.Create(OnClearLog);
             ClearJig1CountCommand = ReactiveCommand.Create(OnClearJig1Count);
             ClearJig2CountCommand = ReactiveCommand.Create(OnClearJig2Count);
+
+            // 手动测试命令
+            ManualTriggerLeftDownScanCommand = ReactiveCommand.Create(OnManualTriggerLeftDownScan);
+            ManualTriggerLeftUpScanCommand = ReactiveCommand.Create(OnManualTriggerLeftUpScan);
+            ManualTriggerRightUpScanCommand = ReactiveCommand.Create(OnManualTriggerRightUpScan);
+            ManualTriggerRightDownScanCommand = ReactiveCommand.Create(OnManualTriggerRightDownScan);
+            ManualTriggerRobotScanCommand = ReactiveCommand.Create(OnManualTriggerRobotScan);
+            SimulateRobotToScanPosCommand = ReactiveCommand.Create(OnSimulateRobotToScanPos);
+            SimulateRobotReportCommand = ReactiveCommand.Create(OnSimulateRobotReport);
 
             // 初始化状态检查定时器
             _statusCheckTimer = new Timer(_runConfig.StatusCheckInterval);
@@ -213,7 +222,8 @@ namespace FZK.Application.Run.ViewModels
 
         [Reactive] public bool IsNoHardwareMode { get; set; }
         [Reactive] public bool IsRunning { get; set; }
-       
+
+        public string HardwareModeText => IsNoHardwareMode ? MultiLang.NoHardwareModeOn : MultiLang.NoHardwareModeOff;
         public string RunStatusText => IsRunning ? MultiLang.StopDevice : MultiLang.StartDevice;
 
         public Style RunStatusButtonStyle
@@ -410,7 +420,7 @@ namespace FZK.Application.Run.ViewModels
             try
             {
                 // 1. 清除 PLC 计数器
-                await _plcService.WriteRegisterAsync(_plcAddr.Jig1Counts, 0);
+                await _plcService.WriteRegisterAsync(_plcAddr.Jig1Count, 0);
                 PlcD108 = 0;
                 this.RaisePropertyChanged(nameof(Jig1UseCount));
 
@@ -440,7 +450,7 @@ namespace FZK.Application.Run.ViewModels
         {
             try
             {
-                await _plcService.WriteRegisterAsync(_plcAddr.Jig2Counts, 0);
+                await _plcService.WriteRegisterAsync(_plcAddr.Jig2Count, 0);
                 PlcD109 = 0;
                 this.RaisePropertyChanged(nameof(Jig2UseCount));
 
@@ -531,8 +541,87 @@ namespace FZK.Application.Run.ViewModels
                 _timerProcessLock.Release();
             }
         }
-       
+        /// <summary>
+        /// 写入 PLC 寄存器，并针对 D100-D109 记录详细日志
+        /// </summary>
+        private async Task WritePlcRegister(int address, int value)
+        {
+            bool isTargetAddress = address >= 100 && address <= 109;
 
+            if (isTargetAddress)
+            {
+                lock (_statsLock)
+                {
+                    if (!_plcWriteStats.ContainsKey(address))
+                        _plcWriteStats[address] = (0, 0, 0);
+                    var stat = _plcWriteStats[address];
+                    _plcWriteStats[address] = (stat.total + 1, stat.success, stat.fail);
+                }
+                Logs.LogDebug(string.Format(MultiLang.AttemptWritePlcD, address, value));
+            }
+
+            if (IsNoHardwareMode)
+            {
+                Logs.LogDebug(string.Format(MultiLang.NoHardwareSimWritePlcD, address, value));
+                if (isTargetAddress)
+                {
+                    lock (_statsLock)
+                    {
+                        var stat = _plcWriteStats[address];
+                        _plcWriteStats[address] = (stat.total, stat.success + 1, stat.fail);
+                    }
+                    Logs.LogDebug(string.Format(MultiLang.WritePlcDSuccessSim, address));
+                }
+                return;
+            }
+
+            try
+            {
+                await _hardwareService.WritePlcRegister(address, value); // 重试已在内部
+                Logs.LogDebug(string.Format(MultiLang.WritePlcDDetail, address, value));
+                if (isTargetAddress)
+                {
+                    lock (_statsLock)
+                    {
+                        var stat = _plcWriteStats[address];
+                        _plcWriteStats[address] = (stat.total, stat.success + 1, stat.fail);
+                    }
+                    Logs.LogDebug(string.Format(MultiLang.WritePlcDSuccess, address));
+                }
+            }
+            catch (Exception ex)
+            {
+                Logs.LogError(ex, string.Format(MultiLang.WritePlcDFailed, address));
+                if (isTargetAddress)
+                {
+                    lock (_statsLock)
+                    {
+                        var stat = _plcWriteStats[address];
+                        _plcWriteStats[address] = (stat.total, stat.success, stat.fail + 1);
+                    }
+                    Logs.LogError(ex, string.Format(MultiLang.WritePlcDFailedDetail, address, ex.Message));
+                }
+                throw;
+            }
+        }
+
+        private async Task ResetPlcErrorRegisters()
+        {
+            try
+            {
+                if (!IsNoHardwareMode)
+                {
+                    await _plcService.WriteRegisterAsync(_plcAddr.Jig1CompareResult, 0);
+                    await _plcService.WriteRegisterAsync(_plcAddr.Jig1WeldFinalResult, 0);
+                    await _plcService.WriteRegisterAsync(_plcAddr.Jig2CompareResult, 0);
+                    await _plcService.WriteRegisterAsync(_plcAddr.Jig2WeldFinalResult, 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logs.LogError(ex, MultiLang.ResetPlcErrorRegistersFail);
+            }
+        }
 
         #endregion
 
@@ -1610,6 +1699,117 @@ namespace FZK.Application.Run.ViewModels
 
         #endregion
 
+        #region 手动测试命令
+
+        private async void OnManualTriggerLeftDownScan()
+        {
+            AppendLog(MultiLang.ManualTriggerLeftDownScan);
+            await TriggerScannerAndRecord(ScannerType.治具1下, MultiLang.LeftDownScan);
+        }
+
+        private async void OnManualTriggerLeftUpScan()
+        {
+            AppendLog(MultiLang.ManualTriggerLeftUpScan);
+            await TriggerScannerAndRecord(ScannerType.治具1上, MultiLang.LeftUpScan);
+        }
+
+        private async void OnManualTriggerRightUpScan()
+        {
+            AppendLog(MultiLang.ManualTriggerRightUpScan);
+            await TriggerScannerAndRecord(ScannerType.治具2上, MultiLang.RightUpScan);
+        }
+
+        private async void OnManualTriggerRightDownScan()
+        {
+            AppendLog(MultiLang.ManualTriggerRightDownScan);
+            await TriggerScannerAndRecord(ScannerType.治具2下, MultiLang.RightDownScan);
+        }
+
+        private async void OnManualTriggerRobotScan()
+        {
+            AppendLog(MultiLang.ManualTriggerRobotScan);
+            await TriggerScannerAndRecord(ScannerType.机械臂, MultiLang.RobotScan);
+        }
+
+        /// <summary>
+        /// 触发指定扫码枪并记录结果
+        /// </summary>
+        private async Task TriggerScannerAndRecord(ScannerType scannerType, string scanTypeName)
+        {
+            if (IsNoHardwareMode)
+            {
+                AppendLog(string.Format(MultiLang.ManualSimulateLog, scanTypeName));
+                await AddScanRecordAsync(new ScanRecord
+                {
+                    CreateTime = DateTime.Now,
+                    JigNo = MultiLang.Manual,
+                    ScanType = scanTypeName,
+                    SPCode = $"SIM{DateTime.Now:HHmmss}",
+                    Result = "1",
+                    Remark = MultiLang.SimulateRemark
+                });
+                return;
+            }
+
+            try
+            {
+                string code = await _hardwareService.TriggerScanner(scannerType);
+                if (!string.IsNullOrEmpty(code))
+                {
+                    AppendLog(string.Format(MultiLang.ManualScanSuccess, scanTypeName, code));
+                    await AddScanRecordAsync(new ScanRecord
+                    {
+                        CreateTime = DateTime.Now,
+                        JigNo = MultiLang.Manual,
+                        ScanType = scanTypeName,
+                        SPCode = code,
+                        Result = "1",
+                        Remark = MultiLang.ManualTriggerSuccessRemark
+                    });
+                }
+                else
+                {
+                    AppendLog(string.Format(MultiLang.ManualScanFail, scanTypeName));
+                    await AddScanRecordAsync(new ScanRecord
+                    {
+                        CreateTime = DateTime.Now,
+                        JigNo = MultiLang.Manual,
+                        ScanType = scanTypeName,
+                        Result = "2",
+                        Remark = MultiLang.ScanFailRemark
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Logs.LogError(ex, string.Format(MultiLang.ManualScanException, scanTypeName));
+                AppendLog(string.Format(MultiLang.ManualScanExceptionLog, scanTypeName, ex.Message));
+                await AddScanRecordAsync(new ScanRecord
+                {
+                    CreateTime = DateTime.Now,
+                    JigNo = MultiLang.Manual,
+                    ScanType = scanTypeName,
+                    Result = "2",
+                    Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
+                });
+            }
+        }
+
+        private void OnSimulateRobotToScanPos()
+        {
+            RobotStatus = MultiLang.SimArrivedScanPos;
+            RobotScanPosition = MultiLang.SimJig1ScanPos;
+            AppendLog(MultiLang.SimRobotArrivedScanPos);
+        }
+
+        private void OnSimulateRobotReport()
+        {
+            RobotReportResult = MultiLang.SimReportSuccess;
+            RobotStatus = MultiLang.Idle;
+            AppendLog(MultiLang.SimRobotReportSuccess);
+        }
+
+        #endregion
 
         #region 资源释放
 
