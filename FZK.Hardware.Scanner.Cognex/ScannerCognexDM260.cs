@@ -529,6 +529,9 @@ namespace FZK.Hardware.Scanner.Cognex
                             {
                                 _receiveQueue.Enqueue(received);
                                 _queueSemaphore.Release(); // 通知解析任务
+
+                                //Logs.LogWarn( received);
+
                             }
                             else
                             {
@@ -602,7 +605,7 @@ namespace FZK.Hardware.Scanner.Cognex
                             {
                                 // 更新 Content 为完整报文
                                 Content = completeMessage;
-
+                                
                                 // 拆分多码（如果需要）
                                 var codes = completeMessage.Split(new[] { _codeDelimiter }, StringSplitOptions.RemoveEmptyEntries)
                                     .Select(c => c.Trim())

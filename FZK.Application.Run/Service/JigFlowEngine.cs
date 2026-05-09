@@ -56,6 +56,7 @@ namespace FZK.Application.Run.Service
 
         public async Task ProcessScanAsync()
         {
+
             Logs.LogInfo($"{_config.JigName} 开始扫码比对流程");
             await _plc.WriteRegisterAsync(_config.TriggerScanAddr, 0);
 
