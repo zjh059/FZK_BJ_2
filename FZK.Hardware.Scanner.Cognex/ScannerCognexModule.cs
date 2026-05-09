@@ -21,10 +21,10 @@ namespace FZK.Hardware.Scanner.Cognex
         {
            // if (!ConfigManager.NoHardwareMode)
             {
-                containerRegistry.Register<IScanner, ScannerCognexDM260>(ScannerType.左上.ToString());
-                containerRegistry.Register<IScanner, ScannerCognexDM260>(ScannerType.左下.ToString());
-                containerRegistry.Register<IScanner, ScannerCognexDM260>(ScannerType.右上.ToString());
-                containerRegistry.Register<IScanner, ScannerCognexDM260>(ScannerType.右下.ToString());
+                containerRegistry.Register<IScanner, ScannerCognexDM260>(ScannerType.治具1上.ToString());
+                containerRegistry.Register<IScanner, ScannerCognexDM260>(ScannerType.治具1下.ToString());
+                containerRegistry.Register<IScanner, ScannerCognexDM260>(ScannerType.治具2上.ToString());
+                containerRegistry.Register<IScanner, ScannerCognexDM260>(ScannerType.治具2下.ToString());
                 containerRegistry.Register<IScanner, ScannerCognexDM260>(ScannerType.机械臂.ToString());
 
             }

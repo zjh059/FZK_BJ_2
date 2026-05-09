@@ -40,10 +40,10 @@ namespace FZK.Application.Initialize.Services
         {
             OmronPLC = pLC;
             EpsonRobot = robot;
-            LeftUpScanner = containerProvider.Resolve<IScanner>(ScannerType.左上.ToString());
-            RightUpScanner = containerProvider.Resolve<IScanner>(ScannerType.右上.ToString());
-            LeftDownScanner = containerProvider.Resolve<IScanner>(ScannerType.左下.ToString());
-            RightDownScanner = containerProvider.Resolve<IScanner>(ScannerType.右下.ToString());
+            LeftUpScanner = containerProvider.Resolve<IScanner>(ScannerType.治具1上.ToString());
+            RightUpScanner = containerProvider.Resolve<IScanner>(ScannerType.治具2上.ToString());
+            LeftDownScanner = containerProvider.Resolve<IScanner>(ScannerType.治具1下.ToString());
+            RightDownScanner = containerProvider.Resolve<IScanner>(ScannerType.治具2下.ToString());
             SPScanner = containerProvider.Resolve<IScanner>(ScannerType.机械臂.ToString());
             SystemConfigManager = systemConfigManager;
             EventAggregator = eventAggregator;
@@ -68,7 +68,7 @@ namespace FZK.Application.Initialize.Services
             Task<bool> plcTask = !OmronPLC.Initialized ? Task.Run(() => OmronPLC.Init(SystemConfigManager.pLCConfig)) : null;
             Task<bool> robotTask = !EpsonRobot.Initialized ? Task.Run(() => EpsonRobot.Init(SystemConfigManager.robotConfig)) : null;
 
-            var taskList = new List<Task<bool>> { leftUpTask, rightUpTask, leftDownTask, rightDownTask, plcTask }
+            var taskList = new List<Task<bool>> { leftUpTask, rightUpTask, leftDownTask, rightDownTask, plcTask , robotTask }//leftUpTask, rightUpTask, leftDownTask, rightDownTask, plcTask
                 .Where(t => t != null).ToList();
 
             bool[] results = taskList.Count == 0 ? new bool[0] : await Task.WhenAll(taskList);

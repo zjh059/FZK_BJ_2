@@ -27,26 +27,26 @@ namespace FZK.Application.Config.Models
         {
             IpAddress = "127.0.0.1",
             Port = 8888,
-            Direction = ScannerType.左上
+            Direction = ScannerType.治具1上
         };
         public ScannerConfig LeftDownScannerConfig { get; set; } = new ScannerConfig()
         {
             IpAddress = "127.0.0.1",
             Port = 8889,
-            Direction = ScannerType.左下
+            Direction = ScannerType.治具1下
 
         };
         public ScannerConfig RightUpScannerConfig { get; set; } = new ScannerConfig()
         {
             IpAddress = "127.0.0.1",
             Port = 8890,
-            Direction = ScannerType.右上
+            Direction = ScannerType.治具2上
         };
         public ScannerConfig RightDownScannerConfig { get; set; } = new ScannerConfig()
         {
             IpAddress = "127.0.0.1",
             Port = 8891,
-            Direction = ScannerType.右下
+            Direction = ScannerType.治具2下
         };
         public ScannerConfig RobotScannerConfig { get; set; } = new ScannerConfig()
         {

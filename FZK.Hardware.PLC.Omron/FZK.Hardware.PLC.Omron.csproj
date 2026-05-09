@@ -77,6 +77,9 @@
       <Name>FZK.Logger</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="PLC位置信息.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)FZK.Shell\bin\$(Configuration)" /S</PostBuildEvent>

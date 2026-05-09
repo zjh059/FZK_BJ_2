@@ -191,19 +191,19 @@ namespace FZK.Application.Run.Service
 
             switch (scannerType)
             {
-                case ScannerType.左下:
+                case ScannerType.治具1下:
                     targetScanner = _hardwareManager.LeftDownScanner;
                     break;
-                case ScannerType.左上:
+                case ScannerType.治具1上:
                     targetScanner = _hardwareManager.LeftUpScanner;
                     break;
                 case ScannerType.机械臂:
                     targetScanner = _hardwareManager.SPScanner;
                     break;
-                case ScannerType.右上:
+                case ScannerType.治具2上:
                     targetScanner = _hardwareManager.RightUpScanner;
                     break;
-                case ScannerType.右下:
+                case ScannerType.治具2下:
                     targetScanner = _hardwareManager.RightDownScanner;
                     break;
                 default:

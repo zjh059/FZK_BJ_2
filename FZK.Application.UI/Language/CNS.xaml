@@ -208,15 +208,15 @@
 
     <!-- 扫码器配置页面 -->
     <system:String x:Key="扫码器设置">扫码器设置</system:String>
-    <system:String x:Key="左上扫码器">左上扫码器</system:String>
-    <system:String x:Key="左下扫码器">左下扫码器</system:String>
-    <system:String x:Key="右上扫码器">右上扫码器</system:String>
-    <system:String x:Key="右下扫码器">右下扫码器</system:String>
+    <system:String x:Key="左上扫码器">一工位上</system:String>
+    <system:String x:Key="左下扫码器">一工位下</system:String>
+    <system:String x:Key="右上扫码器">二工位上</system:String>
+    <system:String x:Key="右下扫码器">二工位下</system:String>
     <system:String x:Key="机械臂扫码器">机械臂扫码器</system:String>
-    <system:String x:Key="左上扫码器参数">左上扫码器参数</system:String>
-    <system:String x:Key="左下扫码器参数">左下扫码器参数</system:String>
-    <system:String x:Key="右上扫码器参数">右上扫码器参数</system:String>
-    <system:String x:Key="右下扫码器参数">右下扫码器参数</system:String>
+    <system:String x:Key="左上扫码器参数">一工位上参数</system:String>
+    <system:String x:Key="左下扫码器参数">一工位下参数</system:String>
+    <system:String x:Key="右上扫码器参数">二工位上参数</system:String>
+    <system:String x:Key="右下扫码器参数">二工位下参数</system:String>
     <system:String x:Key="机械臂扫码器参数">机械臂扫码器参数</system:String>
     <system:String x:Key="方向">方向</system:String>
     <system:String x:Key="扫码延迟ms">扫码延迟 (ms)</system:String>
@@ -251,10 +251,10 @@
     <system:String x:Key="重复初始化硬件">重复初始化硬件</system:String>
     <system:String x:Key="初始化硬件失败">初始化硬件失败</system:String>
     <system:String x:Key="初始化硬件成功">初始化硬件成功</system:String>
-    <system:String x:Key="左上扫码模块">左上扫码模块</system:String>
-    <system:String x:Key="右上扫码模块">右上扫码模块</system:String>
-    <system:String x:Key="左下扫码模块">左下扫码模块</system:String>
-    <system:String x:Key="右下扫码模块">右下扫码模块</system:String>
+    <system:String x:Key="左上扫码模块">治具1上扫码模块</system:String>
+    <system:String x:Key="右上扫码模块">治具2上扫码模块</system:String>
+    <system:String x:Key="左下扫码模块">治具1下扫码模块</system:String>
+    <system:String x:Key="右下扫码模块">治具2下扫码模块</system:String>
     <system:String x:Key="机械臂扫码模块">机械臂扫码模块</system:String>
     <system:String x:Key="PLC模块">PLC模块</system:String>
     <system:String x:Key="机械手模块">机械手模块</system:String>

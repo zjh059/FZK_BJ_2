@@ -354,8 +354,11 @@ namespace FZK.Hardware.PLC.Omron
         {
             lock (_taskLock)
             {
-                if (_heartbeatTask == null || _heartbeatTask.IsCompleted)
-                    _heartbeatTask = Task.Run(HeartbeatTaskAsync, _cancellationTokenSource.Token);
+                if (_plcConfig.HeartbeatIsOpen)
+                {
+                    if (_heartbeatTask == null || _heartbeatTask.IsCompleted)
+                        _heartbeatTask = Task.Run(HeartbeatTaskAsync, _cancellationTokenSource.Token);
+                }               
                 if (_reconnectTask == null || _reconnectTask.IsCompleted)
                     _reconnectTask = Task.Factory.StartNew(ReconnectGuardTask, _cancellationTokenSource.Token,
                         TaskCreationOptions.LongRunning, TaskScheduler.Default);

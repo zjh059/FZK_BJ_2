@@ -128,8 +128,8 @@ namespace FZK.Application.Run.ViewModels
                 CompareResultAddr = 106,
                 WeldFinalAddr = 104,
                 CountAddr = 108,
-                BottomScanner = ScannerType.左下,
-                TopScanner = ScannerType.左上
+                BottomScanner = ScannerType.治具1下,
+                TopScanner = ScannerType.治具1上
             };
             _jig1Engine = new JigFlowEngine(
                 jig1Config, _plcService, hardwareService, _databaseService, mesService,
@@ -149,8 +149,8 @@ namespace FZK.Application.Run.ViewModels
                 CompareResultAddr = 107,
                 WeldFinalAddr = 105,
                 CountAddr = 109,
-                BottomScanner = ScannerType.右下,
-                TopScanner = ScannerType.右上
+                BottomScanner = ScannerType.治具2下,
+                TopScanner = ScannerType.治具2上
             };
             _jig2Engine = new JigFlowEngine(
                 jig2Config, _plcService, hardwareService, _databaseService, mesService,
@@ -1692,25 +1692,25 @@ namespace FZK.Application.Run.ViewModels
         private async void OnManualTriggerLeftDownScan()
         {
             AppendLog(MultiLang.ManualTriggerLeftDownScan);
-            await TriggerScannerAndRecord(ScannerType.左下, MultiLang.LeftDownScan);
+            await TriggerScannerAndRecord(ScannerType.治具1下, MultiLang.LeftDownScan);
         }
 
         private async void OnManualTriggerLeftUpScan()
         {
             AppendLog(MultiLang.ManualTriggerLeftUpScan);
-            await TriggerScannerAndRecord(ScannerType.左上, MultiLang.LeftUpScan);
+            await TriggerScannerAndRecord(ScannerType.治具1上, MultiLang.LeftUpScan);
         }
 
         private async void OnManualTriggerRightUpScan()
         {
             AppendLog(MultiLang.ManualTriggerRightUpScan);
-            await TriggerScannerAndRecord(ScannerType.右上, MultiLang.RightUpScan);
+            await TriggerScannerAndRecord(ScannerType.治具2上, MultiLang.RightUpScan);
         }
 
         private async void OnManualTriggerRightDownScan()
         {
             AppendLog(MultiLang.ManualTriggerRightDownScan);
-            await TriggerScannerAndRecord(ScannerType.右下, MultiLang.RightDownScan);
+            await TriggerScannerAndRecord(ScannerType.治具2下, MultiLang.RightDownScan);
         }
 
         private async void OnManualTriggerRobotScan()
