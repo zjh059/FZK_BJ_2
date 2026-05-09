@@ -41,6 +41,12 @@ namespace FZK.Application.Run.ViewModels
         private readonly IDatabaseManager _databaseManager;
         private readonly IHardwareService _hardwareService;
         private readonly IHardwareManager _hardwareManager;
+        private readonly IPlcService _plcService;
+        private readonly IJigFlowEngine _jig1Engine;
+        private readonly IJigFlowEngine _jig2Engine;
+        private readonly IRobotCoordinator _robotCoordinator;
+        private readonly IDatabaseService _databaseService;
+
         private readonly ISystemConfigManager _systemConfigManager;
         private readonly IMesService _mesService;
 
@@ -53,7 +59,7 @@ namespace FZK.Application.Run.ViewModels
         private readonly ScannerConfig _rightDownScannerConfig;
         private readonly ScannerConfig _rightUpScannerConfig;
         private readonly ScannerConfig __robotScannerConfig; // 机械臂扫码枪
-        private readonly SoftwareConfig __softwareConfig; // 机械臂扫码枪
+        private readonly SoftwareConfig _softwareConfig; // 机械臂扫码枪
         private readonly int bottomCodeLength;
         //锁
         private readonly SemaphoreSlim _jig1ProcessLock = new SemaphoreSlim(1, 1);
@@ -79,21 +85,27 @@ namespace FZK.Application.Run.ViewModels
 
         #region 构造函数与初始化
 
-        public RunViewModel(
-            IDatabaseManager databaseManager,
+        public RunViewModel(IDatabaseManager databaseManager,
             IHardwareService hardwareService,
             IMesService mesService,
             IHardwareManager hardwareManager,
-            ISystemConfigManager systemConfigManager)
+            ISystemConfigManager systemConfigManager,
+            IPlcService plcService,
+            IDatabaseService databaseService,
+            IRobotCoordinator robotCoordinator
+            )
         {
-            _databaseManager = databaseManager ?? throw new ArgumentNullException(nameof(databaseManager));
-            _hardwareService = hardwareService ?? throw new ArgumentNullException(nameof(hardwareService));
-            _mesService = mesService ?? throw new ArgumentNullException(nameof(mesService));
-            _hardwareManager = hardwareManager ?? throw new ArgumentNullException(nameof(hardwareManager));
-            _systemConfigManager = systemConfigManager ?? throw new ArgumentNullException(nameof(systemConfigManager));
-
-            // 加载配置
+            _robotCoordinator= robotCoordinator;
             _plcAddr = systemConfigManager.plcAddressConfig ?? new PlcAddressConfig();
+            _runConfig = systemConfigManager.runConfig ?? new RunConfig();
+            _robotConfig = systemConfigManager.robotConfig ?? new RobotConfig();
+            _softwareConfig = systemConfigManager.SoftwareConfig ?? new SoftwareConfig();
+            _hardwareService = hardwareService;
+            _hardwareManager = hardwareManager;
+            _plcService = plcService;
+            _databaseService= databaseService;
+             // 加载配置
+             _plcAddr = systemConfigManager.plcAddressConfig ?? new PlcAddressConfig();
             _runConfig = systemConfigManager.runConfig ?? new RunConfig();
             _robotConfig = systemConfigManager.robotConfig ?? new RobotConfig();
             _leftDownScannerConfig = systemConfigManager.LeftDownScannerConfig ?? new ScannerConfig();
@@ -101,8 +113,53 @@ namespace FZK.Application.Run.ViewModels
             _rightDownScannerConfig = systemConfigManager.RightDownScannerConfig ?? new ScannerConfig();
             _rightUpScannerConfig = systemConfigManager.RightUpScannerConfig ?? new ScannerConfig();
             __robotScannerConfig = systemConfigManager.RobotScannerConfig ?? new ScannerConfig();
-            __softwareConfig = systemConfigManager.SoftwareConfig ?? new SoftwareConfig();
+            _softwareConfig = systemConfigManager.SoftwareConfig ?? new SoftwareConfig();
             bottomCodeLength = _leftDownScannerConfig.SnLength;
+
+            // 创建治具1引擎
+            var jig1Config = new JigConfig
+            {
+                JigName = MultiLang.Jig1,
+                TriggerScanAddr = _plcAddr.Jig1TriggerScan,
+                TriggerWeldAddr = _plcAddr.Jig1TriggerWeld,
+                TriggerClearAddr = _plcAddr.Jig1TriggerClear,
+                ScanResultAddr = 100,
+                WeldResultAddr = 101,
+                CompareResultAddr = 106,
+                WeldFinalAddr = 104,
+                CountAddr = 108,
+                BottomScanner = ScannerType.左下,
+                TopScanner = ScannerType.左上
+            };
+            _jig1Engine = new JigFlowEngine(
+                jig1Config, _plcService, hardwareService, _databaseService, mesService,
+                _runConfig, systemConfigManager.LeftDownScannerConfig,
+                IsNoHardwareMode, _softwareConfig.IsSFC,
+    record => AddScanRecordAsync(record));
+
+            // 创建治具2引擎
+            var jig2Config = new JigConfig
+            {
+                JigName = MultiLang.Jig2,
+                TriggerScanAddr = _plcAddr.Jig2TriggerScan,
+                TriggerWeldAddr = _plcAddr.Jig2TriggerWeld,
+                TriggerClearAddr = _plcAddr.Jig2TriggerClear,
+                ScanResultAddr = 102,
+                WeldResultAddr = 103,
+                CompareResultAddr = 107,
+                WeldFinalAddr = 105,
+                CountAddr = 109,
+                BottomScanner = ScannerType.右下,
+                TopScanner = ScannerType.右上
+            };
+            _jig2Engine = new JigFlowEngine(
+                jig2Config, _plcService, hardwareService, _databaseService, mesService,
+                _runConfig, systemConfigManager.RightDownScannerConfig,
+                IsNoHardwareMode, _softwareConfig.IsSFC,
+    record => AddScanRecordAsync(record));
+
+
+
             ScanRecords = new ObservableCollection<ScanRecord>();
 
             // 初始化命令
@@ -138,23 +195,9 @@ namespace FZK.Application.Run.ViewModels
 
         private void InitPlcRegisters()
         {
-            PlcD0 = "0";
-            PlcD1 = "0";
-            PlcD2 = "0";
-            PlcD3 = "0";
-            PlcD4 = "0";
-            PlcD5 = "0";
-
-            PlcD100 = 0;
-            PlcD101 = 0;
-            PlcD102 = 0;
-            PlcD103 = 0;
-            PlcD104 = 0;
-            PlcD105 = 0;
-            PlcD106 = 0;
-            PlcD107 = 0;
-            PlcD108 = 0;
-            PlcD109 = 0;
+            PlcD0 = PlcD1 = PlcD2 = PlcD3 = PlcD4 = PlcD5 = "0";
+            PlcD100 = PlcD101 = PlcD102 = PlcD103 = PlcD104 = PlcD105 = 0;
+            PlcD106 = PlcD107 = PlcD108 = PlcD109 = 0;
         }
 
         private void InitPlcReadTimer()
@@ -304,7 +347,7 @@ namespace FZK.Application.Run.ViewModels
 
                 if (!IsNoHardwareMode)
                 {
-                    _hardwareService.Init();
+                    _hardwareService?.Init();
                     Logs.LogInfo(MultiLang.HardwareInitCompleted);
                 }
                 else
@@ -316,7 +359,7 @@ namespace FZK.Application.Run.ViewModels
             {
                 _plcReadTimer.Stop();
                 Logs.LogInfo(MultiLang.DeviceStoppedStopMonitor);
-                if (!IsNoHardwareMode) _hardwareService.Stop();
+                if (!IsNoHardwareMode) _hardwareService?.Stop();
                 Logs.LogInfo(MultiLang.DeviceStopping);
             }
 
@@ -328,8 +371,24 @@ namespace FZK.Application.Run.ViewModels
         {
             try
             {
-                await ReadPlcRegisters();
-                _databaseManager.GetAll(); // 同步操作，建议改为异步
+                // 1. 读取 PLC 触发寄存器并更新 UI
+                var addresses = new List<int>
+        {
+            _plcAddr.Jig1TriggerScan, _plcAddr.Jig1TriggerWeld, _plcAddr.Jig1TriggerClear,
+            _plcAddr.Jig2TriggerScan, _plcAddr.Jig2TriggerWeld, _plcAddr.Jig2TriggerClear
+        };
+                var values = await _plcService.ReadTriggerRegistersAsync(addresses);
+
+                PlcD0 = values.TryGetValue(_plcAddr.Jig1TriggerScan, out int d0) ? d0.ToString() : "0";
+                PlcD1 = values.TryGetValue(_plcAddr.Jig1TriggerWeld, out int d1) ? d1.ToString() : "0";
+                PlcD2 = values.TryGetValue(_plcAddr.Jig1TriggerClear, out int d2) ? d2.ToString() : "0";
+                PlcD3 = values.TryGetValue(_plcAddr.Jig2TriggerScan, out int d3) ? d3.ToString() : "0";
+                PlcD4 = values.TryGetValue(_plcAddr.Jig2TriggerWeld, out int d4) ? d4.ToString() : "0";
+                PlcD5 = values.TryGetValue(_plcAddr.Jig2TriggerClear, out int d5) ? d5.ToString() : "0";
+
+                // 2. 刷新数据库缓存（注意：原代码是同步调用，此处保持同步避免行为变化）
+                _databaseManager.GetAll();
+
                 Logs.LogInfo(MultiLang.StatusRefreshCompleted);
                 AppendLog(MultiLang.StatusRefreshDone);
             }
@@ -351,11 +410,26 @@ namespace FZK.Application.Run.ViewModels
         {
             try
             {
+                // 1. 清除 PLC 计数器
+                await _plcService.WriteRegisterAsync(_plcAddr.Jig1Count, 0);
                 PlcD108 = 0;
-                WritePlcRegister(_plcAddr.Jig1Count, 0);
-                Logs.LogInfo(MultiLang.Jig1CountCleared);
-                await UpdateJigCountInDb(1, "0");
                 this.RaisePropertyChanged(nameof(Jig1UseCount));
+
+
+                // 2. 清除数据库中对应底板码的使用次数（如果存在当前底板码）
+                if (!string.IsNullOrEmpty(_currentJig1BottomCode))
+                {
+                    await _databaseService.ClearCountAsync(_currentJig1BottomCode);
+                    Logs.LogInfo(string.Format(MultiLang.DbClearJigCountSuccess, 1, _currentJig1BottomCode));
+                }
+                else
+                {
+                    Logs.LogWarn(MultiLang.DbClearNoBottomCode + " 治具1");
+                }
+
+                Logs.LogInfo(MultiLang.Jig1CountCleared);
+                AppendLog(MultiLang.Jig1CountCleared);
+
             }
             catch (Exception ex)
             {
@@ -367,11 +441,22 @@ namespace FZK.Application.Run.ViewModels
         {
             try
             {
+                await _plcService.WriteRegisterAsync(_plcAddr.Jig2Count, 0);
                 PlcD109 = 0;
-                WritePlcRegister(_plcAddr.Jig2Count, 0);
-                Logs.LogInfo(MultiLang.Jig2CountCleared);
-                await UpdateJigCountInDb(2, "0");
                 this.RaisePropertyChanged(nameof(Jig2UseCount));
+
+                if (!string.IsNullOrEmpty(_currentJig2BottomCode))
+                {
+                    await _databaseService.ClearCountAsync(_currentJig2BottomCode);
+                    Logs.LogInfo(string.Format(MultiLang.DbClearJigCountSuccess, 2, _currentJig2BottomCode));
+                }
+                else
+                {
+                    Logs.LogWarn(MultiLang.DbClearNoBottomCode + " 治具2");
+                }
+
+                Logs.LogInfo(MultiLang.Jig2CountCleared);
+                AppendLog(MultiLang.Jig2CountCleared);
             }
             catch (Exception ex)
             {
@@ -387,99 +472,66 @@ namespace FZK.Application.Run.ViewModels
         {
             if (_disposed || !IsRunning) return;
             if (!await _timerProcessLock.WaitAsync(0)) return;
-            await System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
-            {
-                try
-                {
-                    // 读取 PLC 寄存器值
-                    var addresses = new List<int>
-                    {
-                        _plcAddr.Jig1TriggerScan,
-                        _plcAddr.Jig1TriggerWeld,
-                        _plcAddr.Jig1TriggerClear,
-                        _plcAddr.Jig2TriggerScan,
-                        _plcAddr.Jig2TriggerWeld,
-                        _plcAddr.Jig2TriggerClear,
-                    };
-                    var plcValues = await _hardwareService.ReadPlcRegisters(addresses);
 
-                    // 获取当前值（默认 0）
-                    int curD0 = plcValues.TryGetValue(_plcAddr.Jig1TriggerScan, out int d0) ? d0 : 0;
-                    int curD1 = plcValues.TryGetValue(_plcAddr.Jig1TriggerWeld, out int d1) ? d1 : 0;
-                    int curD2 = plcValues.TryGetValue(_plcAddr.Jig1TriggerClear, out int d2) ? d2 : 0;
-                    int curD3 = plcValues.TryGetValue(_plcAddr.Jig2TriggerScan, out int d3) ? d3 : 0;
-                    int curD4 = plcValues.TryGetValue(_plcAddr.Jig2TriggerWeld, out int d4) ? d4 : 0;
-                    int curD5 = plcValues.TryGetValue(_plcAddr.Jig2TriggerClear, out int d5) ? d5 : 0;
-
-                    // 更新 UI 显示（仅用于界面，不影响业务逻辑）
-                    PlcD0 = curD0.ToString();
-                    PlcD1 = curD1.ToString();
-                    PlcD2 = curD2.ToString();
-                    PlcD3 = curD3.ToString();
-                    PlcD4 = curD4.ToString();
-                    PlcD5 = curD5.ToString();
-
-                    // 边沿检测并处理
-                    await ProcessJig1Logic(curD0, curD1, curD2);
-                    await ProcessJig2Logic(curD3, curD4, curD5);
-                    await ProcessRobotLogic();
-                    // 更新上次值
-                    _lastD0 = curD0;
-                    _lastD1 = curD1;
-                    _lastD2 = curD2;
-                    _lastD3 = curD3;
-                    _lastD4 = curD4;
-                    _lastD5 = curD5;
-                }
-                catch (ObjectDisposedException)
-                {
-                    // 信号量已释放，直接返回
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    Logs.LogError(ex, MultiLang.PLCReadProcessError);
-                    // await ResetPlcErrorRegisters();
-                }
-
-                finally
-                {
-                    _timerProcessLock.Release();
-                }
-            });
-        }
-
-        private async Task ReadPlcRegisters()
-        {
-            if (IsNoHardwareMode) return;
 
             try
             {
+                // 读取 PLC 寄存器值
                 var addresses = new List<int>
                 {
-                    _plcAddr.Jig1TriggerScan,
-                    _plcAddr.Jig1TriggerWeld,
-                    _plcAddr.Jig1TriggerClear,
-                    _plcAddr.Jig2TriggerScan,
-                    _plcAddr.Jig2TriggerWeld,
-                    _plcAddr.Jig2TriggerClear,
+                    _plcAddr.Jig1TriggerScan, _plcAddr.Jig1TriggerWeld, _plcAddr.Jig1TriggerClear,
+                    _plcAddr.Jig2TriggerScan, _plcAddr.Jig2TriggerWeld, _plcAddr.Jig2TriggerClear
                 };
 
-                var plcValues = await _hardwareService.ReadPlcRegisters(addresses);
+                var values = await _plcService.ReadTriggerRegistersAsync(addresses);
 
-                PlcD0 = plcValues.ContainsKey(_plcAddr.Jig1TriggerScan) ? plcValues[_plcAddr.Jig1TriggerScan].ToString() : "0";
-                PlcD1 = plcValues.ContainsKey(_plcAddr.Jig1TriggerWeld) ? plcValues[_plcAddr.Jig1TriggerWeld].ToString() : "0";
-                PlcD2 = plcValues.ContainsKey(_plcAddr.Jig1TriggerClear) ? plcValues[_plcAddr.Jig1TriggerClear].ToString() : "0";
-                PlcD3 = plcValues.ContainsKey(_plcAddr.Jig2TriggerScan) ? plcValues[_plcAddr.Jig2TriggerScan].ToString() : "0";
-                PlcD4 = plcValues.ContainsKey(_plcAddr.Jig2TriggerWeld) ? plcValues[_plcAddr.Jig2TriggerWeld].ToString() : "0";
-                PlcD5 = plcValues.ContainsKey(_plcAddr.Jig2TriggerClear) ? plcValues[_plcAddr.Jig2TriggerClear].ToString() : "0";
+                // 获取当前值（默认 0）
+                int d0 = values.TryGetValue(_plcAddr.Jig1TriggerScan, out int v0) ? v0 : 0;
+                int d1 = values.TryGetValue(_plcAddr.Jig1TriggerWeld, out int v1) ? v1 : 0;
+                int d2 = values.TryGetValue(_plcAddr.Jig1TriggerClear, out int v2) ? v2 : 0;
+                int d3 = values.TryGetValue(_plcAddr.Jig2TriggerScan, out int v3) ? v3 : 0;
+                int d4 = values.TryGetValue(_plcAddr.Jig2TriggerWeld, out int v4) ? v4 : 0;
+                int d5 = values.TryGetValue(_plcAddr.Jig2TriggerClear, out int v5) ? v5 : 0;
+
+                // 更新 UI 显示（仅用于界面，不影响业务逻辑）
+                PlcD0 = d0.ToString(); PlcD1 = d1.ToString(); PlcD2 = d2.ToString();
+                PlcD3 = d3.ToString(); PlcD4 = d4.ToString(); PlcD5 = d5.ToString();
+
+                // 边沿检测并处理
+                if (_lastD0 == 0 && d0 == 1)
+                    await _jig1Engine.ProcessScanAsync();
+                if (_lastD1 == 0 && d1 == 1) 
+                    await _jig1Engine.ProcessWeldAsync();
+                if (_lastD2 == 0 && d2 == 1) 
+                    await _jig1Engine.ProcessClearAsync();
+                if (_lastD3 == 0 && d3 == 1) 
+                    await _jig2Engine.ProcessScanAsync();
+                if (_lastD4 == 0 && d4 == 1) 
+                    await _jig2Engine.ProcessWeldAsync();
+                if (_lastD5 == 0 && d5 == 1) 
+                    await _jig2Engine.ProcessClearAsync();
+
+                await _robotCoordinator.ProcessCommandAsync();
+
+                // 更新上次值
+                _lastD0 = d0; _lastD1 = d1; _lastD2 = d2;
+                _lastD3 = d3; _lastD4 = d4; _lastD5 = d5;
+            }
+            catch (ObjectDisposedException)
+            {
+                // 信号量已释放，直接返回
+                return;
             }
             catch (Exception ex)
             {
-                Logs.LogError(ex, MultiLang.ReadPLCRegisterFail);
+                Logs.LogError(ex, MultiLang.PLCReadProcessError);
+                // await ResetPlcErrorRegisters();
+            }
+            finally
+            {
+                _timerProcessLock.Release();
             }
         }
-
         /// <summary>
         /// 写入 PLC 寄存器，并针对 D100-D109 记录详细日志
         /// </summary>
@@ -550,10 +602,10 @@ namespace FZK.Application.Run.ViewModels
             {
                 if (!IsNoHardwareMode)
                 {
-                    await WritePlcRegister(_plcAddr.Jig1CompareResult, 0);
-                    await WritePlcRegister(_plcAddr.Jig1WeldFinalResult, 0);
-                    await WritePlcRegister(_plcAddr.Jig2CompareResult, 0);
-                    await WritePlcRegister(_plcAddr.Jig2WeldFinalResult, 0);
+                    await _plcService.WriteRegisterAsync(_plcAddr.Jig1CompareResult, 0);
+                    await _plcService.WriteRegisterAsync(_plcAddr.Jig1WeldFinalResult, 0);
+                    await _plcService.WriteRegisterAsync(_plcAddr.Jig2CompareResult, 0);
+                    await _plcService.WriteRegisterAsync(_plcAddr.Jig2WeldFinalResult, 0);
                 }
             }
             catch (Exception ex)
@@ -566,1050 +618,1050 @@ namespace FZK.Application.Run.ViewModels
 
         #region 治具1核心逻辑
 
-        private async Task ProcessJig1Logic(int curD0, int curD1, int curD2)
-        {
-            if (!await _jig1ProcessLock.WaitAsync(0)) return;
-            try
-            {
-                // 底/顶部扫码触发（上升沿）
-                if (_lastD0 == 0 && curD0 == 1)
-                {
-                    Logs.LogDebug(MultiLang.Jig1DetectedScanTrigger);
-                    await ProcessJig1Scan();
-                }
+        //private async Task ProcessJig1Logic(int curD0, int curD1, int curD2)
+        //{
+        //    if (!await _jig1ProcessLock.WaitAsync(0)) return;
+        //    try
+        //    {
+        //        // 底/顶部扫码触发（上升沿）
+        //        if (_lastD0 == 0 && curD0 == 1)
+        //        {
+        //            Logs.LogDebug(MultiLang.Jig1DetectedScanTrigger);
+        //            await ProcessJig1Scan();
+        //        }
 
-                // 焊接结果扫码触发（上升沿）
-                if (_lastD1 == 0 && curD1 == 1)
-                {
-                    Logs.LogDebug(MultiLang.Jig1DetectedWeldTrigger);
-                    await ProcessJig1Weld();
-                }
+        //        // 焊接结果扫码触发（上升沿）
+        //        if (_lastD1 == 0 && curD1 == 1)
+        //        {
+        //            Logs.LogDebug(MultiLang.Jig1DetectedWeldTrigger);
+        //            await ProcessJig1Weld();
+        //        }
 
-                // 清零触发（上升沿）
-                if (_lastD2 == 0 && curD2 == 1)
-                {
-                    Logs.LogDebug(MultiLang.Jig1DetectedClearTrigger);
-                    await ProcessJig1Clear();
-                }
-            }
-            catch (ObjectDisposedException)
-            {
-                // 信号量已释放，直接返回
-                return;
-            }
-            finally
-            {
-                _jig1ProcessLock.Release();
-            }
+        //        // 清零触发（上升沿）
+        //        if (_lastD2 == 0 && curD2 == 1)
+        //        {
+        //            Logs.LogDebug(MultiLang.Jig1DetectedClearTrigger);
+        //            await ProcessJig1Clear();
+        //        }
+        //    }
+        //    catch (ObjectDisposedException)
+        //    {
+        //        // 信号量已释放，直接返回
+        //        return;
+        //    }
+        //    finally
+        //    {
+        //        _jig1ProcessLock.Release();
+        //    }
 
-        }
+        //}
 
-        private async Task ProcessJig1Scan()
-        {
-            Logs.LogInfo(MultiLang.Jig1StartScanProcess);
-            await WritePlcRegister(_plcAddr.Jig1TriggerScan, 0);
-            PlcD0 = "0";
+        //private async Task ProcessJig1Scan()
+        //{
+        //    Logs.LogInfo(MultiLang.Jig1StartScanProcess);
+        //    await WritePlcRegister(_plcAddr.Jig1TriggerScan, 0);
+        //    PlcD0 = "0";
 
-            string bottomCode = string.Empty;
-            string spCode = string.Empty;
-            string topCode = string.Empty;
-            bool scanSuccess = false;
-            bool verifySuccess = false;
-            int retryCount = 0;
-            string errorMsg = string.Empty;
+        //    string bottomCode = string.Empty;
+        //    string spCode = string.Empty;
+        //    string topCode = string.Empty;
+        //    bool scanSuccess = false;
+        //    bool verifySuccess = false;
+        //    int retryCount = 0;
+        //    string errorMsg = string.Empty;
 
-            try
-            {
-                // 重试获取双码
-                while (retryCount < _runConfig.ScanRetryCount && !scanSuccess)
-                {
-                    if (retryCount > 0)
-                    {
-                        Logs.LogDebug(string.Format(MultiLang.Jig1ScanParseRetry, retryCount));
-                        await Task.Delay(_runConfig.ScanRetryDelay);
-                    }
+        //    try
+        //    {
+        //        // 重试获取双码
+        //        while (retryCount < _runConfig.ScanRetryCount && !scanSuccess)
+        //        {
+        //            if (retryCount > 0)
+        //            {
+        //                Logs.LogDebug(string.Format(MultiLang.Jig1ScanParseRetry, retryCount));
+        //                await Task.Delay(_runConfig.ScanRetryDelay);
+        //            }
 
-                    string bottomRaw = string.Empty;
+        //            string bottomRaw = string.Empty;
 
-                    if (IsNoHardwareMode)
-                    {
-                        // 模拟：生成两个码并用分隔符连接
-                        bottomRaw = $"H-B{DateTime.Now:yyyyMMddHHmmss}{_leftDownScannerConfig.CodeDelimiter}SP{DateTime.Now:yyyyMMddHHmmss}";
-                        topCode = $"T{DateTime.Now:yyyyMMddHHmmss}";
-                    }
-                    else
-                    {
-                        // 触发左下和左上扫码
-                        var bottomTask = _hardwareService.TriggerScanner(ScannerType.左下);
-                        var topTask = _hardwareService.TriggerScanner(ScannerType.左上);
-                        await Task.WhenAll(bottomTask, topTask);
-                        bottomRaw = await bottomTask;
-                        topCode = await topTask;
-                    }
+        //            if (IsNoHardwareMode)
+        //            {
+        //                // 模拟：生成两个码并用分隔符连接
+        //                bottomRaw = $"H-B{DateTime.Now:yyyyMMddHHmmss}{_leftDownScannerConfig.CodeDelimiter}SP{DateTime.Now:yyyyMMddHHmmss}";
+        //                topCode = $"T{DateTime.Now:yyyyMMddHHmmss}";
+        //            }
+        //            else
+        //            {
+        //                // 触发左下和左上扫码
+        //                var bottomTask = _hardwareService.TriggerScanner(ScannerType.左下);
+        //                var topTask = _hardwareService.TriggerScanner(ScannerType.左上);
+        //                await Task.WhenAll(bottomTask, topTask);
+        //                bottomRaw = await bottomTask;
+        //                topCode = await topTask;
+        //            }
 
-                    // 解析左下扫码结果（可能包含双码）
-                    if (TryParseBottomAndSpCode(bottomRaw, _leftDownScannerConfig.CodeDelimiter, out string parsedBottom, out string parsedSp))
-                    {
-                        var delimiter = _leftDownScannerConfig.CodeDelimiter;
-                        var codes = bottomRaw.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
+        //            // 解析左下扫码结果（可能包含双码）
+        //            if (TryParseBottomAndSpCode(bottomRaw, _leftDownScannerConfig.CodeDelimiter, out string parsedBottom, out string parsedSp))
+        //            {
+        //                var delimiter = _leftDownScannerConfig.CodeDelimiter;
+        //                var codes = bottomRaw.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
 
-                        if (codes.Length >= 2)
-                        {
-                            bottomCode = parsedBottom;
-                            spCode = parsedSp;
-                            scanSuccess = !string.IsNullOrEmpty(bottomCode) && !string.IsNullOrEmpty(spCode) && !string.IsNullOrEmpty(topCode);
-                        }
-                        else
-                        {
-                            Logs.LogWarn(string.Format(MultiLang.Jig1BottomScanFormatError, bottomRaw));
-                        }
-                    }
+        //                if (codes.Length >= 2)
+        //                {
+        //                    bottomCode = parsedBottom;
+        //                    spCode = parsedSp;
+        //                    scanSuccess = !string.IsNullOrEmpty(bottomCode) && !string.IsNullOrEmpty(spCode) && !string.IsNullOrEmpty(topCode);
+        //                }
+        //                else
+        //                {
+        //                    Logs.LogWarn(string.Format(MultiLang.Jig1BottomScanFormatError, bottomRaw));
+        //                }
+        //            }
 
-                    retryCount++;
-                }
+        //            retryCount++;
+        //        }
 
-                if (scanSuccess)
-                {
-                    // 写入扫码完成标志
-                    await WritePlcRegister(_plcAddr.Jig1ScanResult, 1);
-                    PlcD100 = 1;
+        //        if (scanSuccess)
+        //        {
+        //            // 写入扫码完成标志
+        //            await WritePlcRegister(_plcAddr.Jig1ScanResult, 1);
+        //            PlcD100 = 1;
 
-                    // 验证底板码和顶部码是否匹配
-                    verifySuccess = await VerifyBottomTopCode(bottomCode, topCode);
+        //            // 验证底板码和顶部码是否匹配
+        //            verifySuccess = await VerifyBottomTopCode(bottomCode, topCode);
 
-                    if (verifySuccess)
-                    {
-                        Logs.LogInfo(string.Format(MultiLang.Jig1VerifySuccess, bottomCode, topCode, spCode));
-                        await UpdateOrAddCodeEntity(bottomCode, topCode, spCode);
-                        await WritePlcRegister(_plcAddr.Jig1CompareResult, 1);
-                        PlcD106 = 1;
-                    }
-                    else
-                    {
-                        Logs.LogWarn(string.Format(MultiLang.Jig1VerifyFail, bottomCode, topCode));
-                        await WritePlcRegister(_plcAddr.Jig1CompareResult, 2);
-                        PlcD106 = 2;
-                    }
+        //            if (verifySuccess)
+        //            {
+        //                Logs.LogInfo(string.Format(MultiLang.Jig1VerifySuccess, bottomCode, topCode, spCode));
+        //                await UpdateOrAddCodeEntity(bottomCode, topCode, spCode);
+        //                await WritePlcRegister(_plcAddr.Jig1CompareResult, 1);
+        //                PlcD106 = 1;
+        //            }
+        //            else
+        //            {
+        //                Logs.LogWarn(string.Format(MultiLang.Jig1VerifyFail, bottomCode, topCode));
+        //                await WritePlcRegister(_plcAddr.Jig1CompareResult, 2);
+        //                PlcD106 = 2;
+        //            }
 
-                    // 记录扫描记录
-                    await AddScanRecordAsync(new ScanRecord
-                    {
-                        CreateTime = DateTime.Now,
-                        JigNo = MultiLang.Jig1,
-                        ScanType = MultiLang.ScanTypeBottomTop,
-                        BottomCode = bottomCode,
-                        TopCode = topCode,
-                        SPCode = spCode,
-                        Result = verifySuccess ? "1" : "2",
-                        Remark = verifySuccess ? MultiLang.VerifySuccessRemark : MultiLang.VerifyFailRemark
-                    });
-                }
-                else
-                {
-                    Logs.LogWarn(MultiLang.Jig1ScanFailRetryExhausted);
-                    await WritePlcRegister(_plcAddr.Jig1CompareResult, 2);
-                    PlcD106 = 2;
+        //            // 记录扫描记录
+        //            await AddScanRecordAsync(new ScanRecord
+        //            {
+        //                CreateTime = DateTime.Now,
+        //                JigNo = MultiLang.Jig1,
+        //                ScanType = MultiLang.ScanTypeBottomTop,
+        //                BottomCode = bottomCode,
+        //                TopCode = topCode,
+        //                SPCode = spCode,
+        //                Result = verifySuccess ? "1" : "2",
+        //                Remark = verifySuccess ? MultiLang.VerifySuccessRemark : MultiLang.VerifyFailRemark
+        //            });
+        //        }
+        //        else
+        //        {
+        //            Logs.LogWarn(MultiLang.Jig1ScanFailRetryExhausted);
+        //            await WritePlcRegister(_plcAddr.Jig1CompareResult, 2);
+        //            PlcD106 = 2;
 
-                    await AddScanRecordAsync(new ScanRecord
-                    {
-                        CreateTime = DateTime.Now,
-                        JigNo = MultiLang.Jig1,
-                        ScanType = MultiLang.ScanTypeBottomTop,
-                        BottomCode = bottomCode,
-                        TopCode = topCode,
-                        SPCode = spCode,
-                        Result = "2",
-                        Remark = MultiLang.ScanFailRetryExhaustedRemark
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, string.Format(MultiLang.Jig1ScanException, bottomCode, retryCount));
-                await WritePlcRegister(_plcAddr.Jig1CompareResult, 2);
-                PlcD106 = 2;
+        //            await AddScanRecordAsync(new ScanRecord
+        //            {
+        //                CreateTime = DateTime.Now,
+        //                JigNo = MultiLang.Jig1,
+        //                ScanType = MultiLang.ScanTypeBottomTop,
+        //                BottomCode = bottomCode,
+        //                TopCode = topCode,
+        //                SPCode = spCode,
+        //                Result = "2",
+        //                Remark = MultiLang.ScanFailRetryExhaustedRemark
+        //            });
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logs.LogError(ex, string.Format(MultiLang.Jig1ScanException, bottomCode, retryCount));
+        //        await WritePlcRegister(_plcAddr.Jig1CompareResult, 2);
+        //        PlcD106 = 2;
 
-                await AddScanRecordAsync(new ScanRecord
-                {
-                    CreateTime = DateTime.Now,
-                    JigNo = MultiLang.Jig1,
-                    ScanType = MultiLang.ScanTypeBottomTop,
-                    BottomCode = bottomCode,
-                    TopCode = topCode,
-                    SPCode = spCode,
-                    Result = "2",
-                    Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
-                });
-            }
-        }
+        //        await AddScanRecordAsync(new ScanRecord
+        //        {
+        //            CreateTime = DateTime.Now,
+        //            JigNo = MultiLang.Jig1,
+        //            ScanType = MultiLang.ScanTypeBottomTop,
+        //            BottomCode = bottomCode,
+        //            TopCode = topCode,
+        //            SPCode = spCode,
+        //            Result = "2",
+        //            Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
+        //        });
+        //    }
+        //}
 
-        /// <summary>
-        /// 治具1焊接结果扫码处理
-        /// </summary>
-        private async Task ProcessJig1Weld()
-        {
-            Logs.LogInfo(MultiLang.Jig1StartWeldProcess);
-            await WritePlcRegister(_plcAddr.Jig1TriggerWeld, 0);
-            PlcD1 = "0";
+        ///// <summary>
+        ///// 治具1焊接结果扫码处理
+        ///// </summary>
+        //private async Task ProcessJig1Weld()
+        //{
+        //    Logs.LogInfo(MultiLang.Jig1StartWeldProcess);
+        //    await WritePlcRegister(_plcAddr.Jig1TriggerWeld, 0);
+        //    PlcD1 = "0";
 
-            string bottomCode = string.Empty;
-            string spCode = string.Empty;
-            bool scanSuccess = false;
-            int retryCount = 0;
+        //    string bottomCode = string.Empty;
+        //    string spCode = string.Empty;
+        //    bool scanSuccess = false;
+        //    int retryCount = 0;
 
-            try
-            {
-                while (retryCount < _runConfig.ScanRetryCount && !scanSuccess)
-                {
-                    if (retryCount > 0)
-                    {
-                        Logs.LogDebug(string.Format(MultiLang.Jig1WeldParseRetry, retryCount));
-                        await Task.Delay(_runConfig.ScanRetryDelay);
-                    }
+        //    try
+        //    {
+        //        while (retryCount < _runConfig.ScanRetryCount && !scanSuccess)
+        //        {
+        //            if (retryCount > 0)
+        //            {
+        //                Logs.LogDebug(string.Format(MultiLang.Jig1WeldParseRetry, retryCount));
+        //                await Task.Delay(_runConfig.ScanRetryDelay);
+        //            }
 
-                    string bottomRaw = string.Empty;
+        //            string bottomRaw = string.Empty;
 
-                    if (IsNoHardwareMode)
-                    {
-                        // 模拟生成双码，用分隔符连接
-                        bottomRaw = $"H-B{DateTime.Now:yyyyMMddHHmmss}{_leftDownScannerConfig.CodeDelimiter}SP{DateTime.Now:yyyyMMddHHmmss}";
-                    }
-                    else
-                    {
-                        // 只触发左下扫码枪（返回双码）
-                        bottomRaw = await _hardwareService.TriggerScanner(ScannerType.左下);
-                    }
+        //            if (IsNoHardwareMode)
+        //            {
+        //                // 模拟生成双码，用分隔符连接
+        //                bottomRaw = $"H-B{DateTime.Now:yyyyMMddHHmmss}{_leftDownScannerConfig.CodeDelimiter}SP{DateTime.Now:yyyyMMddHHmmss}";
+        //            }
+        //            else
+        //            {
+        //                // 只触发左下扫码枪（返回双码）
+        //                bottomRaw = await _hardwareService.TriggerScanner(ScannerType.左下);
+        //            }
 
-                    // 解析左下扫码结果，获取底板码和主板码
-                    if (TryParseBottomAndSpCode(bottomRaw, _leftDownScannerConfig.CodeDelimiter, out string parsedBottom, out string parsedSp))
-                    {
-                        bottomCode = parsedBottom;
-                        spCode = parsedSp;
-                        scanSuccess = !string.IsNullOrEmpty(bottomCode) && !string.IsNullOrEmpty(spCode);
-                    }
-                    else
-                    {
-                        Logs.LogWarn(string.Format(MultiLang.Jig1WeldParseFail, bottomRaw));
-                    }
+        //            // 解析左下扫码结果，获取底板码和主板码
+        //            if (TryParseBottomAndSpCode(bottomRaw, _leftDownScannerConfig.CodeDelimiter, out string parsedBottom, out string parsedSp))
+        //            {
+        //                bottomCode = parsedBottom;
+        //                spCode = parsedSp;
+        //                scanSuccess = !string.IsNullOrEmpty(bottomCode) && !string.IsNullOrEmpty(spCode);
+        //            }
+        //            else
+        //            {
+        //                Logs.LogWarn(string.Format(MultiLang.Jig1WeldParseFail, bottomRaw));
+        //            }
 
-                    retryCount++;
-                }
+        //            retryCount++;
+        //        }
 
-                if (scanSuccess)
-                {
-                    // 写入扫码完成标志
-                    await WritePlcRegister(_plcAddr.Jig1WeldResult, 1);
-                    PlcD101 = 1;
-                    bool mesResult = false;
-                    if (__softwareConfig.IsSFC)
-                    {
-                        mesResult = await _mesService.GetMesTestResult(spCode);
-                    }
-                    else
-                    {
-                        mesResult = true;
-                    }
-                    // MES查询主板码测试结果
+        //        if (scanSuccess)
+        //        {
+        //            // 写入扫码完成标志
+        //            await WritePlcRegister(_plcAddr.Jig1WeldResult, 1);
+        //            PlcD101 = 1;
+        //            bool mesResult = false;
+        //            if (_softwareConfig.IsSFC)
+        //            {
+        //                mesResult = await _mesService.GetMesTestResult(spCode);
+        //            }
+        //            else
+        //            {
+        //                mesResult = true;
+        //            }
+        //            // MES查询主板码测试结果
 
 
-                    int weldResult = mesResult ? 1 : 2;
-                    await UpdateCodeEntityTestResult(spCode, weldResult);
-                    string newCount = await UpdateBTEntityCount(bottomCode);
-                    if (int.TryParse(newCount, out int countValue))
-                    {
-                        await WritePlcRegister(_plcAddr.Jig1Count, countValue);
-                        PlcD108 = countValue;
-                        this.RaisePropertyChanged(nameof(Jig1UseCount));
-                    }
-                    else
-                    {
-                        Logs.LogWarn(string.Format(MultiLang.Jig1CountConvertFail, newCount));
-                        await WritePlcRegister(_plcAddr.Jig1Count, 0);
-                        PlcD108 = 0;
-                    }
+        //            int weldResult = mesResult ? 1 : 2;
+        //            await UpdateCodeEntityTestResult(spCode, weldResult);
+        //            string newCount = await UpdateBTEntityCount(bottomCode);
+        //            if (int.TryParse(newCount, out int countValue))
+        //            {
+        //                await WritePlcRegister(_plcAddr.Jig1Count, countValue);
+        //                PlcD108 = countValue;
+        //                this.RaisePropertyChanged(nameof(Jig1UseCount));
+        //            }
+        //            else
+        //            {
+        //                Logs.LogWarn(string.Format(MultiLang.Jig1CountConvertFail, newCount));
+        //                await WritePlcRegister(_plcAddr.Jig1Count, 0);
+        //                PlcD108 = 0;
+        //            }
 
-                    // 写入焊接最终结果
-                    await WritePlcRegister(_plcAddr.Jig1WeldFinalResult, weldResult);
-                    PlcD104 = weldResult;
-                    _currentJig1BottomCode = bottomCode;
-                    // 添加扫描记录
-                    await AddScanRecordAsync(new ScanRecord
-                    {
-                        CreateTime = DateTime.Now,
-                        JigNo = MultiLang.Jig1,
-                        ScanType = MultiLang.ScanTypeWeldResult,
-                        BottomCode = bottomCode,
-                        SPCode = spCode,
-                        Result = weldResult.ToString(),
-                        Remark = mesResult ? MultiLang.MesOkRemark : MultiLang.MesNgRemark
-                    });
+        //            // 写入焊接最终结果
+        //            await WritePlcRegister(_plcAddr.Jig1WeldFinalResult, weldResult);
+        //            PlcD104 = weldResult;
+        //            _currentJig1BottomCode = bottomCode;
+        //            // 添加扫描记录
+        //            await AddScanRecordAsync(new ScanRecord
+        //            {
+        //                CreateTime = DateTime.Now,
+        //                JigNo = MultiLang.Jig1,
+        //                ScanType = MultiLang.ScanTypeWeldResult,
+        //                BottomCode = bottomCode,
+        //                SPCode = spCode,
+        //                Result = weldResult.ToString(),
+        //                Remark = mesResult ? MultiLang.MesOkRemark : MultiLang.MesNgRemark
+        //            });
 
-                    Logs.LogInfo(string.Format(MultiLang.Jig1WeldComplete, bottomCode, spCode, mesResult ? MultiLang.Ok : MultiLang.Ng, PlcD108));
-                }
-                else
-                {
-                    Logs.LogWarn(MultiLang.Jig1WeldScanFailRetryExhausted);
-                    await WritePlcRegister(_plcAddr.Jig1WeldFinalResult, 2);
-                    PlcD104 = 2;
+        //            Logs.LogInfo(string.Format(MultiLang.Jig1WeldComplete, bottomCode, spCode, mesResult ? MultiLang.Ok : MultiLang.Ng, PlcD108));
+        //        }
+        //        else
+        //        {
+        //            Logs.LogWarn(MultiLang.Jig1WeldScanFailRetryExhausted);
+        //            await WritePlcRegister(_plcAddr.Jig1WeldFinalResult, 2);
+        //            PlcD104 = 2;
 
-                    await AddScanRecordAsync(new ScanRecord
-                    {
-                        CreateTime = DateTime.Now,
-                        JigNo = MultiLang.Jig1,
-                        ScanType = MultiLang.ScanTypeWeldResult,
-                        BottomCode = bottomCode,
-                        SPCode = spCode,
-                        Result = "2",
-                        Remark = MultiLang.ScanFailRetryExhaustedRemark
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, string.Format(MultiLang.Jig1WeldException, bottomCode, spCode));
-                await WritePlcRegister(_plcAddr.Jig1WeldFinalResult, 2);
-                PlcD104 = 2;
+        //            await AddScanRecordAsync(new ScanRecord
+        //            {
+        //                CreateTime = DateTime.Now,
+        //                JigNo = MultiLang.Jig1,
+        //                ScanType = MultiLang.ScanTypeWeldResult,
+        //                BottomCode = bottomCode,
+        //                SPCode = spCode,
+        //                Result = "2",
+        //                Remark = MultiLang.ScanFailRetryExhaustedRemark
+        //            });
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logs.LogError(ex, string.Format(MultiLang.Jig1WeldException, bottomCode, spCode));
+        //        await WritePlcRegister(_plcAddr.Jig1WeldFinalResult, 2);
+        //        PlcD104 = 2;
 
-                await AddScanRecordAsync(new ScanRecord
-                {
-                    CreateTime = DateTime.Now,
-                    JigNo = MultiLang.Jig1,
-                    ScanType = MultiLang.ScanTypeWeldResult,
-                    BottomCode = bottomCode,
-                    SPCode = spCode,
-                    Result = "2",
-                    Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
-                });
-            }
-        }
+        //        await AddScanRecordAsync(new ScanRecord
+        //        {
+        //            CreateTime = DateTime.Now,
+        //            JigNo = MultiLang.Jig1,
+        //            ScanType = MultiLang.ScanTypeWeldResult,
+        //            BottomCode = bottomCode,
+        //            SPCode = spCode,
+        //            Result = "2",
+        //            Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
+        //        });
+        //    }
+        //}
 
-        private async Task ProcessJig1Clear()
-        {
-            Logs.LogInfo(MultiLang.Jig1StartClearProcess);
-            await WritePlcRegister(_plcAddr.Jig1TriggerClear, 0);
-            PlcD2 = "0";
+        //private async Task ProcessJig1Clear()
+        //{
+        //    Logs.LogInfo(MultiLang.Jig1StartClearProcess);
+        //    await WritePlcRegister(_plcAddr.Jig1TriggerClear, 0);
+        //    PlcD2 = "0";
 
-            string bottomCode = string.Empty;
-            bool scanSuccess = false;
+        //    string bottomCode = string.Empty;
+        //    bool scanSuccess = false;
 
-            try
-            {
-                string bottomRaw = string.Empty;
-                if (IsNoHardwareMode)
-                {
-                    bottomCode = $"B{DateTime.Now:yyyyMMddHHmmss}";
-                    scanSuccess = true;
-                }
-                else
-                {
-                    bottomRaw = await _hardwareService.TriggerScanner(ScannerType.左下);
+        //    try
+        //    {
+        //        string bottomRaw = string.Empty;
+        //        if (IsNoHardwareMode)
+        //        {
+        //            bottomCode = $"B{DateTime.Now:yyyyMMddHHmmss}";
+        //            scanSuccess = true;
+        //        }
+        //        else
+        //        {
+        //            bottomRaw = await _hardwareService.TriggerScanner(ScannerType.左下);
 
-                    if (TryParseBottomAndSpCode(bottomRaw, _rightDownScannerConfig.CodeDelimiter, out string parsedBottom, out string parsedSp))
-                    {
-                        bottomCode = parsedBottom;
-                        scanSuccess = !string.IsNullOrEmpty(bottomCode);
-                    }
-                    else
-                    {
-                        Logs.LogWarn(string.Format(MultiLang.Jig1ClearParseFail, bottomRaw));
-                    }
+        //            if (TryParseBottomAndSpCode(bottomRaw, _rightDownScannerConfig.CodeDelimiter, out string parsedBottom, out string parsedSp))
+        //            {
+        //                bottomCode = parsedBottom;
+        //                scanSuccess = !string.IsNullOrEmpty(bottomCode);
+        //            }
+        //            else
+        //            {
+        //                Logs.LogWarn(string.Format(MultiLang.Jig1ClearParseFail, bottomRaw));
+        //            }
 
-                }
+        //        }
 
-                if (scanSuccess)
-                {
-                    await ClearBTEntityCount(bottomCode);
-                    await WritePlcRegister(_plcAddr.Jig1Count, 0);
-                    PlcD108 = 0;
-                    this.RaisePropertyChanged(nameof(Jig1UseCount));
+        //        if (scanSuccess)
+        //        {
+        //            await ClearBTEntityCount(bottomCode);
+        //            await WritePlcRegister(_plcAddr.Jig1Count, 0);
+        //            PlcD108 = 0;
+        //            this.RaisePropertyChanged(nameof(Jig1UseCount));
 
-                    Logs.LogInfo(string.Format(MultiLang.Jig1ClearComplete, bottomCode));
+        //            Logs.LogInfo(string.Format(MultiLang.Jig1ClearComplete, bottomCode));
 
-                    await AddScanRecordAsync(new ScanRecord
-                    {
-                        CreateTime = DateTime.Now,
-                        JigNo = MultiLang.Jig1,
-                        ScanType = MultiLang.ScanTypeClear,
-                        BottomCode = bottomCode,
-                        Result = "1",
-                        Remark = MultiLang.ClearSuccessRemark
-                    });
-                }
-                else
-                {
-                    Logs.LogWarn(MultiLang.Jig1ClearFailNoCode);
+        //            await AddScanRecordAsync(new ScanRecord
+        //            {
+        //                CreateTime = DateTime.Now,
+        //                JigNo = MultiLang.Jig1,
+        //                ScanType = MultiLang.ScanTypeClear,
+        //                BottomCode = bottomCode,
+        //                Result = "1",
+        //                Remark = MultiLang.ClearSuccessRemark
+        //            });
+        //        }
+        //        else
+        //        {
+        //            Logs.LogWarn(MultiLang.Jig1ClearFailNoCode);
 
-                    await AddScanRecordAsync(new ScanRecord
-                    {
-                        CreateTime = DateTime.Now,
-                        JigNo = MultiLang.Jig1,
-                        ScanType = MultiLang.ScanTypeClear,
-                        BottomCode = bottomCode,
-                        Result = "2",
-                        Remark = MultiLang.ScanFailRemark
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, string.Format(MultiLang.Jig1ClearException, bottomCode));
-                await AddScanRecordAsync(new ScanRecord
-                {
-                    CreateTime = DateTime.Now,
-                    JigNo = MultiLang.Jig1,
-                    ScanType = MultiLang.ScanTypeClear,
-                    BottomCode = bottomCode,
-                    Result = "2",
-                    Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
-                });
-            }
-        }
+        //            await AddScanRecordAsync(new ScanRecord
+        //            {
+        //                CreateTime = DateTime.Now,
+        //                JigNo = MultiLang.Jig1,
+        //                ScanType = MultiLang.ScanTypeClear,
+        //                BottomCode = bottomCode,
+        //                Result = "2",
+        //                Remark = MultiLang.ScanFailRemark
+        //            });
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logs.LogError(ex, string.Format(MultiLang.Jig1ClearException, bottomCode));
+        //        await AddScanRecordAsync(new ScanRecord
+        //        {
+        //            CreateTime = DateTime.Now,
+        //            JigNo = MultiLang.Jig1,
+        //            ScanType = MultiLang.ScanTypeClear,
+        //            BottomCode = bottomCode,
+        //            Result = "2",
+        //            Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
+        //        });
+        //    }
+        //}
 
         #endregion
 
         #region 治具2核心逻辑
 
-        private async Task ProcessJig2Logic(int curD3, int curD4, int curD5)
-        {
-            try
-            {
-                if (!await _jig2ProcessLock.WaitAsync(0)) return;
-                // 底/顶部扫码触发（上升沿）
-                if (_lastD3 == 0 && curD3 == 1)
-                {
-                    Logs.LogDebug(MultiLang.Jig2DetectedScanTrigger);
-                    await ProcessJig2Scan();
-                }
+        //private async Task ProcessJig2Logic(int curD3, int curD4, int curD5)
+        //{
+        //    try
+        //    {
+        //        if (!await _jig2ProcessLock.WaitAsync(0)) return;
+        //        // 底/顶部扫码触发（上升沿）
+        //        if (_lastD3 == 0 && curD3 == 1)
+        //        {
+        //            Logs.LogDebug(MultiLang.Jig2DetectedScanTrigger);
+        //            await ProcessJig2Scan();
+        //        }
 
-                // 焊接结果扫码触发（上升沿）
-                if (_lastD4 == 0 && curD4 == 1)
-                {
-                    Logs.LogDebug(MultiLang.Jig2DetectedWeldTrigger);
-                    await ProcessJig2Weld();
-                }
+        //        // 焊接结果扫码触发（上升沿）
+        //        if (_lastD4 == 0 && curD4 == 1)
+        //        {
+        //            Logs.LogDebug(MultiLang.Jig2DetectedWeldTrigger);
+        //            await ProcessJig2Weld();
+        //        }
 
-                // 清零触发（上升沿）
-                if (_lastD5 == 0 && curD5 == 1)
-                {
-                    Logs.LogDebug(MultiLang.Jig2DetectedClearTrigger);
-                    await ProcessJig2Clear();
-                }
-            }
-            catch (ObjectDisposedException)
-            {
-                // 信号量已释放，直接返回
-                return;
-            }
-            finally
-            {
-                _jig2ProcessLock.Release();
-            }
+        //        // 清零触发（上升沿）
+        //        if (_lastD5 == 0 && curD5 == 1)
+        //        {
+        //            Logs.LogDebug(MultiLang.Jig2DetectedClearTrigger);
+        //            await ProcessJig2Clear();
+        //        }
+        //    }
+        //    catch (ObjectDisposedException)
+        //    {
+        //        // 信号量已释放，直接返回
+        //        return;
+        //    }
+        //    finally
+        //    {
+        //        _jig2ProcessLock.Release();
+        //    }
 
-        }
+        //}
 
-        private async Task ProcessJig2Scan()
-        {
-            Logs.LogInfo(MultiLang.Jig2StartScanProcess);
-            await WritePlcRegister(_plcAddr.Jig2TriggerScan, 0);
-            PlcD3 = "0";
+        //private async Task ProcessJig2Scan()
+        //{
+        //    Logs.LogInfo(MultiLang.Jig2StartScanProcess);
+        //    await WritePlcRegister(_plcAddr.Jig2TriggerScan, 0);
+        //    PlcD3 = "0";
 
-            string bottomCode = string.Empty;
-            string spCode = string.Empty;
-            string topCode = string.Empty;
-            bool scanSuccess = false;
-            bool verifySuccess = false;
-            int retryCount = 0;
+        //    string bottomCode = string.Empty;
+        //    string spCode = string.Empty;
+        //    string topCode = string.Empty;
+        //    bool scanSuccess = false;
+        //    bool verifySuccess = false;
+        //    int retryCount = 0;
 
-            try
-            {
-                while (retryCount < _runConfig.ScanRetryCount && !scanSuccess)
-                {
-                    if (retryCount > 0)
-                    {
-                        Logs.LogDebug(string.Format(MultiLang.Jig2ScanParseRetry, retryCount));
-                        await Task.Delay(_runConfig.ScanRetryDelay);
-                    }
+        //    try
+        //    {
+        //        while (retryCount < _runConfig.ScanRetryCount && !scanSuccess)
+        //        {
+        //            if (retryCount > 0)
+        //            {
+        //                Logs.LogDebug(string.Format(MultiLang.Jig2ScanParseRetry, retryCount));
+        //                await Task.Delay(_runConfig.ScanRetryDelay);
+        //            }
 
-                    if (IsNoHardwareMode)
-                    {
-                        bottomCode = $"H-B{DateTime.Now:yyyyMMddHHmmss}";
-                        spCode = $"SP{DateTime.Now:yyyyMMddHHmmss}";
-                        topCode = $"T{DateTime.Now:yyyyMMddHHmmss}";
-                        scanSuccess = true;
-                    }
-                    else
-                    {
-                        // 触发右下扫码枪（返回双码）和右上扫码枪
-                        var bottomTask = _hardwareService.TriggerScanner(ScannerType.右下);
-                        var topTask = _hardwareService.TriggerScanner(ScannerType.右上);
-                        await Task.WhenAll(bottomTask, topTask);
-                        string bottomRaw = await bottomTask;
-                        topCode = await topTask;
+        //            if (IsNoHardwareMode)
+        //            {
+        //                bottomCode = $"H-B{DateTime.Now:yyyyMMddHHmmss}";
+        //                spCode = $"SP{DateTime.Now:yyyyMMddHHmmss}";
+        //                topCode = $"T{DateTime.Now:yyyyMMddHHmmss}";
+        //                scanSuccess = true;
+        //            }
+        //            else
+        //            {
+        //                // 触发右下扫码枪（返回双码）和右上扫码枪
+        //                var bottomTask = _hardwareService.TriggerScanner(ScannerType.右下);
+        //                var topTask = _hardwareService.TriggerScanner(ScannerType.右上);
+        //                await Task.WhenAll(bottomTask, topTask);
+        //                string bottomRaw = await bottomTask;
+        //                topCode = await topTask;
 
-                        // 解析右下扫码结果
-                        if (TryParseBottomAndSpCode(bottomRaw, _rightDownScannerConfig.CodeDelimiter, out string parsedBottom, out string parsedSp))
-                        {
-                            bottomCode = parsedBottom;
-                            spCode = parsedSp;
-                            scanSuccess = !string.IsNullOrEmpty(bottomCode) && !string.IsNullOrEmpty(spCode) && !string.IsNullOrEmpty(topCode);
-                        }
-                        else
-                        {
-                            Logs.LogWarn(string.Format(MultiLang.Jig2BottomScanFormatError, bottomRaw));
-                        }
-                    }
+        //                // 解析右下扫码结果
+        //                if (TryParseBottomAndSpCode(bottomRaw, _rightDownScannerConfig.CodeDelimiter, out string parsedBottom, out string parsedSp))
+        //                {
+        //                    bottomCode = parsedBottom;
+        //                    spCode = parsedSp;
+        //                    scanSuccess = !string.IsNullOrEmpty(bottomCode) && !string.IsNullOrEmpty(spCode) && !string.IsNullOrEmpty(topCode);
+        //                }
+        //                else
+        //                {
+        //                    Logs.LogWarn(string.Format(MultiLang.Jig2BottomScanFormatError, bottomRaw));
+        //                }
+        //            }
 
-                    retryCount++;
-                }
+        //            retryCount++;
+        //        }
 
-                if (scanSuccess)
-                {
-                    await WritePlcRegister(_plcAddr.Jig2ScanResult, 1);
-                    PlcD102 = 1;
+        //        if (scanSuccess)
+        //        {
+        //            await WritePlcRegister(_plcAddr.Jig2ScanResult, 1);
+        //            PlcD102 = 1;
 
-                    verifySuccess = await VerifyBottomTopCode(bottomCode, topCode);
+        //            verifySuccess = await VerifyBottomTopCode(bottomCode, topCode);
 
-                    if (verifySuccess)
-                    {
-                        Logs.LogInfo(string.Format(MultiLang.Jig2VerifySuccess, bottomCode, topCode, spCode));
-                        await UpdateOrAddCodeEntity(bottomCode, topCode, spCode);
-                        await WritePlcRegister(_plcAddr.Jig2CompareResult, 1);
-                        PlcD107 = 1;
-                    }
-                    else
-                    {
-                        Logs.LogWarn(string.Format(MultiLang.Jig2VerifyFail, bottomCode, topCode));
-                        await WritePlcRegister(_plcAddr.Jig2CompareResult, 2);
-                        PlcD107 = 2;
-                    }
+        //            if (verifySuccess)
+        //            {
+        //                Logs.LogInfo(string.Format(MultiLang.Jig2VerifySuccess, bottomCode, topCode, spCode));
+        //                await UpdateOrAddCodeEntity(bottomCode, topCode, spCode);
+        //                await WritePlcRegister(_plcAddr.Jig2CompareResult, 1);
+        //                PlcD107 = 1;
+        //            }
+        //            else
+        //            {
+        //                Logs.LogWarn(string.Format(MultiLang.Jig2VerifyFail, bottomCode, topCode));
+        //                await WritePlcRegister(_plcAddr.Jig2CompareResult, 2);
+        //                PlcD107 = 2;
+        //            }
 
-                    await AddScanRecordAsync(new ScanRecord
-                    {
-                        CreateTime = DateTime.Now,
-                        JigNo = MultiLang.Jig2,
-                        ScanType = MultiLang.ScanTypeBottomTop,
-                        BottomCode = bottomCode,
-                        TopCode = topCode,
-                        SPCode = spCode,
-                        Result = verifySuccess ? "1" : "2",
-                        Remark = verifySuccess ? MultiLang.VerifySuccessRemark : MultiLang.VerifyFailRemark
-                    });
-                }
-                else
-                {
-                    Logs.LogWarn(MultiLang.Jig2ScanFailRetryExhausted);
-                    await WritePlcRegister(_plcAddr.Jig2CompareResult, 2);
-                    PlcD107 = 2;
+        //            await AddScanRecordAsync(new ScanRecord
+        //            {
+        //                CreateTime = DateTime.Now,
+        //                JigNo = MultiLang.Jig2,
+        //                ScanType = MultiLang.ScanTypeBottomTop,
+        //                BottomCode = bottomCode,
+        //                TopCode = topCode,
+        //                SPCode = spCode,
+        //                Result = verifySuccess ? "1" : "2",
+        //                Remark = verifySuccess ? MultiLang.VerifySuccessRemark : MultiLang.VerifyFailRemark
+        //            });
+        //        }
+        //        else
+        //        {
+        //            Logs.LogWarn(MultiLang.Jig2ScanFailRetryExhausted);
+        //            await WritePlcRegister(_plcAddr.Jig2CompareResult, 2);
+        //            PlcD107 = 2;
 
-                    await AddScanRecordAsync(new ScanRecord
-                    {
-                        CreateTime = DateTime.Now,
-                        JigNo = MultiLang.Jig2,
-                        ScanType = MultiLang.ScanTypeBottomTop,
-                        BottomCode = bottomCode,
-                        TopCode = topCode,
-                        SPCode = spCode,
-                        Result = "2",
-                        Remark = MultiLang.ScanFailRetryExhaustedRemark
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, string.Format(MultiLang.Jig2ScanException, bottomCode));
-                await WritePlcRegister(_plcAddr.Jig2CompareResult, 2);
-                PlcD107 = 2;
+        //            await AddScanRecordAsync(new ScanRecord
+        //            {
+        //                CreateTime = DateTime.Now,
+        //                JigNo = MultiLang.Jig2,
+        //                ScanType = MultiLang.ScanTypeBottomTop,
+        //                BottomCode = bottomCode,
+        //                TopCode = topCode,
+        //                SPCode = spCode,
+        //                Result = "2",
+        //                Remark = MultiLang.ScanFailRetryExhaustedRemark
+        //            });
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logs.LogError(ex, string.Format(MultiLang.Jig2ScanException, bottomCode));
+        //        await WritePlcRegister(_plcAddr.Jig2CompareResult, 2);
+        //        PlcD107 = 2;
 
-                await AddScanRecordAsync(new ScanRecord
-                {
-                    CreateTime = DateTime.Now,
-                    JigNo = MultiLang.Jig2,
-                    ScanType = MultiLang.ScanTypeBottomTop,
-                    BottomCode = bottomCode,
-                    TopCode = topCode,
-                    SPCode = spCode,
-                    Result = "2",
-                    Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
-                });
-            }
-        }
+        //        await AddScanRecordAsync(new ScanRecord
+        //        {
+        //            CreateTime = DateTime.Now,
+        //            JigNo = MultiLang.Jig2,
+        //            ScanType = MultiLang.ScanTypeBottomTop,
+        //            BottomCode = bottomCode,
+        //            TopCode = topCode,
+        //            SPCode = spCode,
+        //            Result = "2",
+        //            Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
+        //        });
+        //    }
+        //}
 
-        /// <summary>
-        /// 治具2焊接结果扫码处理
-        /// </summary>
-        private async Task ProcessJig2Weld()
-        {
-            Logs.LogInfo(MultiLang.Jig2StartWeldProcess);
-            await WritePlcRegister(_plcAddr.Jig2TriggerWeld, 0);
-            PlcD4 = "0";
+        ///// <summary>
+        ///// 治具2焊接结果扫码处理
+        ///// </summary>
+        //private async Task ProcessJig2Weld()
+        //{
+        //    Logs.LogInfo(MultiLang.Jig2StartWeldProcess);
+        //    await WritePlcRegister(_plcAddr.Jig2TriggerWeld, 0);
+        //    PlcD4 = "0";
 
-            string bottomCode = string.Empty;
-            string spCode = string.Empty;
-            bool scanSuccess = false;
-            int retryCount = 0;
+        //    string bottomCode = string.Empty;
+        //    string spCode = string.Empty;
+        //    bool scanSuccess = false;
+        //    int retryCount = 0;
 
-            try
-            {
-                while (retryCount < _runConfig.ScanRetryCount && !scanSuccess)
-                {
-                    if (retryCount > 0)
-                    {
-                        Logs.LogDebug(string.Format(MultiLang.Jig2WeldParseRetry, retryCount));
-                        await Task.Delay(_runConfig.ScanRetryDelay);
-                    }
+        //    try
+        //    {
+        //        while (retryCount < _runConfig.ScanRetryCount && !scanSuccess)
+        //        {
+        //            if (retryCount > 0)
+        //            {
+        //                Logs.LogDebug(string.Format(MultiLang.Jig2WeldParseRetry, retryCount));
+        //                await Task.Delay(_runConfig.ScanRetryDelay);
+        //            }
 
-                    string bottomRaw = string.Empty;
+        //            string bottomRaw = string.Empty;
 
-                    if (IsNoHardwareMode)
-                    {
-                        bottomRaw = $"H-B{DateTime.Now:yyyyMMddHHmmss}{_rightDownScannerConfig.CodeDelimiter}SP{DateTime.Now:yyyyMMddHHmmss}";
-                    }
-                    else
-                    {
-                        // 只触发右下扫码枪（返回双码）
-                        bottomRaw = await _hardwareService.TriggerScanner(ScannerType.右下);
-                    }
+        //            if (IsNoHardwareMode)
+        //            {
+        //                bottomRaw = $"H-B{DateTime.Now:yyyyMMddHHmmss}{_rightDownScannerConfig.CodeDelimiter}SP{DateTime.Now:yyyyMMddHHmmss}";
+        //            }
+        //            else
+        //            {
+        //                // 只触发右下扫码枪（返回双码）
+        //                bottomRaw = await _hardwareService.TriggerScanner(ScannerType.右下);
+        //            }
 
-                    if (TryParseBottomAndSpCode(bottomRaw, _rightDownScannerConfig.CodeDelimiter, out string parsedBottom, out string parsedSp))
-                    {
-                        bottomCode = parsedBottom;
-                        spCode = parsedSp;
-                        scanSuccess = !string.IsNullOrEmpty(bottomCode) && !string.IsNullOrEmpty(spCode);
-                    }
-                    else
-                    {
-                        Logs.LogWarn(string.Format(MultiLang.Jig2WeldParseFail, bottomRaw));
-                    }
+        //            if (TryParseBottomAndSpCode(bottomRaw, _rightDownScannerConfig.CodeDelimiter, out string parsedBottom, out string parsedSp))
+        //            {
+        //                bottomCode = parsedBottom;
+        //                spCode = parsedSp;
+        //                scanSuccess = !string.IsNullOrEmpty(bottomCode) && !string.IsNullOrEmpty(spCode);
+        //            }
+        //            else
+        //            {
+        //                Logs.LogWarn(string.Format(MultiLang.Jig2WeldParseFail, bottomRaw));
+        //            }
 
-                    retryCount++;
-                }
+        //            retryCount++;
+        //        }
 
-                if (scanSuccess)
-                {
-                    await WritePlcRegister(_plcAddr.Jig2WeldResult, 1);
-                    PlcD103 = 1;
+        //        if (scanSuccess)
+        //        {
+        //            await WritePlcRegister(_plcAddr.Jig2WeldResult, 1);
+        //            PlcD103 = 1;
 
-                    bool mesResult = false;
-                    if (__softwareConfig.IsSFC)
-                    {
-                        mesResult = await _mesService.GetMesTestResult(spCode);
-                    }
-                    else
-                    {
-                        mesResult = true;
-                    }
-                    int weldResult = mesResult ? 1 : 2;
+        //            bool mesResult = false;
+        //            if (_softwareConfig.IsSFC)
+        //            {
+        //                mesResult = await _mesService.GetMesTestResult(spCode);
+        //            }
+        //            else
+        //            {
+        //                mesResult = true;
+        //            }
+        //            int weldResult = mesResult ? 1 : 2;
 
-                    await UpdateCodeEntityTestResult(spCode, weldResult);
+        //            await UpdateCodeEntityTestResult(spCode, weldResult);
 
-                    string newCount = await UpdateBTEntityCount(bottomCode);
-                    if (int.TryParse(newCount, out int countValue))
-                    {
-                        await WritePlcRegister(_plcAddr.Jig2Count, countValue);
-                        PlcD109 = countValue;
-                        this.RaisePropertyChanged(nameof(Jig2UseCount));
-                    }
-                    else
-                    {
-                        Logs.LogWarn(string.Format(MultiLang.Jig2CountConvertFail, newCount));
-                        await WritePlcRegister(_plcAddr.Jig2Count, 0);
-                        PlcD109 = 0;
-                    }
+        //            string newCount = await UpdateBTEntityCount(bottomCode);
+        //            if (int.TryParse(newCount, out int countValue))
+        //            {
+        //                await WritePlcRegister(_plcAddr.Jig2Count, countValue);
+        //                PlcD109 = countValue;
+        //                this.RaisePropertyChanged(nameof(Jig2UseCount));
+        //            }
+        //            else
+        //            {
+        //                Logs.LogWarn(string.Format(MultiLang.Jig2CountConvertFail, newCount));
+        //                await WritePlcRegister(_plcAddr.Jig2Count, 0);
+        //                PlcD109 = 0;
+        //            }
 
-                    await WritePlcRegister(_plcAddr.Jig2WeldFinalResult, weldResult);
-                    PlcD105 = weldResult;
+        //            await WritePlcRegister(_plcAddr.Jig2WeldFinalResult, weldResult);
+        //            PlcD105 = weldResult;
 
-                    await AddScanRecordAsync(new ScanRecord
-                    {
-                        CreateTime = DateTime.Now,
-                        JigNo = MultiLang.Jig2,
-                        ScanType = MultiLang.ScanTypeWeldResult,
-                        BottomCode = bottomCode,
-                        SPCode = spCode,
-                        Result = weldResult.ToString(),
-                        Remark = mesResult ? MultiLang.MesOkRemark : MultiLang.MesNgRemark
-                    });
+        //            await AddScanRecordAsync(new ScanRecord
+        //            {
+        //                CreateTime = DateTime.Now,
+        //                JigNo = MultiLang.Jig2,
+        //                ScanType = MultiLang.ScanTypeWeldResult,
+        //                BottomCode = bottomCode,
+        //                SPCode = spCode,
+        //                Result = weldResult.ToString(),
+        //                Remark = mesResult ? MultiLang.MesOkRemark : MultiLang.MesNgRemark
+        //            });
 
-                    Logs.LogInfo(string.Format(MultiLang.Jig2WeldComplete, bottomCode, spCode, mesResult ? MultiLang.Ok : MultiLang.Ng, PlcD109));
-                }
-                else
-                {
-                    Logs.LogWarn(MultiLang.Jig2WeldScanFailRetryExhausted);
-                    await WritePlcRegister(_plcAddr.Jig2WeldFinalResult, 2);
-                    PlcD105 = 2;
-                    _currentJig2BottomCode = bottomCode;
-                    await AddScanRecordAsync(new ScanRecord
-                    {
-                        CreateTime = DateTime.Now,
-                        JigNo = MultiLang.Jig2,
-                        ScanType = MultiLang.ScanTypeWeldResult,
-                        BottomCode = bottomCode,
-                        SPCode = spCode,
-                        Result = "2",
-                        Remark = MultiLang.ScanFailRetryExhaustedRemark
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, string.Format(MultiLang.Jig2WeldException, bottomCode, spCode));
-                await WritePlcRegister(_plcAddr.Jig2WeldFinalResult, 2);
-                PlcD105 = 2;
+        //            Logs.LogInfo(string.Format(MultiLang.Jig2WeldComplete, bottomCode, spCode, mesResult ? MultiLang.Ok : MultiLang.Ng, PlcD109));
+        //        }
+        //        else
+        //        {
+        //            Logs.LogWarn(MultiLang.Jig2WeldScanFailRetryExhausted);
+        //            await WritePlcRegister(_plcAddr.Jig2WeldFinalResult, 2);
+        //            PlcD105 = 2;
+        //            _currentJig2BottomCode = bottomCode;
+        //            await AddScanRecordAsync(new ScanRecord
+        //            {
+        //                CreateTime = DateTime.Now,
+        //                JigNo = MultiLang.Jig2,
+        //                ScanType = MultiLang.ScanTypeWeldResult,
+        //                BottomCode = bottomCode,
+        //                SPCode = spCode,
+        //                Result = "2",
+        //                Remark = MultiLang.ScanFailRetryExhaustedRemark
+        //            });
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logs.LogError(ex, string.Format(MultiLang.Jig2WeldException, bottomCode, spCode));
+        //        await WritePlcRegister(_plcAddr.Jig2WeldFinalResult, 2);
+        //        PlcD105 = 2;
 
-                await AddScanRecordAsync(new ScanRecord
-                {
-                    CreateTime = DateTime.Now,
-                    JigNo = MultiLang.Jig2,
-                    ScanType = MultiLang.ScanTypeWeldResult,
-                    BottomCode = bottomCode,
-                    SPCode = spCode,
-                    Result = "2",
-                    Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
-                });
-            }
-        }
+        //        await AddScanRecordAsync(new ScanRecord
+        //        {
+        //            CreateTime = DateTime.Now,
+        //            JigNo = MultiLang.Jig2,
+        //            ScanType = MultiLang.ScanTypeWeldResult,
+        //            BottomCode = bottomCode,
+        //            SPCode = spCode,
+        //            Result = "2",
+        //            Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
+        //        });
+        //    }
+        //}
 
-        private async Task ProcessJig2Clear()
-        {
-            Logs.LogInfo(MultiLang.Jig2StartClearProcess);
-            await WritePlcRegister(_plcAddr.Jig2TriggerClear, 0);
-            PlcD5 = "0";
+        //private async Task ProcessJig2Clear()
+        //{
+        //    Logs.LogInfo(MultiLang.Jig2StartClearProcess);
+        //    await WritePlcRegister(_plcAddr.Jig2TriggerClear, 0);
+        //    PlcD5 = "0";
 
-            string bottomCode = string.Empty;
-            bool scanSuccess = false;
+        //    string bottomCode = string.Empty;
+        //    bool scanSuccess = false;
 
-            try
-            {
-                string bottomRaw = string.Empty;
-                if (IsNoHardwareMode)
-                {
-                    bottomCode = $"B{DateTime.Now:yyyyMMddHHmmss}";
-                    scanSuccess = true;
-                }
-                else
-                {
-                    bottomRaw = await _hardwareService.TriggerScanner(ScannerType.右下);
+        //    try
+        //    {
+        //        string bottomRaw = string.Empty;
+        //        if (IsNoHardwareMode)
+        //        {
+        //            bottomCode = $"B{DateTime.Now:yyyyMMddHHmmss}";
+        //            scanSuccess = true;
+        //        }
+        //        else
+        //        {
+        //            bottomRaw = await _hardwareService.TriggerScanner(ScannerType.右下);
 
-                    if (TryParseBottomAndSpCode(bottomRaw, _rightDownScannerConfig.CodeDelimiter, out string parsedBottom, out string parsedSp))
-                    {
-                        bottomCode = parsedBottom;
-                        scanSuccess = !string.IsNullOrEmpty(bottomCode);
-                    }
-                    else
-                    {
-                        Logs.LogWarn(string.Format(MultiLang.Jig2ClearParseFail, bottomRaw));
-                    }
+        //            if (TryParseBottomAndSpCode(bottomRaw, _rightDownScannerConfig.CodeDelimiter, out string parsedBottom, out string parsedSp))
+        //            {
+        //                bottomCode = parsedBottom;
+        //                scanSuccess = !string.IsNullOrEmpty(bottomCode);
+        //            }
+        //            else
+        //            {
+        //                Logs.LogWarn(string.Format(MultiLang.Jig2ClearParseFail, bottomRaw));
+        //            }
 
-                    scanSuccess = !string.IsNullOrEmpty(bottomCode);
-                }
+        //            scanSuccess = !string.IsNullOrEmpty(bottomCode);
+        //        }
 
-                if (scanSuccess)
-                {
-                    await ClearBTEntityCount(bottomCode);
-                    await WritePlcRegister(_plcAddr.Jig2Count, 0);
-                    PlcD109 = 0;
-                    this.RaisePropertyChanged(nameof(Jig2UseCount));
+        //        if (scanSuccess)
+        //        {
+        //            await ClearBTEntityCount(bottomCode);
+        //            await WritePlcRegister(_plcAddr.Jig2Count, 0);
+        //            PlcD109 = 0;
+        //            this.RaisePropertyChanged(nameof(Jig2UseCount));
 
-                    Logs.LogInfo(string.Format(MultiLang.Jig2ClearComplete, bottomCode));
+        //            Logs.LogInfo(string.Format(MultiLang.Jig2ClearComplete, bottomCode));
 
-                    await AddScanRecordAsync(new ScanRecord
-                    {
-                        CreateTime = DateTime.Now,
-                        JigNo = MultiLang.Jig2,
-                        ScanType = MultiLang.ScanTypeClear,
-                        BottomCode = bottomCode,
-                        Result = "1",
-                        Remark = MultiLang.ClearSuccessRemark
-                    });
-                }
-                else
-                {
-                    Logs.LogWarn(MultiLang.Jig2ClearFailNoCode);
+        //            await AddScanRecordAsync(new ScanRecord
+        //            {
+        //                CreateTime = DateTime.Now,
+        //                JigNo = MultiLang.Jig2,
+        //                ScanType = MultiLang.ScanTypeClear,
+        //                BottomCode = bottomCode,
+        //                Result = "1",
+        //                Remark = MultiLang.ClearSuccessRemark
+        //            });
+        //        }
+        //        else
+        //        {
+        //            Logs.LogWarn(MultiLang.Jig2ClearFailNoCode);
 
-                    await AddScanRecordAsync(new ScanRecord
-                    {
-                        CreateTime = DateTime.Now,
-                        JigNo = MultiLang.Jig2,
-                        ScanType = MultiLang.ScanTypeClear,
-                        BottomCode = bottomCode,
-                        Result = "2",
-                        Remark = MultiLang.ScanFailRemark
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, string.Format(MultiLang.Jig2ClearException, bottomCode));
-                await AddScanRecordAsync(new ScanRecord
-                {
-                    CreateTime = DateTime.Now,
-                    JigNo = MultiLang.Jig2,
-                    ScanType = MultiLang.ScanTypeClear,
-                    BottomCode = bottomCode,
-                    Result = "2",
-                    Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
-                });
-            }
-        }
+        //            await AddScanRecordAsync(new ScanRecord
+        //            {
+        //                CreateTime = DateTime.Now,
+        //                JigNo = MultiLang.Jig2,
+        //                ScanType = MultiLang.ScanTypeClear,
+        //                BottomCode = bottomCode,
+        //                Result = "2",
+        //                Remark = MultiLang.ScanFailRemark
+        //            });
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logs.LogError(ex, string.Format(MultiLang.Jig2ClearException, bottomCode));
+        //        await AddScanRecordAsync(new ScanRecord
+        //        {
+        //            CreateTime = DateTime.Now,
+        //            JigNo = MultiLang.Jig2,
+        //            ScanType = MultiLang.ScanTypeClear,
+        //            BottomCode = bottomCode,
+        //            Result = "2",
+        //            Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
+        //        });
+        //    }
+        //}
 
         #endregion
 
         #region 机械臂逻辑
 
-        private async Task ProcessRobotLogic()
-        {
-            if (IsNoHardwareMode) return;
-            if (!await _robotProcessLock.WaitAsync(0)) return;
+        //private async Task ProcessRobotLogic()
+        //{
+        //    if (IsNoHardwareMode) return;
+        //    if (!await _robotProcessLock.WaitAsync(0)) return;
 
-            try
-            {
-                var robotCommand = await _hardwareService.GetRobotCommand();
-                // 假设 RobotCommand 是一个枚举，包含 ArriveScanPos 等值
-                if (robotCommand == RobotCommand.RobAsc.ToString())
-                {
-                    Logs.LogInfo(MultiLang.RobotArrivedScanPos);
-                    RobotStatus = MultiLang.Scanning;
-                    RobotScanPosition = MultiLang.ScanPosition;
+        //    try
+        //    {
+        //        var robotCommand = await _hardwareService.GetRobotCommand();
+        //        // 假设 RobotCommand 是一个枚举，包含 ArriveScanPos 等值
+        //        if (robotCommand == RobotCommand.RobAsc.ToString())
+        //        {
+        //            Logs.LogInfo(MultiLang.RobotArrivedScanPos);
+        //            RobotStatus = MultiLang.Scanning;
+        //            RobotScanPosition = MultiLang.ScanPosition;
 
-                    string spCode = await _hardwareService.TriggerScanner(ScannerType.机械臂);
+        //            string spCode = await _hardwareService.TriggerScanner(ScannerType.机械臂);
 
-                    if (!string.IsNullOrEmpty(spCode))
-                    {
-                        Logs.LogInfo(string.Format(MultiLang.RobotScanSuccess, spCode));
+        //            if (!string.IsNullOrEmpty(spCode))
+        //            {
+        //                Logs.LogInfo(string.Format(MultiLang.RobotScanSuccess, spCode));
 
-                        bool reportResult = await _mesService.ReportStation(spCode);
-                        RobotReportResult = reportResult ? MultiLang.ReportSuccess : MultiLang.ReportFail;
+        //                bool reportResult = await _mesService.ReportStation(spCode);
+        //                RobotReportResult = reportResult ? MultiLang.ReportSuccess : MultiLang.ReportFail;
 
-                        await _hardwareService.SendRobotResponse(reportResult);
+        //                await _hardwareService.SendRobotResponse(reportResult);
 
-                        Logs.LogInfo(string.Format(MultiLang.RobotReportComplete, reportResult ? MultiLang.Success : MultiLang.Fail));
+        //                Logs.LogInfo(string.Format(MultiLang.RobotReportComplete, reportResult ? MultiLang.Success : MultiLang.Fail));
 
-                        await AddScanRecordAsync(new ScanRecord
-                        {
-                            CreateTime = DateTime.Now,
-                            JigNo = MultiLang.Robot,
-                            ScanType = MultiLang.ScanTypeReport,
-                            SPCode = spCode,
-                            Result = reportResult ? "1" : "2",
-                            Remark = reportResult ? MultiLang.ReportSuccessRemark : MultiLang.ReportFailRemark
-                        });
-                    }
-                    else
-                    {
-                        Logs.LogWarn(MultiLang.RobotScanFailNoCode);
-                        RobotReportResult = MultiLang.ScanFail;
-                        await _hardwareService.SendRobotResponse(false);
+        //                await AddScanRecordAsync(new ScanRecord
+        //                {
+        //                    CreateTime = DateTime.Now,
+        //                    JigNo = MultiLang.Robot,
+        //                    ScanType = MultiLang.ScanTypeReport,
+        //                    SPCode = spCode,
+        //                    Result = reportResult ? "1" : "2",
+        //                    Remark = reportResult ? MultiLang.ReportSuccessRemark : MultiLang.ReportFailRemark
+        //                });
+        //            }
+        //            else
+        //            {
+        //                Logs.LogWarn(MultiLang.RobotScanFailNoCode);
+        //                RobotReportResult = MultiLang.ScanFail;
+        //                await _hardwareService.SendRobotResponse(false);
 
-                        await AddScanRecordAsync(new ScanRecord
-                        {
-                            CreateTime = DateTime.Now,
-                            JigNo = MultiLang.Robot,
-                            ScanType = MultiLang.ScanTypeReport,
-                            SPCode = spCode,
-                            Result = "2",
-                            Remark = MultiLang.ScanFailRemark
-                        });
-                    }
+        //                await AddScanRecordAsync(new ScanRecord
+        //                {
+        //                    CreateTime = DateTime.Now,
+        //                    JigNo = MultiLang.Robot,
+        //                    ScanType = MultiLang.ScanTypeReport,
+        //                    SPCode = spCode,
+        //                    Result = "2",
+        //                    Remark = MultiLang.ScanFailRemark
+        //                });
+        //            }
 
-                    RobotStatus = MultiLang.Idle;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, MultiLang.RobotLogicException);
-                RobotStatus = MultiLang.Idle;
+        //            RobotStatus = MultiLang.Idle;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logs.LogError(ex, MultiLang.RobotLogicException);
+        //        RobotStatus = MultiLang.Idle;
 
-                await AddScanRecordAsync(new ScanRecord
-                {
-                    CreateTime = DateTime.Now,
-                    JigNo = MultiLang.Robot,
-                    ScanType = MultiLang.ScanTypeReport,
-                    Result = "2",
-                    Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
-                });
-            }
-            finally
-            {
-                _robotProcessLock.Release();
-            }
-        }
+        //        await AddScanRecordAsync(new ScanRecord
+        //        {
+        //            CreateTime = DateTime.Now,
+        //            JigNo = MultiLang.Robot,
+        //            ScanType = MultiLang.ScanTypeReport,
+        //            Result = "2",
+        //            Remark = string.Format(MultiLang.ExceptionRemark, ex.Message)
+        //        });
+        //    }
+        //    finally
+        //    {
+        //        _robotProcessLock.Release();
+        //    }
+        //}
 
         #endregion
 
         #region 数据库操作
 
-        private async Task<bool> VerifyBottomTopCode(string bottomCode, string topCode)
-        {
-            if (string.IsNullOrEmpty(bottomCode) || string.IsNullOrEmpty(topCode))
-                return false;
+        //private async Task<bool> VerifyBottomTopCode(string bottomCode, string topCode)
+        //{
+        //    if (string.IsNullOrEmpty(bottomCode) || string.IsNullOrEmpty(topCode))
+        //        return false;
 
-            try
-            {
-                // 建议使用异步查询
-                var btEntity = await Task.Run(() => _databaseManager.BTEntities.FirstOrDefault(t => t.BottomCode == bottomCode));
-                if (btEntity == null)
-                {
-                    Logs.LogWarn(string.Format(MultiLang.DbBtEntityNotFound, bottomCode));
-                    return false;
-                }
-                return btEntity.TopCode == topCode;
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, string.Format(MultiLang.DbVerifyBottomTopFailed, bottomCode));
-                return false;
-            }
-        }
+        //    try
+        //    {
+        //        // 建议使用异步查询
+        //        var btEntity = await Task.Run(() => _databaseManager.BTEntities.FirstOrDefault(t => t.BottomCode == bottomCode));
+        //        if (btEntity == null)
+        //        {
+        //            Logs.LogWarn(string.Format(MultiLang.DbBtEntityNotFound, bottomCode));
+        //            return false;
+        //        }
+        //        return btEntity.TopCode == topCode;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logs.LogError(ex, string.Format(MultiLang.DbVerifyBottomTopFailed, bottomCode));
+        //        return false;
+        //    }
+        //}
 
-        private async Task UpdateOrAddCodeEntity(string bottomCode, string topCode, string spCode)
-        {
-            try
-            {
-                var codeEntity = await Task.Run(() => _databaseManager.CodeEntities.FirstOrDefault(t => t.BottomCode == bottomCode));
+        //private async Task UpdateOrAddCodeEntity(string bottomCode, string topCode, string spCode)
+        //{
+        //    try
+        //    {
+        //        var codeEntity = await Task.Run(() => _databaseManager.CodeEntities.FirstOrDefault(t => t.BottomCode == bottomCode));
 
-                if (codeEntity != null)
-                {
-                    codeEntity.SPCode = spCode;
-                    _databaseManager.CodeRepository.Update(codeEntity);
-                    Logs.LogInfo(string.Format(MultiLang.DbUpdateCodeEntity, bottomCode, spCode));
-                }
-                else
-                {
-                    var newEntity = new CodeEntity
-                    {
-                        BottomCode = bottomCode,
-                        TopCode = topCode,
-                        SPCode = spCode,
-                        Result = "0",
-                        InsertDate = DateTime.Now
-                    };
-                    _databaseManager.CodeRepository.Insert(newEntity);
-                    Logs.LogInfo(string.Format(MultiLang.DbInsertCodeEntity, bottomCode, topCode, spCode));
-                }
+        //        if (codeEntity != null)
+        //        {
+        //            codeEntity.SPCode = spCode;
+        //            _databaseManager.CodeRepository.Update(codeEntity);
+        //            Logs.LogInfo(string.Format(MultiLang.DbUpdateCodeEntity, bottomCode, spCode));
+        //        }
+        //        else
+        //        {
+        //            var newEntity = new CodeEntity
+        //            {
+        //                BottomCode = bottomCode,
+        //                TopCode = topCode,
+        //                SPCode = spCode,
+        //                Result = "0",
+        //                InsertDate = DateTime.Now
+        //            };
+        //            _databaseManager.CodeRepository.Insert(newEntity);
+        //            Logs.LogInfo(string.Format(MultiLang.DbInsertCodeEntity, bottomCode, topCode, spCode));
+        //        }
 
-                await Task.Run(() => _databaseManager.SaveChanged());
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, string.Format(MultiLang.DbUpsertCodeEntityFailed, bottomCode));
-            }
-        }
+        //        await Task.Run(() => _databaseManager.SaveChanged());
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logs.LogError(ex, string.Format(MultiLang.DbUpsertCodeEntityFailed, bottomCode));
+        //    }
+        //}
 
-        /// <summary>
-        /// 数据库更新测试结果
-        /// </summary>
-        /// <param name="spCode"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        private async Task UpdateCodeEntityTestResult(string spCode, int result)
-        {
-            try
-            {
-                var codeEntity = await Task.Run(() => _databaseManager.CodeEntities.FirstOrDefault(t => t.SPCode == spCode));
-                if (codeEntity != null)
-                {
-                    codeEntity.Result = result.ToString();
-                    _databaseManager.CodeRepository.Update(codeEntity);
-                    await Task.Run(() => _databaseManager.SaveChanged());
-                    Logs.LogInfo(string.Format(MultiLang.DbUpdateTestResult, spCode, result == 1 ? MultiLang.Ok : MultiLang.Ng));
-                }
-                else
-                {
-                    Logs.LogWarn(string.Format(MultiLang.DbCodeEntityNotFound, spCode));
-                }
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, string.Format(MultiLang.DbUpdateTestResultFailed, spCode));
-            }
-        }
+        ///// <summary>
+        ///// 数据库更新测试结果
+        ///// </summary>
+        ///// <param name="spCode"></param>
+        ///// <param name="result"></param>
+        ///// <returns></returns>
+        //private async Task UpdateCodeEntityTestResult(string spCode, int result)
+        //{
+        //    try
+        //    {
+        //        var codeEntity = await Task.Run(() => _databaseManager.CodeEntities.FirstOrDefault(t => t.SPCode == spCode));
+        //        if (codeEntity != null)
+        //        {
+        //            codeEntity.Result = result.ToString();
+        //            _databaseManager.CodeRepository.Update(codeEntity);
+        //            await Task.Run(() => _databaseManager.SaveChanged());
+        //            Logs.LogInfo(string.Format(MultiLang.DbUpdateTestResult, spCode, result == 1 ? MultiLang.Ok : MultiLang.Ng));
+        //        }
+        //        else
+        //        {
+        //            Logs.LogWarn(string.Format(MultiLang.DbCodeEntityNotFound, spCode));
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logs.LogError(ex, string.Format(MultiLang.DbUpdateTestResultFailed, spCode));
+        //    }
+        //}
 
-        /// <summary>
-        /// 更新治具使用次数
-        /// </summary>
-        /// <param name="bottomCode"></param>
-        /// <returns></returns>
-        private async Task<string> UpdateBTEntityCount(string bottomCode)
-        {
-            try
-            {
-                var btEntity = await Task.Run(() => _databaseManager.BTEntities.FirstOrDefault(t => t.BottomCode == bottomCode));
-                if (btEntity != null)
-                {
-                    if (int.TryParse(btEntity.Counts, out int currentCount))
-                    {
-                        currentCount += 1;
-                        btEntity.Counts = currentCount.ToString();
-                    }
-                    else
-                    {
-                        Logs.LogWarn(string.Format(MultiLang.DbCountParseFail, bottomCode, btEntity.Counts));
-                        btEntity.Counts = "1";
-                    }
+        ///// <summary>
+        ///// 更新治具使用次数
+        ///// </summary>
+        ///// <param name="bottomCode"></param>
+        ///// <returns></returns>
+        //private async Task<string> UpdateBTEntityCount(string bottomCode)
+        //{
+        //    try
+        //    {
+        //        var btEntity = await Task.Run(() => _databaseManager.BTEntities.FirstOrDefault(t => t.BottomCode == bottomCode));
+        //        if (btEntity != null)
+        //        {
+        //            if (int.TryParse(btEntity.Counts, out int currentCount))
+        //            {
+        //                currentCount += 1;
+        //                btEntity.Counts = currentCount.ToString();
+        //            }
+        //            else
+        //            {
+        //                Logs.LogWarn(string.Format(MultiLang.DbCountParseFail, bottomCode, btEntity.Counts));
+        //                btEntity.Counts = "1";
+        //            }
 
-                    _databaseManager.BTRepository.Update(btEntity);
-                    await Task.Run(() => _databaseManager.SaveChanged());
+        //            _databaseManager.BTRepository.Update(btEntity);
+        //            await Task.Run(() => _databaseManager.SaveChanged());
 
-                    Logs.LogInfo(string.Format(MultiLang.DbUpdateCountSuccess, bottomCode, btEntity.Counts));
-                    return btEntity.Counts;
-                }
-                else
-                {
-                    Logs.LogWarn(string.Format(MultiLang.DbBtEntityNotFound, bottomCode));
-                    return "0";
-                }
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, string.Format(MultiLang.DbUpdateCountFailed, bottomCode));
-                return "0";
-            }
-        }
+        //            Logs.LogInfo(string.Format(MultiLang.DbUpdateCountSuccess, bottomCode, btEntity.Counts));
+        //            return btEntity.Counts;
+        //        }
+        //        else
+        //        {
+        //            Logs.LogWarn(string.Format(MultiLang.DbBtEntityNotFound, bottomCode));
+        //            return "0";
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logs.LogError(ex, string.Format(MultiLang.DbUpdateCountFailed, bottomCode));
+        //        return "0";
+        //    }
+        //}
 
-        private async Task ClearBTEntityCount(string bottomCode)
-        {
-            try
-            {
-                var btEntity = await Task.Run(() => _databaseManager.BTEntities.FirstOrDefault(t => t.BottomCode == bottomCode));
-                if (btEntity != null)
-                {
-                    btEntity.Counts = "0";
-                    _databaseManager.BTRepository.Update(btEntity);
-                    await Task.Run(() => _databaseManager.SaveChanged());
-                    Logs.LogInfo(string.Format(MultiLang.DbClearCountSuccess, bottomCode));
-                }
-                else
-                {
-                    Logs.LogWarn(string.Format(MultiLang.DbBtEntityNotFound, bottomCode));
-                }
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, string.Format(MultiLang.DbClearCountFailed, bottomCode));
-            }
-        }
+        //private async Task ClearBTEntityCount(string bottomCode)
+        //{
+        //    try
+        //    {
+        //        var btEntity = await Task.Run(() => _databaseManager.BTEntities.FirstOrDefault(t => t.BottomCode == bottomCode));
+        //        if (btEntity != null)
+        //        {
+        //            btEntity.Counts = "0";
+        //            _databaseManager.BTRepository.Update(btEntity);
+        //            await Task.Run(() => _databaseManager.SaveChanged());
+        //            Logs.LogInfo(string.Format(MultiLang.DbClearCountSuccess, bottomCode));
+        //        }
+        //        else
+        //        {
+        //            Logs.LogWarn(string.Format(MultiLang.DbBtEntityNotFound, bottomCode));
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Logs.LogError(ex, string.Format(MultiLang.DbClearCountFailed, bottomCode));
+        //    }
+        //}
 
-        private async Task UpdateJigCountInDb(int jigNo, string count)
-        {
-            string bottomCode = null;
-            if (jigNo == 1)
-            {
-                bottomCode = _currentJig1BottomCode;
-            }
-            else if (jigNo == 2)
-            {
-                bottomCode = _currentJig2BottomCode;
-            }
+        //private async Task UpdateJigCountInDb(int jigNo, string count)
+        //{
+        //    string bottomCode = null;
+        //    if (jigNo == 1)
+        //    {
+        //        bottomCode = _currentJig1BottomCode;
+        //    }
+        //    else if (jigNo == 2)
+        //    {
+        //        bottomCode = _currentJig2BottomCode;
+        //    }
 
-            if (string.IsNullOrEmpty(bottomCode))
-            {
-                Logs.LogWarn(string.Format(MultiLang.DbClearNoBottomCode, jigNo));
-                return;
-            }
+        //    if (string.IsNullOrEmpty(bottomCode))
+        //    {
+        //        Logs.LogWarn(string.Format(MultiLang.DbClearNoBottomCode, jigNo));
+        //        return;
+        //    }
 
-            await ClearBTEntityCount(bottomCode);
-            Logs.LogInfo(string.Format(MultiLang.DbClearJigCountSuccess, jigNo, bottomCode));
-        }
+        //    await ClearBTEntityCount(bottomCode);
+        //    Logs.LogInfo(string.Format(MultiLang.DbClearJigCountSuccess, jigNo, bottomCode));
+        //}
 
         #endregion
 
@@ -1822,82 +1874,83 @@ namespace FZK.Application.Run.ViewModels
 
         #endregion
 
-        /// <summary>
-        /// 从原始扫码结果中解析底板码和主板码
-        /// </summary>
-        /// <param name="raw">原始字符串（可能包含分隔符）</param>
-        /// <param name="delimiter">分隔符</param>
-        /// <param name="bottomCode">解析出的底板码</param>
-        /// <param name="spCode">解析出的主板码</param>
-        /// <returns>是否解析成功</returns>
-        private bool TryParseBottomAndSpCode(string raw, string delimiter, out string bottomCode, out string spCode)
+        //    /// <summary>
+        //    /// 从原始扫码结果中解析底板码和主板码
+        //    /// </summary>
+        //    /// <param name="raw">原始字符串（可能包含分隔符）</param>
+        //    /// <param name="delimiter">分隔符</param>
+        //    /// <param name="bottomCode">解析出的底板码</param>
+        //    /// <param name="spCode">解析出的主板码</param>
+        //    /// <returns>是否解析成功</returns>
+        //    private bool TryParseBottomAndSpCode(string raw, string delimiter, out string bottomCode, out string spCode)
+        //    {
+        //        bottomCode = null;
+        //        spCode = null;
+
+        //        if (string.IsNullOrEmpty(raw)) return false;
+
+        //        var codes = raw.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
+        //        if (codes.Length < 2) return false;
+
+        //        // 遍历所有码，根据特征识别
+        //        string possibleBottom = null;//
+        //        string possibleSp = null;
+
+        //        foreach (var code in codes)
+        //        {
+        //            var trimmed = code.Trim();
+        //            if (trimmed.StartsWith("H-")) // 底板码特征：以 H- 开头
+        //            {
+        //                possibleBottom = trimmed;
+        //            }
+        //            else if (!trimmed.Contains("-") && trimmed.All(c => char.IsLetterOrDigit(c))) // 主板码特征：不含横线，纯字母数字
+        //            {
+        //                possibleSp = trimmed;
+        //            }
+        //        }
+
+        //        // 如果两者都找到，则成功
+        //        if (!string.IsNullOrEmpty(possibleBottom) && !string.IsNullOrEmpty(possibleSp))
+        //        {
+        //            bottomCode = possibleBottom;
+        //            spCode = possibleSp;
+        //            return true;
+        //        }
+
+        //        // 如果特征不明显，可降级按顺序假设（第一个为底板，第二个为主板）
+        //        if (codes.Length >= 2)
+        //        {
+        //            bottomCode = codes[0].Trim();
+        //            spCode = codes[1].Trim();
+        //            Logs.LogWarn(string.Format(MultiLang.ParseFallbackOrder, bottomCode, spCode));
+        //            return true;
+        //        }
+        //        if (codes.Length == 1 && codes[0].Length == bottomCodeLength)
+        //        {
+        //            bottomCode = codes[0].Trim();
+        //            // spCode = codes[1].Trim();
+        //            Logs.LogWarn(string.Format(MultiLang.ParseFallbackSingle, spCode, bottomCode));
+        //            return true;
+        //        }
+
+        //        return false;
+        //    }
+        //}
+
+        #region 实体类
+
+        public class ScanRecord : ReactiveObject
         {
-            bottomCode = null;
-            spCode = null;
-
-            if (string.IsNullOrEmpty(raw)) return false;
-
-            var codes = raw.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
-            if (codes.Length < 2) return false;
-
-            // 遍历所有码，根据特征识别
-            string possibleBottom = null;//
-            string possibleSp = null;
-
-            foreach (var code in codes)
-            {
-                var trimmed = code.Trim();
-                if (trimmed.StartsWith("H-")) // 底板码特征：以 H- 开头
-                {
-                    possibleBottom = trimmed;
-                }
-                else if (!trimmed.Contains("-") && trimmed.All(c => char.IsLetterOrDigit(c))) // 主板码特征：不含横线，纯字母数字
-                {
-                    possibleSp = trimmed;
-                }
-            }
-
-            // 如果两者都找到，则成功
-            if (!string.IsNullOrEmpty(possibleBottom) && !string.IsNullOrEmpty(possibleSp))
-            {
-                bottomCode = possibleBottom;
-                spCode = possibleSp;
-                return true;
-            }
-
-            // 如果特征不明显，可降级按顺序假设（第一个为底板，第二个为主板）
-            if (codes.Length >= 2)
-            {
-                bottomCode = codes[0].Trim();
-                spCode = codes[1].Trim();
-                Logs.LogWarn(string.Format(MultiLang.ParseFallbackOrder, bottomCode, spCode));
-                return true;
-            }
-            if (codes.Length == 1 && codes[0].Length == bottomCodeLength)
-            {
-                bottomCode = codes[0].Trim();
-                // spCode = codes[1].Trim();
-                Logs.LogWarn(string.Format(MultiLang.ParseFallbackSingle, spCode, bottomCode));
-                return true;
-            }
-
-            return false;
+            [Reactive] public DateTime CreateTime { get; set; }
+            [Reactive] public string JigNo { get; set; }
+            [Reactive] public string ScanType { get; set; }
+            [Reactive] public string BottomCode { get; set; }
+            [Reactive] public string TopCode { get; set; }
+            [Reactive] public string SPCode { get; set; }
+            [Reactive] public string Result { get; set; }
+            [Reactive] public string Remark { get; set; }
         }
+
+        #endregion
     }
-
-    #region 实体类
-
-    public class ScanRecord : ReactiveObject
-    {
-        [Reactive] public DateTime CreateTime { get; set; }
-        [Reactive] public string JigNo { get; set; }
-        [Reactive] public string ScanType { get; set; }
-        [Reactive] public string BottomCode { get; set; }
-        [Reactive] public string TopCode { get; set; }
-        [Reactive] public string SPCode { get; set; }
-        [Reactive] public string Result { get; set; }
-        [Reactive] public string Remark { get; set; }
-    }
-
-    #endregion
 }

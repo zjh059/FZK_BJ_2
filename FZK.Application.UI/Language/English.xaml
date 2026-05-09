@@ -555,7 +555,7 @@
     <system:String x:Key="Jig2WeldParseFail">[Jig2] Failed to parse bottom code and SP code from weld scan: {0}</system:String>
     <system:String x:Key="Jig2WeldParseRetry">[Jig2] Weld scan parse failed, retry {0}...</system:String>
     <system:String x:Key="Jig2WeldScanFailRetryExhausted">[Jig2] Weld scan failed: No valid code after multiple retries</system:String>
-    <system:String x:Key="Manual">Manual</system:String>
+   
     <system:String x:Key="ManualScanException">Manual trigger {0} exception</system:String>
     <system:String x:Key="ManualScanExceptionLog">[Manual] {0} exception: {1}</system:String>
     <system:String x:Key="ManualScanFail">[Manual] {0} failed: No code returned</system:String>

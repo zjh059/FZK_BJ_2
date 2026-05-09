@@ -27,6 +27,11 @@ namespace FZK.Application.Run
             containerRegistry.RegisterForNavigation<RunView>();
             containerRegistry.RegisterSingleton<IHardwareService, HardwareService>();//注册硬件初始化管理类
             containerRegistry.RegisterSingleton<IMesService, MesService>();//注册硬件初始化管理类 
+
+            // 业务服务注册（瞬态或单宿，根据实际情况选择）
+            containerRegistry.Register<IPlcService, PlcService>();
+            containerRegistry.Register<IDatabaseService, DatabaseService>();
+            containerRegistry.Register<IRobotCoordinator, RobotCoordinator>();
         }
     }
 }

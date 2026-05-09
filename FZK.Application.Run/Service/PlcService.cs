@@ -11,25 +11,20 @@ namespace FZK.Application.Run.Service
     public class PlcService : IPlcService
     {
         private readonly IHardwareService _hardwareService;
-        private readonly bool _isNoHardwareMode;
-
-        public PlcService(IHardwareService hardwareService, bool isNoHardwareMode)
+       
+        public PlcService(IHardwareService hardwareService)
         {
             _hardwareService = hardwareService;
-            _isNoHardwareMode = isNoHardwareMode;
         }
 
         public async Task<Dictionary<int, int>> ReadTriggerRegistersAsync(IEnumerable<int> addresses)
         {
-            var list = addresses.ToList();
-            if (_isNoHardwareMode)
-                return list.ToDictionary(a => a, a => 0);
+            var list = addresses.ToList();            
             return await _hardwareService.ReadPlcRegisters(list);
         }
 
         public async Task WriteRegisterAsync(int address, int value)
-        {
-            if (_isNoHardwareMode) return;
+        {           
             await _hardwareService.WritePlcRegister(address, value);
         }
 
@@ -46,7 +41,7 @@ namespace FZK.Application.Run.Service
 
         public async Task<int> ReadRegisterAsync(int address)
         {
-            if (_isNoHardwareMode) return 0;
+            var result = new Dictionary<int, int>();           
             return await _hardwareService.ReadPlcRegister(address);
         }
     }

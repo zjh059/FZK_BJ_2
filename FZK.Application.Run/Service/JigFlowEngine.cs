@@ -1,11 +1,14 @@
 ﻿using FZK.Application.Share.Config;
 using FZK.Application.Share.Init;
+using FZK.Application.Share.Language;
 using FZK.Application.Share.Run;
 using FZK.Hardware.Scanner.Base;
 using FZK.Logger;
 using System;
+using System.IO.Pipelines;
 using System.Linq;
 using System.Threading.Tasks;
+using static FZK.Application.Run.ViewModels.RunViewModel;
 
 namespace FZK.Application.Run.Service
 {
@@ -23,7 +26,7 @@ namespace FZK.Application.Run.Service
         private readonly ScannerConfig _bottomScannerConfig;
         private readonly bool _isNoHardwareMode;
         private readonly bool _isSfcEnabled;
-
+        private readonly Action<ScanRecord> _onRecordAdded;
         // 用于记录当前底板码（清零时可能用到）
         private string _currentBottomCode;
 
@@ -36,7 +39,8 @@ namespace FZK.Application.Run.Service
             RunConfig runConfig,
             ScannerConfig bottomScannerConfig,
             bool isNoHardwareMode,
-            bool isSfcEnabled)
+            bool isSfcEnabled,
+            Action<ScanRecord> onRecordAdded)
         {
             _config = config;
             _plc = plc;
@@ -47,6 +51,7 @@ namespace FZK.Application.Run.Service
             _bottomScannerConfig = bottomScannerConfig;
             _isNoHardwareMode = isNoHardwareMode;
             _isSfcEnabled = isSfcEnabled;
+            _onRecordAdded = onRecordAdded;
         }
 
         public async Task ProcessScanAsync()
@@ -106,11 +111,34 @@ namespace FZK.Application.Run.Service
                 {
                     Logs.LogWarn($"{_config.JigName} 比对失败: {bottomCode} != {topCode}");
                 }
+                _onRecordAdded?.Invoke(new ScanRecord
+                {
+                    CreateTime = DateTime.Now,
+                    JigNo = _config.JigName,
+                    ScanType = MultiLang.ScanTypeBottomTop,  // 需要传入多语言，或改用字符串常量
+                    BottomCode = bottomCode,
+                    TopCode = topCode,
+                    SPCode = spCode,
+                    Result = verifyOk ? "1" : "2",
+                    Remark = verifyOk ? "比对成功" : "比对失败"
+                });
             }
             else
             {
                 await _plc.WriteRegisterAsync(_config.CompareResultAddr, 2);
                 Logs.LogWarn($"{_config.JigName} 扫码重试耗尽");
+
+                _onRecordAdded?.Invoke(new ScanRecord
+                {
+                    CreateTime = DateTime.Now,
+                    JigNo = _config.JigName,
+                    ScanType = "底部+顶部扫码",
+                    BottomCode = bottomCode,
+                    TopCode = topCode,
+                    SPCode = spCode,
+                    Result = "2",
+                    Remark = "扫码重试耗尽"
+                });
             }
         }
 
@@ -153,12 +181,33 @@ namespace FZK.Application.Run.Service
                 await _plc.WriteRegisterAsync(_config.WeldFinalAddr, weldResult);
                 _currentBottomCode = bottomCode;
                 Logs.LogInfo($"{_config.JigName} 焊接完成，底板码 {bottomCode}，MES={(mesOk ? "OK" : "NG")}，使用次数={newCount}");
+                _onRecordAdded?.Invoke(new ScanRecord
+                {
+                    CreateTime = DateTime.Now,
+                    JigNo = _config.JigName,
+                    ScanType = "焊接结果扫码",
+                    BottomCode = bottomCode,
+                    SPCode = spCode,
+                    Result = weldResult.ToString(),
+                    Remark = mesOk ? "MES OK" : "MES NG"
+                });
             }
             else
             {
                 await _plc.WriteRegisterAsync(_config.WeldFinalAddr, 2);
                 Logs.LogWarn($"{_config.JigName} 焊接扫码重试耗尽");
+                _onRecordAdded?.Invoke(new ScanRecord
+                {
+                    CreateTime = DateTime.Now,
+                    JigNo = _config.JigName,
+                    ScanType = "焊接结果扫码",
+                    BottomCode = bottomCode,
+                    SPCode = spCode,
+                    Result = "2",
+                    Remark = "扫码重试耗尽"
+                });
             }
+
         }
 
         public async Task ProcessClearAsync()
@@ -189,10 +238,28 @@ namespace FZK.Application.Run.Service
                 await _db.ClearCountAsync(bottomCode);
                 await _plc.WriteRegisterAsync(_config.CountAddr, 0);
                 Logs.LogInfo($"{_config.JigName} 清零成功，底板码 {bottomCode}");
+                _onRecordAdded?.Invoke(new ScanRecord
+                {
+                    CreateTime = DateTime.Now,
+                    JigNo = _config.JigName,
+                    ScanType = "清零",
+                    BottomCode = bottomCode,
+                    Result = "1",
+                    Remark = "清零成功"
+                });
             }
             else
             {
                 Logs.LogWarn($"{_config.JigName} 清零扫码失败");
+                _onRecordAdded?.Invoke(new ScanRecord
+                {
+                    CreateTime = DateTime.Now,
+                    JigNo = _config.JigName,
+                    ScanType = "清零",
+                    BottomCode = bottomCode,
+                    Result = "2",
+                    Remark = "清零扫码失败"
+                });
             }
         }
 

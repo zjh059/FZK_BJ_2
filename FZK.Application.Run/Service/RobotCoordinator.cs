@@ -14,21 +14,21 @@ namespace FZK.Application.Run.Service
     {
         private readonly IHardwareService _hardware;
         private readonly IMesService _mes;
-        private readonly bool _isNoHardwareMode;
+        
         private readonly ScannerConfig _robotScannerConfig;
 
         public RobotCoordinator(IHardwareService hardware, IMesService mes,
-            bool isNoHardwareMode, ScannerConfig robotScannerConfig)
+             ScannerConfig robotScannerConfig)
         {
             _hardware = hardware;
             _mes = mes;
-            _isNoHardwareMode = isNoHardwareMode;
+           
             _robotScannerConfig = robotScannerConfig;
         }
 
         public async Task ProcessCommandAsync()
         {
-            if (_isNoHardwareMode) return;
+            
 
             var command = await _hardware.GetRobotCommand();
             if (command == RobotCommand.RobAsc.ToString())
