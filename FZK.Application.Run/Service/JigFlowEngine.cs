@@ -62,7 +62,7 @@ namespace FZK.Application.Run.Service
 
             Logs.LogInfo($"{_config.JigName} 开始扫码比对流程");
             _onLogged?.Invoke($"{_config.JigName} 开始扫码比对流程");
-            await _plc.WriteRegisterAsync(_config.TriggerScanAddr, 0);
+           // await _plc.WriteRegisterAsync(_config.TriggerScanAddr, 0);
 
             string bottomCode = "", spCode = "", topCode = "";
             bool success = false;
@@ -101,22 +101,24 @@ namespace FZK.Application.Run.Service
                 }
                 retry++;
             }
+            await _plc.WriteRegisterAsync(_config.ScanFinishAddr, _config.FinishFlag);
+            _onLogged?.Invoke($"{_config.JigName} 扫码完成: {bottomCode} / {topCode}");
 
             if (success)
             {
-                await _plc.WriteRegisterAsync(_config.ScanFinishAddr, 1);
+                
                 bool verifyOk = await _db.VerifyBottomTopCodeAsync(bottomCode, topCode);
-                await _plc.WriteRegisterAsync(_config.ScanResultAddr, verifyOk ? 1 : 2);
+                await _plc.WriteRegisterAsync(_config.ScanResultAddr, verifyOk ? _config.OKFlag : _config.NGFlag);
                 if (verifyOk)
                 {
                     await _db.UpdateOrAddCodeEntityAsync(bottomCode, topCode, spCode);
-                    Logs.LogInfo($"{_config.JigName} 比对成功: {bottomCode} / {topCode}");
-                    _onLogged?.Invoke($"{_config.JigName} 比对成功: {bottomCode} / {topCode}");
+                    Logs.LogInfo($"{_config.JigName} 比对成功");
+                    _onLogged?.Invoke($"{_config.JigName} 比对成功");
                 }
                 else
                 {
                     Logs.LogWarn($"{_config.JigName} 比对失败: {bottomCode} != {topCode}");
-                    _onLogged?.Invoke($"{_config.JigName} 比对失败: {bottomCode} != {topCode}");
+                    _onLogged?.Invoke($"{_config.JigName} 比对失败");
                 }
                 _onRecordAdded?.Invoke(new ScanRecord
                 {
@@ -132,7 +134,7 @@ namespace FZK.Application.Run.Service
             }
             else
             {
-                await _plc.WriteRegisterAsync(_config.ScanResultAddr, 2);
+                await _plc.WriteRegisterAsync(_config.ScanResultAddr, _config.NGFlag);
                 Logs.LogWarn($"{_config.JigName} 扫码重试耗尽");
                 _onLogged?.Invoke($"{_config.JigName} 扫码重试耗尽");
 
@@ -154,7 +156,7 @@ namespace FZK.Application.Run.Service
         {
             Logs.LogInfo($"{_config.JigName} 开始焊接结果处理");
             _onLogged?.Invoke($"{_config.JigName} 开始焊接结果处理");
-            await _plc.WriteRegisterAsync(_config.TriggerWeldAddr, 0);
+          //  await _plc.WriteRegisterAsync(_config.TriggerWeldAddr, 0);
 
             string bottomCode = "", spCode = "";
             bool success = false;
@@ -177,17 +179,17 @@ namespace FZK.Application.Run.Service
                 }
                 retry++;
             }
-
+            await _plc.WriteRegisterAsync(_config.WeldFinishAddr, _config.FinishFlag);
             if (success)
             {
-                await _plc.WriteRegisterAsync(_config.WeldFinishAddr, 1);
+                
                 bool mesOk = !_isSfcEnabled || await _mes.GetMesTestResult(spCode);
                 int weldResult = mesOk ? 1 : 2;
                 await _db.UpdateTestResultAsync(spCode, weldResult);
                 string newCount = await _db.IncrementCountAsync(bottomCode);
                 if (int.TryParse(newCount, out int countVal))
                     await _plc.WriteRegisterAsync(_config.CountsAddr, countVal);
-                await _plc.WriteRegisterAsync(_config.WeldResultAddr, weldResult);
+                await _plc.WriteRegisterAsync(_config.WeldResultAddr, weldResult==1?_config.OKFlag:_config.NGFlag);
                 _currentBottomCode = bottomCode;
                 Logs.LogInfo($"{_config.JigName} 焊接完成，底板码 {bottomCode}，MES={(mesOk ? "OK" : "NG")}，使用次数={newCount}");
                 _onLogged?.Invoke($"{_config.JigName} 焊接完成，底板码 {bottomCode}，MES={(mesOk ? "OK" : "NG")}，使用次数={newCount}");
@@ -204,7 +206,7 @@ namespace FZK.Application.Run.Service
             }
             else
             {
-                await _plc.WriteRegisterAsync(_config.WeldResultAddr, 2);
+                await _plc.WriteRegisterAsync(_config.WeldResultAddr, _config.NGFlag);
                 Logs.LogWarn($"{_config.JigName} 焊接扫码重试耗尽");
                 _onLogged?.Invoke($"{_config.JigName} 焊接扫码重试耗尽");
                 _onRecordAdded?.Invoke(new ScanRecord
@@ -225,7 +227,7 @@ namespace FZK.Application.Run.Service
         {
             Logs.LogInfo($"{_config.JigName} 开始清零流程");
             _onLogged?.Invoke($"{_config.JigName} 开始清零流程");
-            await _plc.WriteRegisterAsync(_config.TriggerClearAddr, 0);
+           // await _plc.WriteRegisterAsync(_config.TriggerClearAddr, 0);
 
             string bottomCode = "";
             bool success = false;

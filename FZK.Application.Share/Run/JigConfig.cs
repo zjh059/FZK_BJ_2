@@ -20,5 +20,11 @@ namespace FZK.Application.Share.Run
         public ScannerType BottomScanner { get; set; }
         public ScannerType? TopScanner { get; set; } // 有的治具顶部扫码枪可能为null
         public string JigName { get; set; }
+        public int OKFlag { get; set; } = 1;
+        public int NGFlag { get; set; } = 2;
+        public int FinishFlag { get; set; } = 1;
+        public int ClearCounts { get; set; } = 40;
+
+
     }
 }
