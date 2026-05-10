@@ -141,7 +141,7 @@ namespace FZK.Application.Run.ViewModels
             _jig1Engine = new JigFlowEngine(
                 jig1Config, _plcService, hardwareService, _databaseService, mesService,
                 _runConfig, systemConfigManager.Jig1DownScannerConfig,
-                IsNoHardwareMode, _softwareConfig.IsSFC,
+                IsNoHardwareMode, _softwareConfig.IsSFC,_softwareConfig.IsDebug,
                  record => AddScanRecordAsync(record),
                  msg => AppendLog(msg));
 
@@ -163,7 +163,7 @@ namespace FZK.Application.Run.ViewModels
             _jig2Engine = new JigFlowEngine(
                 jig2Config, _plcService, hardwareService, _databaseService, mesService,
                 _runConfig, systemConfigManager.Jig2DownScannerConfig,
-                IsNoHardwareMode, _softwareConfig.IsSFC,
+                IsNoHardwareMode, _softwareConfig.IsSFC, _softwareConfig.IsDebug,
                 record => AddScanRecordAsync(record),
                 msg => AppendLog(msg));
 

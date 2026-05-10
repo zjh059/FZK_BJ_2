@@ -46,18 +46,21 @@ namespace FZK.Application.Run.Service
                 string spCode = await _hardware.TriggerScanner(ScannerType.机械臂);
                 
                 bool reportResult = false;
-                if (string.IsNullOrEmpty(spCode))
-                {
-                    reportResult = false;
-                }
-                if (_SoftwareConfig.IsSFC)
-                {
-                    reportResult = await _mes.ReportStation(spCode);
-                }
-                else
-                {
+               
+               
+                if (_SoftwareConfig.IsSFC)               
+                    reportResult = await _mes.ReportStation(spCode);                
+                else                
                     reportResult = true;
-                }
+
+
+                if (string.IsNullOrEmpty(spCode))
+                    reportResult = false;
+
+                if (_SoftwareConfig.IsDebug)
+                    reportResult = true;
+
+
                 _eventAggregator.GetEvent<UILogEvent>().Publish("回复机械臂:" +reportResult);
                 await _hardware.SendRobotResponse(reportResult);
                 Logs.LogInfo($"机械臂上报结果: {(reportResult ? "成功" : "失败")}");

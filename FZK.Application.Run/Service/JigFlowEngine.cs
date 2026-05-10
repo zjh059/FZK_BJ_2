@@ -26,6 +26,7 @@ namespace FZK.Application.Run.Service
         private readonly ScannerConfig _bottomScannerConfig;
         private readonly bool _isNoHardwareMode;
         private readonly bool _isSfcEnabled;
+        private readonly bool _isDebug;
         private readonly Action<ScanRecord> _onRecordAdded;
         private readonly Action<string> _onLogged;
         // 用于记录当前底板码（清零时可能用到）
@@ -41,6 +42,7 @@ namespace FZK.Application.Run.Service
             ScannerConfig bottomScannerConfig,
             bool isNoHardwareMode,
             bool isSfcEnabled,
+            bool isDebug,
             Action<ScanRecord> onRecordAdded,
             Action<string> onLogAdded)
         {
@@ -53,6 +55,10 @@ namespace FZK.Application.Run.Service
             _bottomScannerConfig = bottomScannerConfig;
             _isNoHardwareMode = isNoHardwareMode;
             _isSfcEnabled = isSfcEnabled;
+            _isDebug = isDebug;
+            if (_isDebug)            
+                _config.NGFlag = 1;
+            
             _onRecordAdded = onRecordAdded;
             _onLogged = onLogAdded;
         }

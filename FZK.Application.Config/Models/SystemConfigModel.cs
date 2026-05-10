@@ -20,7 +20,7 @@ namespace FZK.Application.Config.Models
             InitUrl = "http://localhost:5000/api/Product",
             TestResultUrl = "http://localhost:5000/api/Product",
             ReportStationUrl = "http://localhost:5000/api/Product",
-             
+            IsDebug=false
         };
 
         public ScannerConfig LeftUpScannerConfig { get; set; } = new ScannerConfig()

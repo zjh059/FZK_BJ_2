@@ -79,6 +79,33 @@ namespace FZK.Hardware.Robot.Epson
         private int _reconnectCount;
         private readonly byte[] _receiveBuffer = new byte[4096];
 
+        #region 新增：心跳检测相关字段
+
+        private Timer _heartbeatTimer;
+        /// <summary>
+        /// 是否等待心跳响应
+        /// </summary>
+        private volatile bool _heartbeatPending;  
+        /// <summary>
+        /// 连续超时次数
+        /// </summary>
+        private int _heartbeatTimeoutCount;       
+        private readonly object _heartbeatLock = new object();
+        /// <summary>
+        /// 心跳发送间隔
+        /// </summary>
+        private int _heartbeatInterval;
+        /// <summary>
+        /// 心跳超时时间 
+        /// </summary>
+        private int _heartbeatTimeout = 5000;     
+        /// <summary>
+        /// 最大失败次数，超过则判定断线
+        /// </summary>
+        private int _heartbeatMaxRetry = 3;
+
+        #endregion
+
         #endregion
 
         #region 构造函数
@@ -98,6 +125,7 @@ namespace FZK.Hardware.Robot.Epson
         {
             try
             {
+              
                 if (Initialized)
                 {
                     Message = "机械手已完成初始化，无需重复执行";
@@ -112,8 +140,15 @@ namespace FZK.Hardware.Robot.Epson
                     Message = "机械手配置为空，使用默认设置";
                     Logs.LogInfo(Message);
                 }
+                _heartbeatInterval = robotConfig.HeartbeatInterval;
+                _heartbeatTimeout = robotConfig.CommandTimeout;
+                _heartbeatMaxRetry = robotConfig.CommandRetryCount;
+
 
                 RobotState = RobotState.Connecting;
+
+
+
                 Message = $"正在连接机械手：{_robotConfig.IpAddress}:{_robotConfig.Port}";
                 Logs.LogInfo(Message);
 
@@ -133,6 +168,7 @@ namespace FZK.Hardware.Robot.Epson
                 _reconnectCount = 0;
 
                 StartBackgroundTasks();
+                StartHeartbeat();
                 return true;
             }
             catch (Exception ex)
@@ -180,6 +216,13 @@ namespace FZK.Hardware.Robot.Epson
 
         public bool CheckConnection()
         {
+
+            if (_heartbeatPending && _heartbeatTimeoutCount > 0)
+            {
+                Logs.LogError($"心跳状态异常：待响应={_heartbeatPending}，超时次数={_heartbeatTimeoutCount}");
+                return false;
+            }
+
             if (Connected && _tcpClient != null && _tcpClient.Connected)
                 return true;
 
@@ -188,6 +231,7 @@ namespace FZK.Hardware.Robot.Epson
             Logs.LogError(Message);
             return TryConnect();
         }
+
 
         #endregion
 
@@ -200,7 +244,7 @@ namespace FZK.Hardware.Robot.Epson
                 RobotState = RobotState.Disconnecting;
                 Message = "正在关闭机械手连接，释放资源...";
                 Logs.LogInfo(Message);
-
+                StopHeartbeat();
                 // 1. 取消所有后台任务
                 _cancellationTokenSource.Cancel();
 
@@ -413,7 +457,7 @@ namespace FZK.Hardware.Robot.Epson
                         if (!string.IsNullOrEmpty(content))
                         {
                             ReceiveContent = content;
-
+                            HandleHeartbeatResponse(content);
                             Logs.LogInfo($"收到数据：{content} (长度：{raw.Length})");
                         }
                     }
@@ -506,6 +550,142 @@ namespace FZK.Hardware.Robot.Epson
                 }
             }
             Logs.LogInfo("重连任务已终止");
+        }
+
+        #endregion
+
+
+        #region 后台任务:心跳
+       
+
+        /// <summary>
+        /// 启动心跳检测
+        /// </summary>
+        private void StartHeartbeat()
+        {
+            lock (_heartbeatLock)
+            {
+
+                StopHeartbeat(); // 停止旧的定时器
+
+                _heartbeatPending = false;
+                _heartbeatTimeoutCount = 0;
+
+                _heartbeatTimer = new Timer(
+                    OnHeartbeatTimerCallback,
+                    null,
+                    _heartbeatInterval,  // 首次延迟
+                    _heartbeatInterval   // 周期性执行
+                );
+
+                Logs.LogInfo($"心跳检测已启动，间隔：{_heartbeatInterval}ms，超时：{_heartbeatTimeout}ms，最大失败次数：{_heartbeatMaxRetry}");
+            }
+        }
+
+        /// <summary>
+        /// 停止心跳检测
+        /// </summary>
+        private void StopHeartbeat()
+        {
+            lock (_heartbeatLock)
+            {
+                _heartbeatTimer?.Dispose();
+                _heartbeatTimer = null;
+                _heartbeatPending = false;
+                _heartbeatTimeoutCount = 0;
+                Logs.LogInfo("心跳检测已停止");
+            }
+        }
+
+        /// <summary>
+        /// 心跳定时器回调
+        /// </summary>
+        private void OnHeartbeatTimerCallback(object state)
+        {
+            try
+            {                
+                if (!Connected || !Initialized || _tcpClient == null || !_tcpClient.Connected)
+                {
+                    return;
+                }
+             
+                if (_heartbeatPending)
+                {
+                    _heartbeatTimeoutCount++;
+                    Logs.LogError($"心跳响应超时（第{_heartbeatTimeoutCount}次），预计响应时间：{_heartbeatTimeout}ms");
+
+                    if (_heartbeatTimeoutCount >= _heartbeatMaxRetry)
+                    {
+                        // 连续超时次数达到上限，判定连接断开
+                        Logs.LogError($"连续{_heartbeatMaxRetry}次心跳超时，判定连接已断开，触发重连");
+
+                        // 主动断开标志，触发重连任务
+                        Connected = false;
+                        RobotState = RobotState.Reconnecting;
+                        Message = "心跳超时，连接断开";
+
+                        // 重置心跳状态，避免重复触发
+                        _heartbeatPending = false;
+                        _heartbeatTimeoutCount = 0;
+                        StopHeartbeat();
+                        return;
+                    }
+                    return; // 继续等待响应
+                }
+              
+                string heartbeatCommand = _robotConfig.HeartbeatCommand;
+                if (string.IsNullOrEmpty(heartbeatCommand))
+                {
+                    Logs.LogError("心跳指令为空，无法发送");
+                    return;
+                }
+
+                // 标记等待响应
+                _heartbeatPending = true;
+                string fullCommand = $"{heartbeatCommand}{_robotConfig.CommandEndFlag}";
+                _sendQueue.Enqueue(fullCommand);
+
+                Logs.LogInfo($"心跳指令已发送：{heartbeatCommand}");
+
+
+            }
+            catch (Exception ex)
+            {
+                Logs.LogError($"心跳检测异常：{ex.Message}");
+            }
+        }
+
+
+
+        /// <summary>
+        /// 处理心跳响应（在 AnalysisTask 中调用）
+        /// </summary>
+        private void HandleHeartbeatResponse(string receivedContent)
+        {
+            // 如果当前有心跳正在等待响应
+            if (_heartbeatPending)
+            {
+                // 根据实际协议判断收到的内容是否是心跳响应
+                if (IsHeartbeatResponse(receivedContent))
+                {
+                    lock (_heartbeatLock)
+                    {
+                        _heartbeatPending = false;
+                        _heartbeatTimeoutCount = 0;
+                        Logs.LogInfo("心跳响应正常，连接状态良好");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 判断收到的数据是否为心跳响应（根据实际协议修改）
+        /// </summary>
+        private bool IsHeartbeatResponse(string content)
+        {
+            if (string.IsNullOrEmpty(content))
+                return false;
+            return content.Contains(_robotConfig.HeartbeatResponse);
         }
 
         #endregion
