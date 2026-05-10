@@ -68,7 +68,7 @@ namespace FZK.Application.Initialize.Services
             Task<bool> plcTask = !OmronPLC.Initialized ? Task.Run(() => OmronPLC.Init(SystemConfigManager.pLCConfig)) : null;
             Task<bool> robotTask = !EpsonRobot.Initialized ? Task.Run(() => EpsonRobot.Init(SystemConfigManager.robotConfig)) : null;
 
-            var taskList = new List<Task<bool>> { leftUpTask, rightUpTask, leftDownTask, rightDownTask, plcTask , robotTask }//leftUpTask, rightUpTask, leftDownTask, rightDownTask, plcTask
+            var taskList = new List<Task<bool>> { plcTask, leftUpTask, rightUpTask, leftDownTask, rightDownTask, robotTask }//leftUpTask, rightUpTask, leftDownTask, rightDownTask, plcTask
                 .Where(t => t != null).ToList();
 
             bool[] results = taskList.Count == 0 ? new bool[0] : await Task.WhenAll(taskList);
@@ -80,7 +80,7 @@ namespace FZK.Application.Initialize.Services
             if (leftDownTask != null && !leftDownTask.Result) failList.Add(MultiLang.左下扫码模块);
             if (rightDownTask != null && !rightDownTask.Result) failList.Add(MultiLang.右下扫码模块);
             if (spTask != null && !spTask.Result) failList.Add(MultiLang.机械臂扫码模块);
-            if (plcTask != null && !plcTask.Result) failList.Add(MultiLang.PLC模块);
+          //  if (plcTask != null && !plcTask.Result) failList.Add(MultiLang.PLC模块);
             if (robotTask != null && !robotTask.Result) failList.Add(MultiLang.机械手模块);
 
             if (allSuccess)

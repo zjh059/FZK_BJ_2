@@ -1686,68 +1686,7 @@ namespace FZK.Application.Run.ViewModels
 
         #endregion
 
-        //    /// <summary>
-        //    /// 从原始扫码结果中解析底板码和主板码
-        //    /// </summary>
-        //    /// <param name="raw">原始字符串（可能包含分隔符）</param>
-        //    /// <param name="delimiter">分隔符</param>
-        //    /// <param name="bottomCode">解析出的底板码</param>
-        //    /// <param name="spCode">解析出的主板码</param>
-        //    /// <returns>是否解析成功</returns>
-        //    private bool TryParseBottomAndSpCode(string raw, string delimiter, out string bottomCode, out string spCode)
-        //    {
-        //        bottomCode = null;
-        //        spCode = null;
-
-        //        if (string.IsNullOrEmpty(raw)) return false;
-
-        //        var codes = raw.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
-        //        if (codes.Length < 2) return false;
-
-        //        // 遍历所有码，根据特征识别
-        //        string possibleBottom = null;//
-        //        string possibleSp = null;
-
-        //        foreach (var code in codes)
-        //        {
-        //            var trimmed = code.Trim();
-        //            if (trimmed.StartsWith("H-")) // 底板码特征：以 H- 开头
-        //            {
-        //                possibleBottom = trimmed;
-        //            }
-        //            else if (!trimmed.Contains("-") && trimmed.All(c => char.IsLetterOrDigit(c))) // 主板码特征：不含横线，纯字母数字
-        //            {
-        //                possibleSp = trimmed;
-        //            }
-        //        }
-
-        //        // 如果两者都找到，则成功
-        //        if (!string.IsNullOrEmpty(possibleBottom) && !string.IsNullOrEmpty(possibleSp))
-        //        {
-        //            bottomCode = possibleBottom;
-        //            spCode = possibleSp;
-        //            return true;
-        //        }
-
-        //        // 如果特征不明显，可降级按顺序假设（第一个为底板，第二个为主板）
-        //        if (codes.Length >= 2)
-        //        {
-        //            bottomCode = codes[0].Trim();
-        //            spCode = codes[1].Trim();
-        //            Logs.LogWarn(string.Format(MultiLang.ParseFallbackOrder, bottomCode, spCode));
-        //            return true;
-        //        }
-        //        if (codes.Length == 1 && codes[0].Length == bottomCodeLength)
-        //        {
-        //            bottomCode = codes[0].Trim();
-        //            // spCode = codes[1].Trim();
-        //            Logs.LogWarn(string.Format(MultiLang.ParseFallbackSingle, spCode, bottomCode));
-        //            return true;
-        //        }
-
-        //        return false;
-        //    }
-        //}
+       
 
         #region 实体类
 

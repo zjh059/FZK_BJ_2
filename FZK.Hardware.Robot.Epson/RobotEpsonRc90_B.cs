@@ -627,47 +627,67 @@ namespace FZK.Hardware.Robot.Epson
         /// </summary>
         private void SendHeartbeat()
         {
-            // ==============================
-            // ✅ 修复：全程锁内 → 检查→发送→设置 原子执行
-            // ==============================
-            lock (_heartbeatLock)
+            try
             {
-                if (!_heartbeatRunning || !Connected || _heartbeatPending) return;
-                if (string.IsNullOrEmpty(_robotConfig.HeartbeatCommand)) return;
-
-                // 锁内发送心跳（安全无阻塞）
-                string cmd = $"{_robotConfig.HeartbeatCommand}{_robotConfig.CommandEndFlag}";
-                _sendQueue.Add(cmd);
-
-                // 锁内创建令牌 + 状态变更
-                _heartbeatPending = true;
-                _heartbeatTimeoutCts?.Dispose();
-                _heartbeatTimeoutCts = new CancellationTokenSource();
-            }
-
-            // 超时任务在锁外运行
-            _ = Task.Run(async () =>
-            {
-                try
+                // ==============================
+                // ✅ 修复：全程锁内 → 检查→发送→设置 原子执行
+                // ==============================
+                lock (_heartbeatLock)
                 {
-                    await Task.Delay(_heartbeatTimeout, _heartbeatTimeoutCts.Token);
-                    lock (_heartbeatLock)
-                    {
-                        if (!_heartbeatPending) return;
-                        _heartbeatTimeoutCount++;
-                        Logs.LogError($"心跳超时 {_heartbeatTimeoutCount} 次");
+                    if (!_heartbeatRunning || !Connected || _heartbeatPending) return;
+                    if (string.IsNullOrEmpty(_robotConfig.HeartbeatCommand)) return;
 
-                        if (_heartbeatTimeoutCount >= _heartbeatMaxRetry)
+                    // 锁内发送心跳（安全无阻塞）
+                    string cmd = $"{_robotConfig.HeartbeatCommand}{_robotConfig.CommandEndFlag}";
+                    _sendQueue.Add(cmd);
+
+                    // 锁内创建令牌 + 状态变更
+                    _heartbeatPending = true;
+                    _heartbeatTimeoutCts?.Dispose();
+                    _heartbeatTimeoutCts = new CancellationTokenSource();
+                }
+
+                // 超时任务在锁外运行
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await Task.Delay(_heartbeatTimeout, _heartbeatTimeoutCts.Token);
+                        lock (_heartbeatLock)
                         {
-                            TransitionToState(RobotState.Reconnecting);
+                            if (!_heartbeatPending) return;
+                            _heartbeatTimeoutCount++;
+                            Logs.LogError($"心跳超时 {_heartbeatTimeoutCount} 次");
+
                             _heartbeatPending = false;
-                            _heartbeatTimeoutCount = 0;
-                            StopHeartbeat();
+                            _heartbeatTimeoutCts?.Cancel();
+                            _heartbeatTimeoutCts?.Dispose();
+                            _heartbeatTimeoutCts = null;
+
+                            if (_heartbeatTimeoutCount >= _heartbeatMaxRetry)
+                            {
+                                TransitionToState(RobotState.Reconnecting);
+                                _heartbeatPending = false;
+                                _heartbeatTimeoutCount = 0;
+                                StopHeartbeat();
+                            }
                         }
                     }
+                    catch (OperationCanceledException) { }
+                }, _heartbeatTimeoutCts.Token);
+            }
+            catch (Exception ex)
+            {
+                Logs.LogError($"心跳发送异常：{ex.Message}");
+                lock (_heartbeatLock)
+                {
+                    _heartbeatPending = false;
+                    _heartbeatTimeoutCts?.Cancel();
+                    _heartbeatTimeoutCts?.Dispose();
+                    _heartbeatTimeoutCts = null;
                 }
-                catch (OperationCanceledException) { }
-            }, _heartbeatTimeoutCts.Token);
+            }
+           
         }
 
         private void HandleHeartbeatResponse(string content)
