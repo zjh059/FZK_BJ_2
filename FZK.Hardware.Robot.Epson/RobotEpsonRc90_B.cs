@@ -366,7 +366,7 @@ namespace FZK.Hardware.Robot.Epson
 
                     byte[] buffer = new byte[4096];
                     int len = await client.GetStream().ReadAsync(buffer, 0, buffer.Length, _cts.Token);
-                    
+
                     if (len <= 0) continue;
 
                     byte[] data = new byte[len];
@@ -462,8 +462,11 @@ namespace FZK.Hardware.Robot.Epson
 
                 if (!string.IsNullOrEmpty(frame))
                 {
-                    ReceiveContent = frame;
-                    HandleHeartbeatResponse(frame);
+                    if (IsHeartResponse(frame))
+                        HandleHeartbeatResponse(frame);
+                    else
+                        ReceiveContent = frame;
+
                     Logs.LogInfo($"收到完整帧：{frame}");
                 }
             }
@@ -687,20 +690,25 @@ namespace FZK.Hardware.Robot.Epson
                     _heartbeatTimeoutCts = null;
                 }
             }
-           
+
         }
 
+        private bool IsHeartResponse(string content)
+        {
+            if (content.Equals(_robotConfig.HeartbeatResponse, StringComparison.OrdinalIgnoreCase))
+                return true;
+            else return false;
+        }
         private void HandleHeartbeatResponse(string content)
         {
             lock (_heartbeatLock)
             {
                 if (!_heartbeatPending) return;
-                if (!content.Equals(_robotConfig.HeartbeatResponse, StringComparison.OrdinalIgnoreCase)) return;
 
                 _heartbeatPending = false;
                 _heartbeatTimeoutCount = 0;
                 _heartbeatTimeoutCts?.Cancel();
-                Logs.LogInfo("心跳正常");
+                Logs.LogDebug("心跳正常");
             }
         }
         #endregion
