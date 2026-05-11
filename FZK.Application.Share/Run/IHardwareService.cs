@@ -14,7 +14,7 @@ namespace FZK.Application.Share.Run
     /// </summary>
     public interface IHardwareService
     {
-        
+
         void Init();
         void Stop();
         Task<Dictionary<int, int>> ReadPlcRegisters(List<int> addresses);
@@ -23,5 +23,11 @@ namespace FZK.Application.Share.Run
         Task<string> GetRobotCommand();
         Task SendRobotResponse(bool success);
         Task<int> ReadPlcRegister(int address);
+
+        Task<bool> TriggerScannerAndValidateAsync(
+           ScannerType scannerType,
+           int expectedLength,
+           bool enableDebug,
+           bool enableSfc);
     }
 }

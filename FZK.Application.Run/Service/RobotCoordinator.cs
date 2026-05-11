@@ -1,4 +1,5 @@
 ﻿using FZK.Application.Share.Config;
+using FZK.Application.Share.Init;
 using FZK.Application.Share.Models;
 using FZK.Application.Share.Run;
 using FZK.Core.Enums;
@@ -16,22 +17,21 @@ namespace FZK.Application.Run.Service
     public class RobotCoordinator : IRobotCoordinator
     {
         private readonly IHardwareService _hardware;
-        private readonly IMesService _mes;
+       
         private readonly ScannerConfig _robotScannerConfig;
         private readonly SoftwareConfig _SoftwareConfig;
+        private readonly ISystemConfigManager _systemConfigManager;
+
         private readonly IEventAggregator _eventAggregator;
-        
-        public RobotCoordinator(IHardwareService hardware,
-            IMesService mes,
-             ScannerConfig robotScannerConfig,
-             SoftwareConfig softwareConfig,
+
+        public RobotCoordinator(IHardwareService hardware,          
+             ISystemConfigManager systemConfigManager,             
              IEventAggregator eventAggregator
             )
         {
-            _hardware = hardware;
-            _mes = mes;
-            _SoftwareConfig = softwareConfig;
-            _robotScannerConfig = robotScannerConfig;
+            _hardware = hardware;           
+            _SoftwareConfig = systemConfigManager.SoftwareConfig;
+            _robotScannerConfig = systemConfigManager.RobotScannerConfig;
             _eventAggregator = eventAggregator;
         }
 
@@ -43,29 +43,13 @@ namespace FZK.Application.Run.Service
             {
                 Logs.LogInfo("机械臂到达扫码位");
                 _eventAggregator.GetEvent<UILogEvent>().Publish("机械臂到达扫码位");
-                string spCode = await _hardware.TriggerScanner(ScannerType.机械臂);
-                
-                bool reportResult = false;
-               
-
-               
-                if (_SoftwareConfig.IsSFC)               
-                    reportResult = await _mes.ReportStation(spCode);                
-                else                
-                    reportResult = true;
-
-
-                if (string.IsNullOrEmpty(spCode))
-                    reportResult = false;
-
-                if (_SoftwareConfig.IsDebug)
-                    reportResult = true;
-
-
-                _eventAggregator.GetEvent<UILogEvent>().Publish("回复机械臂:" +reportResult);
-                await _hardware.SendRobotResponse(reportResult);
-                Logs.LogInfo($"机械臂上报结果: {(reportResult ? "成功" : "失败")}");
+               // string spCode = await _hardware.TriggerScanner(ScannerType.机械臂);
+                var result = await _hardware.TriggerScannerAndValidateAsync(ScannerType.机械臂, _robotScannerConfig.SnLength,
+                    _SoftwareConfig.IsDebug, _SoftwareConfig.IsSFC);
+                _eventAggregator.GetEvent<UILogEvent>().Publish("回复机械臂:" + result);
+                await _hardware.SendRobotResponse(result);
+                Logs.LogInfo($"机械臂上报结果: {(result ? "成功" : "失败")}");
             }
-        }
+        }         
     }
 }
