@@ -15,7 +15,12 @@ using System.Threading.Tasks;
 namespace FZK.Hardware.Scanner.Cognex
 {
     /// <summary>
-    /// 康耐视 DM260 扫码器驱动（TCP 协议），最终优化版
+    /// 康耐视 DM260 扫码器驱动（TCP 协议），最终生产版
+    /// 修复历史：
+    /// 1. 修复锁内异步IO导致的死锁问题
+    /// 2. 修复Interlocked置空导致的空引用异常
+    /// 3. 修复BlockingCollection CompleteAdding导致的重连失败问题
+    /// 4. 修复ClearContent未清空解析缓冲区导致的条码拼接错误
     /// </summary>
     public class ScannerCognexDM260 : ReactiveObject, IScanner, IDisposable
     {
@@ -65,22 +70,25 @@ namespace FZK.Hardware.Scanner.Cognex
         // ========== 配置 ==========
         private ScannerConfig _scannerConfig;
         private Encoding _encoding = Encoding.UTF8;
-        private string _codeDelimiter = "\r\n";      // 条码之间的分隔符
-        private string _endOfMessageDelimiter = "\r\n"; // 报文结束符
+        private string _codeDelimiter = ",";
+        private string _endOfMessageDelimiter = "\r\n";
 
         // ========== 通信资源 ==========
-        private TcpClient _tcpClient;
+        private volatile TcpClient _tcpClient;
         private readonly SemaphoreSlim _syncLock = new SemaphoreSlim(1, 1);
-        private readonly SemaphoreSlim _queueSemaphore = new SemaphoreSlim(0, MaxQueueSize);
-        private readonly ManualResetEventSlim _analysisStarted = new ManualResetEventSlim(false);
         private readonly ManualResetEventSlim _tasksStarted = new ManualResetEventSlim(false);
+        private readonly ManualResetEventSlim _analysisStarted = new ManualResetEventSlim(false);
 
         // ========== 后台任务控制 ==========
         private CancellationTokenSource _cts;
         private Task _receiveTask;
         private Task _analysisTask;
-        private readonly ConcurrentQueue<byte[]> _receiveQueue = new ConcurrentQueue<byte[]>();
-        private const int MaxQueueSize = 1000;
+
+        // 【核心设计】队列全局唯一，永不重新创建，永不调用CompleteAdding
+        // 彻底解决队列引用不一致和永久关闭问题
+        private readonly BlockingCollection<byte[]> _receiveQueue = new BlockingCollection<byte[]>(MaxQueueSize);
+        private const int MaxQueueSize = 2000;
+
         // ========== 多码解析缓冲区 ==========
         private readonly StringBuilder _messageBuffer = new StringBuilder();
         private readonly object _bufferLock = new object();
@@ -111,14 +119,15 @@ namespace FZK.Hardware.Scanner.Cognex
                 return false;
             }
 
-            // 随机延迟分散并发压力
+            // 随机延迟分散并发初始化压力
             var random = new Random(Guid.NewGuid().GetHashCode());
             await Task.Delay(random.Next(100, 300)).ConfigureAwait(false);
 
+            // 先关闭旧连接和任务
             await CloseAsync().ConfigureAwait(false);
             _scannerConfig = scannerConfig;
 
-            // 编码配置
+            // 加载编码配置
             if (!string.IsNullOrEmpty(_scannerConfig.EncodingName))
             {
                 try
@@ -127,11 +136,11 @@ namespace FZK.Hardware.Scanner.Cognex
                 }
                 catch (Exception ex)
                 {
-                    Logs.LogWarn(ex, $"编码 {_scannerConfig.EncodingName} 无效，使用默认 UTF8");
+                    Logs.LogWarn(ex, $"[{GetDeviceId()}] 编码 {_scannerConfig.EncodingName} 无效，使用默认 UTF8");
                 }
             }
 
-            // 分隔符配置
+            // 加载分隔符配置
             if (!string.IsNullOrEmpty(_scannerConfig.CodeDelimiter))
                 _codeDelimiter = _scannerConfig.CodeDelimiter;
             if (!string.IsNullOrEmpty(_scannerConfig.EndOfMessageDelimiter))
@@ -142,6 +151,9 @@ namespace FZK.Hardware.Scanner.Cognex
             {
                 _cts = new CancellationTokenSource();
                 var token = _cts.Token;
+
+                // 注册取消回调，立即中断所有IO操作
+                token.Register(() => CloseTcpClient());
 
                 _tcpClient = new TcpClient();
                 var connectTask = _tcpClient.ConnectAsync(_scannerConfig.IpAddress, _scannerConfig.Port);
@@ -175,7 +187,7 @@ namespace FZK.Hardware.Scanner.Cognex
                     return false;
                 }
 
-                // ===== 新增：启用 TCP KeepAlive =====
+                // 启用TCP保活机制
                 EnableTcpKeepAlive(_tcpClient.Client, 5000, 2000);
 
                 // 启动后台任务
@@ -183,17 +195,17 @@ namespace FZK.Hardware.Scanner.Cognex
                     .ContinueWith(t =>
                     {
                         if (t.Exception != null)
-                            Logs.LogError(t.Exception, "接收任务异常退出");
+                            Logs.LogError(t.Exception, $"[{GetDeviceId()}] 接收任务异常退出");
                     }, TaskContinuationOptions.OnlyOnFaulted);
 
                 _analysisTask = Task.Run(() => AnalysisTask(token), token)
                     .ContinueWith(t =>
                     {
                         if (t.Exception != null)
-                            Logs.LogError(t.Exception, "解析任务异常退出");
+                            Logs.LogError(t.Exception, $"[{GetDeviceId()}] 解析任务异常退出");
                     }, TaskContinuationOptions.OnlyOnFaulted);
 
-                // 等待接收任务已进入主循环（超时 2 秒）
+                // 等待任务启动就绪
                 if (!_tasksStarted.Wait(TimeSpan.FromSeconds(2)))
                 {
                     Logs.LogWarn($"[{GetDeviceId()}] 接收任务启动超时，可能影响首次触发");
@@ -218,11 +230,13 @@ namespace FZK.Hardware.Scanner.Cognex
             }
             catch (Exception ex)
             {
-                Logs.LogError(ex);
+                Logs.LogError(ex, $"[{GetDeviceId()}] 初始化异常");
                 Message = ex.Message;
                 CloseTcpClient();
                 _cts?.Dispose();
                 _cts = null;
+                _tasksStarted.Reset();
+                _analysisStarted.Reset();
                 return false;
             }
             finally
@@ -231,6 +245,9 @@ namespace FZK.Hardware.Scanner.Cognex
             }
         }
 
+        /// <summary>
+        /// 触发扫码
+        /// </summary>
         public async Task<bool> TriggerAsync()
         {
             if (_disposed) throw new ObjectDisposedException(nameof(ScannerCognexDM260));
@@ -240,10 +257,18 @@ namespace FZK.Hardware.Scanner.Cognex
             {
                 await _syncLock.WaitAsync().ConfigureAwait(false);
                 lockHeld = true;
+
                 if (!await CheckConnectionInternalNoLockAsync().ConfigureAwait(false))
                     return false;
 
-                // 延迟发送（释放锁，延迟后重新获取）
+                // 锁内捕获局部引用，防止被Interlocked.Exchange置空
+                TcpClient client = _tcpClient;
+                if (client == null)
+                {
+                    Message = "触发失败：连接已关闭";
+                    return false;
+                }
+
                 if (_scannerConfig.DelayTime > 0)
                 {
                     _syncLock.Release();
@@ -251,20 +276,30 @@ namespace FZK.Hardware.Scanner.Cognex
                     await Task.Delay(_scannerConfig.DelayTime, _cts?.Token ?? CancellationToken.None).ConfigureAwait(false);
                     await _syncLock.WaitAsync().ConfigureAwait(false);
                     lockHeld = true;
+
                     if (!await CheckConnectionInternalNoLockAsync().ConfigureAwait(false))
                     {
                         Message = "触发失败：连接已断开";
                         return false;
                     }
+
+                    // 延迟后必须再次捕获局部引用
+                    client = _tcpClient;
+                    if (client == null)
+                    {
+                        Message = "触发失败：连接已关闭";
+                        return false;
+                    }
                 }
 
                 var commandBytes = _encoding.GetBytes(_scannerConfig.TriggerCommand);
-                await _tcpClient.GetStream().WriteAsync(commandBytes, 0, commandBytes.Length, _cts?.Token ?? CancellationToken.None).ConfigureAwait(false);
+                // 使用局部client发送，绝对安全
+                await client.GetStream().WriteAsync(commandBytes, 0, commandBytes.Length, _cts?.Token ?? CancellationToken.None).ConfigureAwait(false);
                 return true;
             }
             catch (Exception ex)
             {
-                Logs.LogError(ex);
+                Logs.LogError(ex, $"[{GetDeviceId()}] 触发失败");
                 Message = $"触发失败：{ex.Message}";
                 return false;
             }
@@ -283,7 +318,7 @@ namespace FZK.Hardware.Scanner.Cognex
             }
             catch (Exception ex)
             {
-                Logs.LogError(ex, "关闭扫码器异常");
+                Logs.LogError(ex, $"[{GetDeviceId()}] 关闭扫码器异常");
             }
         }
 
@@ -292,16 +327,17 @@ namespace FZK.Hardware.Scanner.Cognex
             if (_disposed) return;
 
             bool statusResetDone = false;
-          
+
             try
             {
-                // 取消并销毁 CTS
+                // 取消并销毁CTS（会触发注册的CloseTcpClient回调，停止生产）
                 if (_cts != null)
                 {
                     _cts.Cancel();
                     _cts.Dispose();
                     _cts = null;
                 }
+
                 await _syncLock.WaitAsync().ConfigureAwait(false);
                 // 等待后台任务结束（带超时）
                 var tasks = new[] { _receiveTask, _analysisTask }.Where(t => t != null).ToArray();
@@ -310,21 +346,21 @@ namespace FZK.Hardware.Scanner.Cognex
                     try
                     {
                         await Task.WhenAll(tasks).TimeoutAfter(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
+                        Logs.LogDebug($"[{GetDeviceId()}] 后台任务正常退出");
                     }
                     catch (TimeoutException)
                     {
-                        // 超时后不再等待，继续清理
+                        Logs.LogWarn($"[{GetDeviceId()}] 后台任务退出超时，强制清理队列");
                     }
                     catch (OperationCanceledException)
                     {
-                        // 任务被取消（由于 _cts.Cancel()），正常情况，忽略
+                        // 任务被取消，正常情况
                     }
                 }
 
-                CloseTcpClient();
-
-                // 清空队列
-                while (_receiveQueue.TryDequeue(out _)) { }
+                // 【关键修复】永不调用CompleteAdding，仅清空队列
+                // 队列可重复使用，下次InitAsync直接使用
+                while (_receiveQueue.TryTake(out _)) { }
 
                 // 清空解析缓冲区
                 lock (_bufferLock)
@@ -332,7 +368,11 @@ namespace FZK.Hardware.Scanner.Cognex
                     _messageBuffer.Clear();
                 }
 
-                // 重置状态（这些操作不会抛出异常）
+                // 重置事件
+                _tasksStarted.Reset();
+                _analysisStarted.Reset();
+
+                // 重置状态
                 Initialized = false;
                 Connected = false;
                 Content = string.Empty;
@@ -346,10 +386,9 @@ namespace FZK.Hardware.Scanner.Cognex
             }
             finally
             {
-               
                 if (!statusResetDone)
                 {
-      
+                    // 确保状态始终被重置
                     Initialized = false;
                     Connected = false;
                     Content = string.Empty;
@@ -357,6 +396,8 @@ namespace FZK.Hardware.Scanner.Cognex
                     Message = "已关闭";
                     _receiveTask = null;
                     _analysisTask = null;
+                    _tasksStarted.Reset();
+                    _analysisStarted.Reset();
                 }
 
                 try { _syncLock.Release(); }
@@ -372,7 +413,7 @@ namespace FZK.Hardware.Scanner.Cognex
             }
             catch (Exception ex)
             {
-                Logs.LogError(ex, "检查连接异常");
+                Logs.LogError(ex, $"[{GetDeviceId()}] 检查连接异常");
                 return false;
             }
         }
@@ -391,7 +432,6 @@ namespace FZK.Hardware.Scanner.Cognex
             }
         }
 
-        // ========== 私有辅助方法 ==========
         private string GetDeviceId() => _scannerConfig != null ? $"{_scannerConfig.IpAddress}:{_scannerConfig.Port}" : "Unknown";
 
         private async Task<bool> CheckConnectionInternalNoLockAsync()
@@ -399,24 +439,24 @@ namespace FZK.Hardware.Scanner.Cognex
             // 假设调用者已持有锁
             if (_scannerConfig == null) return false;
 
-            // 检查后台任务状态，若已终止则尝试重启（前提是未取消且未释放）
+            // 检查后台任务状态，若已终止则尝试重启
             if (_cts != null && !_cts.IsCancellationRequested && !_disposed)
             {
                 if (_receiveTask != null && _receiveTask.IsCompleted)
                 {
-                    Logs.LogWarn("接收任务已终止，尝试重启...");
+                    Logs.LogWarn($"[{GetDeviceId()}] 接收任务已终止，尝试重启...");
                     _receiveTask = Task.Run(() => ReceiveTask(_cts.Token), _cts.Token)
-                        .ContinueWith(t => { if (t.Exception != null) Logs.LogError(t.Exception, "重启后的接收任务异常"); }, TaskContinuationOptions.OnlyOnFaulted);
+                        .ContinueWith(t => { if (t.Exception != null) Logs.LogError(t.Exception, $"[{GetDeviceId()}] 重启后的接收任务异常"); }, TaskContinuationOptions.OnlyOnFaulted);
                 }
                 if (_analysisTask != null && _analysisTask.IsCompleted)
                 {
-                    Logs.LogWarn("解析任务已终止，尝试重启...");
+                    Logs.LogWarn($"[{GetDeviceId()}] 解析任务已终止，尝试重启...");
                     _analysisTask = Task.Run(() => AnalysisTask(_cts.Token), _cts.Token)
-                        .ContinueWith(t => { if (t.Exception != null) Logs.LogError(t.Exception, "重启后的解析任务异常"); }, TaskContinuationOptions.OnlyOnFaulted);
+                        .ContinueWith(t => { if (t.Exception != null) Logs.LogError(t.Exception, $"[{GetDeviceId()}] 重启后的解析任务异常"); }, TaskContinuationOptions.OnlyOnFaulted);
                 }
             }
 
-            // 使用 Socket.Poll 检测连接活性
+            // 使用Socket.Poll检测连接活性
             bool isConnected = false;
             if (_tcpClient != null && _tcpClient.Client != null)
             {
@@ -432,7 +472,13 @@ namespace FZK.Hardware.Scanner.Cognex
             // 尝试重连
             try
             {
+                Logs.LogInfo($"[{GetDeviceId()}] 连接断开，尝试重连...");
                 CloseTcpClient();
+
+                // 【关键修复】重连时仅清空队列，不创建新实例
+                // AnalysisTask始终消费同一个队列，无需重启
+                while (_receiveQueue.TryTake(out _)) { }
+
                 _tcpClient = new TcpClient();
                 var connectTask = _tcpClient.ConnectAsync(_scannerConfig.IpAddress, _scannerConfig.Port);
                 var timeoutTask = Task.Delay(1000, _cts?.Token ?? CancellationToken.None);
@@ -465,16 +511,17 @@ namespace FZK.Hardware.Scanner.Cognex
                     return false;
                 }
 
-                // ===== 新增：重连成功后重新启用 KeepAlive =====
+                // 重连成功后重新启用KeepAlive
                 EnableTcpKeepAlive(_tcpClient.Client, 5000, 2000);
 
                 Connected = true;
                 Message = "重连成功";
+                Logs.LogInfo($"[{GetDeviceId()}] 重连成功");
                 return true;
             }
             catch (Exception ex)
             {
-                Logs.LogError(ex);
+                Logs.LogError(ex, $"[{GetDeviceId()}] 重连异常");
                 Message = $"重连异常：{ex.Message}";
                 CloseTcpClient();
                 return false;
@@ -483,81 +530,83 @@ namespace FZK.Hardware.Scanner.Cognex
 
         private void CloseTcpClient()
         {
-            if (_tcpClient != null)
+            // 原子性交换引用，确保只关闭一次
+            var client = Interlocked.Exchange(ref _tcpClient, null);
+            if (client != null)
             {
-                try { _tcpClient.Client?.Shutdown(SocketShutdown.Both); } catch { }
-                try { _tcpClient.Close(); } catch { }
-                _tcpClient = null;
+                try { client.Client?.Shutdown(SocketShutdown.Both); } catch { }
+                try { client.Close(); } catch { }
             }
             Connected = false;
         }
 
-        // ========== 后台任务 ==========
         private async Task ReceiveTask(CancellationToken token)
         {
-            _tasksStarted.Set(); // 通知 InitAsync 任务已启动
+            _tasksStarted.Set();
             while (!token.IsCancellationRequested)
             {
-                var client = _tcpClient;
+                TcpClient client;
+                await _syncLock.WaitAsync(token).ConfigureAwait(false);
+                try
+                {
+                    client = _tcpClient;
+                }
+                finally
+                {
+                    _syncLock.Release();
+                }
+
                 if (client == null || !client.Connected)
                 {
+                    token.ThrowIfCancellationRequested();
                     await Task.Delay(100, token).ConfigureAwait(false);
                     continue;
                 }
 
                 try
                 {
-                    if (client.Available == 0)
-                    {
-                        await Task.Delay(1, token).ConfigureAwait(false);
-                        continue;
-                    }
+                    byte[] buffer = new byte[4096];
+                    // 异步IO在锁外执行，不阻塞其他操作
+                    int length = await client.GetStream().ReadAsync(buffer, 0, buffer.Length, token).ConfigureAwait(false);
 
-                    await _syncLock.WaitAsync(token).ConfigureAwait(false);
-                    try
+                    if (length > 0)
                     {
-                        if (_tcpClient == null || !_tcpClient.Connected)
-                            continue;
+                        var received = buffer.Take(length).ToArray();
 
-                        var stream = _tcpClient.GetStream();
-                        byte[] buffer = new byte[4096];
-                        int length = await stream.ReadAsync(buffer, 0, buffer.Length, token).ConfigureAwait(false);
-                        if (length > 0)
+                        // 防御性检查（理论上不会触发，因为我们永不调用CompleteAdding）
+                        if (!_receiveQueue.IsAddingCompleted)
                         {
-                            var received = buffer.Take(length).ToArray();
-                            if (_receiveQueue.Count < MaxQueueSize)
+                            // 队列满时丢弃最旧的数据
+                            if (!_receiveQueue.TryAdd(received, 0, token))
                             {
-                                _receiveQueue.Enqueue(received);
-                                _queueSemaphore.Release(); // 通知解析任务
-
-                                //Logs.LogWarn( received);
-
-                            }
-                            else
-                            {
-                                _receiveQueue.TryDequeue(out _);
-                                _receiveQueue.Enqueue(received);
-                                Logs.LogWarn("接收队列已满，丢弃旧数据");
+                                if (_receiveQueue.TryTake(out _))
+                                {
+                                    _receiveQueue.TryAdd(received, 0, token);
+                                }
+                                Logs.LogWarn($"[{GetDeviceId()}] 接收队列已满，丢弃旧数据");
                             }
                         }
-                        else
-                        {
-                            Message = "连接被对端关闭";
-                            CloseTcpClient();
-                        }
                     }
-                    finally
+                    else
                     {
-                        _syncLock.Release();
+                        // 对端正常关闭连接
+                        Message = "连接被对端关闭";
+                        CloseTcpClient();
                     }
                 }
                 catch (OperationCanceledException)
                 {
                     break;
                 }
+                catch (InvalidOperationException ex)
+                {
+                    // 捕获队列已完成的异常（理论上不会触发）
+                    Logs.LogDebug($"[{GetDeviceId()}] 队列已完成添加，接收任务正常退出");
+                    break;
+                }
                 catch (Exception ex)
                 {
-                    Logs.LogError(ex);
+                    Logs.LogError(ex, $"[{GetDeviceId()}] 接收异常");
                     Message = $"接收异常：{ex.Message}";
                     CloseTcpClient();
                     await Task.Delay(100, token).ConfigureAwait(false);
@@ -568,87 +617,87 @@ namespace FZK.Hardware.Scanner.Cognex
         private async Task AnalysisTask(CancellationToken token)
         {
             _analysisStarted.Set();
-            while (!token.IsCancellationRequested)
+            try
             {
-                await _queueSemaphore.WaitAsync(token).ConfigureAwait(false);
-
-                if (!_receiveQueue.TryDequeue(out byte[] data))
-                    continue;
-
-
-
-                try
+                // 【核心优势】AnalysisTask只启动一次，始终消费同一个队列
+                // 重连时无需重启，彻底解决队列引用不一致问题
+                foreach (var data in _receiveQueue.GetConsumingEnumerable(token))
                 {
-                    string chunk = _encoding.GetString(data);
-                    lock (_bufferLock)
+                    try
                     {
-                        _messageBuffer.Append(chunk);
-                        if (_messageBuffer.Length > MaxBufferLength)
+                        string chunk = _encoding.GetString(data);
+                        lock (_bufferLock)
                         {
-                            Logs.LogWarn("解析缓冲区超出最大长度，重置");
-                            _messageBuffer.Clear();
-                            continue;
-                        }
-
-                        string currentBuffer = _messageBuffer.ToString();
-                        int endIndex;
-                        // 按报文结束符提取完整报文（例如 \r\n）
-                        while ((endIndex = currentBuffer.IndexOf(_endOfMessageDelimiter, StringComparison.Ordinal)) >= 0)
-                        {
-                            string completeMessage = currentBuffer.Substring(0, endIndex); // 不包含结束符
-                                                                                           // 移除已处理部分（包括结束符）
-                            _messageBuffer.Remove(0, endIndex + _endOfMessageDelimiter.Length);
-                            currentBuffer = _messageBuffer.ToString();
-
-                            // 处理完整报文
-                            if (!string.IsNullOrWhiteSpace(completeMessage))
+                            _messageBuffer.Append(chunk);
+                            if (_messageBuffer.Length > MaxBufferLength)
                             {
-                                // 更新 Content 为完整报文
-                                Content = completeMessage;
-                                
-                                // 拆分多码（如果需要）
-                                var codes = completeMessage.Split(new[] { _codeDelimiter }, StringSplitOptions.RemoveEmptyEntries)
-                                    .Select(c => c.Trim())
-                                    .Where(c => !string.IsNullOrEmpty(c))
-                                    .ToList();
-                                MultiCodes = codes;
-                                _multiCodesSubject.OnNext(MultiCodes);
+                                Logs.LogWarn($"[{GetDeviceId()}] 解析缓冲区超出最大长度，重置");
+                                _messageBuffer.Clear();
+                                continue;
+                            }
+
+                            string currentBuffer = _messageBuffer.ToString();
+                            int endIndex;
+                            // 按报文结束符提取完整报文
+                            while ((endIndex = currentBuffer.IndexOf(_endOfMessageDelimiter, StringComparison.Ordinal)) >= 0)
+                            {
+                                string completeMessage = currentBuffer.Substring(0, endIndex);
+                                // 移除已处理部分（包括结束符）
+                                _messageBuffer.Remove(0, endIndex + _endOfMessageDelimiter.Length);
+                                currentBuffer = _messageBuffer.ToString();
+
+                                // 处理完整报文
+                                if (!string.IsNullOrWhiteSpace(completeMessage))
+                                {
+                                    Content = completeMessage;
+                                    // 拆分多码
+                                    var codes = completeMessage.Split(new[] { _codeDelimiter }, StringSplitOptions.RemoveEmptyEntries)
+                                        .Select(c => c.Trim())
+                                        .Where(c => !string.IsNullOrEmpty(c))
+                                        .ToList();
+                                    MultiCodes = codes;
+                                    _multiCodesSubject.OnNext(MultiCodes);
+                                }
                             }
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    Logs.LogError(ex, "解析数据异常:");
-                    lock (_bufferLock)
+                    catch (Exception ex)
                     {
-                        _messageBuffer.Clear();
+                        Logs.LogError(ex, $"[{GetDeviceId()}] 解析数据异常");
+                        lock (_bufferLock)
+                        {
+                            _messageBuffer.Clear();
+                        }
                     }
                 }
             }
+            catch (OperationCanceledException)
+            {
+                // 正常取消，忽略
+            }
         }
-        // ========== 新增：启用 TCP KeepAlive ==========
+
         private static void EnableTcpKeepAlive(Socket socket, uint keepAliveTime = 5000, uint keepAliveInterval = 2000)
         {
             try
             {
-                // 启用 KeepAlive
+                // 启用KeepAlive
                 socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
-                // 设置 KeepAlive 详细参数（Windows 平台）
+                // 设置KeepAlive详细参数（Windows平台）
                 byte[] inArray = new byte[12];
-                BitConverter.GetBytes(1u).CopyTo(inArray, 0);        // 启用
-                BitConverter.GetBytes(keepAliveTime).CopyTo(inArray, 4);      // 空闲时间（ms）
-                BitConverter.GetBytes(keepAliveInterval).CopyTo(inArray, 8);   // 重试间隔（ms）
+                System.BitConverter.GetBytes(1u).CopyTo(inArray, 0);        // 启用
+                System.BitConverter.GetBytes(keepAliveTime).CopyTo(inArray, 4);      // 空闲时间（ms）
+                System.BitConverter.GetBytes(keepAliveInterval).CopyTo(inArray, 8);   // 重试间隔（ms）
                 socket.IOControl(IOControlCode.KeepAliveValues, inArray, null);
             }
             catch (Exception ex)
             {
-                // 某些平台可能不支持 IOControl，记录警告但不影响主流程
+                // 某些平台可能不支持IOControl，记录警告但不影响主流程
                 Logs.LogWarn($"启用 TCP KeepAlive 失败: {ex.Message}");
             }
         }
-        // ========== IDisposable 实现 ==========
+
         public void Dispose()
         {
             Dispose(true);
@@ -667,21 +716,33 @@ namespace FZK.Hardware.Scanner.Cognex
                 _messageSubject?.Dispose();
                 _contentSubject?.Dispose();
                 _multiCodesSubject?.Dispose();
+                _receiveQueue?.Dispose();
+                _tasksStarted?.Dispose();
+                _analysisStarted?.Dispose();
             }
 
             // 释放非托管资源
-            if (_tcpClient != null)
-            {
-                try { _tcpClient.Client?.Shutdown(SocketShutdown.Both); } catch { }
-                try { _tcpClient.Close(); } catch { }
-                _tcpClient = null;
-            }
-
+            CloseTcpClient();
             _disposed = true;
+        }
+
+        /// <summary>
+        /// 清空扫码结果缓存，防止读取到上一次的旧码
+        /// </summary>
+        public void ClearContent()
+        {
+            Content = string.Empty;
+            MultiCodes = new List<string>();
+            // 【关键修复】同时清空解析缓冲区
+            // 彻底解决不完整报文残留导致的条码拼接错误
+            lock (_bufferLock)
+            {
+                _messageBuffer.Clear();
+            }
         }
     }
 
-    // 扩展方法：为 Task 添加超时功能
+    // 扩展方法：为Task添加超时功能
     internal static class TaskExtensions
     {
         public static async Task TimeoutAfter(this Task task, TimeSpan timeout)

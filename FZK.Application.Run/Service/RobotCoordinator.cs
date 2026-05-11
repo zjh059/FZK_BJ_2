@@ -47,6 +47,7 @@ namespace FZK.Application.Run.Service
                 
                 bool reportResult = false;
                
+
                
                 if (_SoftwareConfig.IsSFC)               
                     reportResult = await _mes.ReportStation(spCode);                

@@ -3,28 +3,27 @@ using FZK.Application.Share.Models;
 using FZK.Application.Share.Run;
 using FZK.Hardware.PLC.Base;
 using FZK.Hardware.Robot.Base;
-using FZK.Hardware.Robot.Epson;
 using FZK.Hardware.Scanner.Base;
 using FZK.Logger;
-using Newtonsoft.Json.Linq;
 using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
-using static Unity.Storage.RegistrationSet;
 
 namespace FZK.Application.Run.Service
 {
     /// <summary>
     /// 硬件服务实现类（适配真实硬件：欧姆龙PLC+康耐视扫码枪+EPSON机械臂）
     /// 核心：复用HardwareManager已初始化的硬件实例，不重复Init
+    /// 兼容：.NET Framework 4.7.2 + C# 7.3
     /// </summary>
     public class HardwareService : IHardwareService
     {
         private readonly IHardwareManager _hardwareManager;
         private const int MaxRetries = 3; // 写入PLC最大重试次数        
+        private const int ScannerTimeoutMs = 5000; // 扫码超时时间（毫秒）
         private readonly IEventAggregator _eventAggregator;
 
         public HardwareService(
@@ -52,19 +51,18 @@ namespace FZK.Application.Run.Service
                     if (result.Success)
                     {
                         Logs.LogInfo("[HardwareService] 硬件重连成功");
-                        //_eventAggregator.GetEvent<UILogEvent>().Publish("重连成功");
-
+                        _eventAggregator.GetEvent<UILogEvent>().Publish("硬件重连成功");
                     }
                     else
                     {
                         Logs.LogError($"[HardwareService] 硬件重连失败：{result.Message}");
-                        
-
+                        _eventAggregator.GetEvent<UILogEvent>().Publish($"硬件重连失败：{result.Message}");
                     }
                 }
                 catch (Exception ex)
                 {
                     Logs.LogError(ex, "[HardwareService] 硬件重连过程中发生异常");
+                    _eventAggregator.GetEvent<UILogEvent>().Publish($"硬件重连异常：{ex.Message}");
                 }
             });
         }
@@ -81,9 +79,14 @@ namespace FZK.Application.Run.Service
                 return result;
             }
 
+            if (_hardwareManager.OmronPLC == null)
+            {
+                Logs.LogError("[PLC] 欧姆龙PLC实例未初始化");
+                return result;
+            }
+
             try
             {
-                // 校验PLC连接状态
                 if (!_hardwareManager.OmronPLC.Connected)
                 {
                     bool reconnectSuccess = _hardwareManager.OmronPLC.CheckConnection();
@@ -94,7 +97,7 @@ namespace FZK.Application.Run.Service
                     }
                     Logs.LogInfo("[PLC] 重连成功，继续读取寄存器");
                 }
-                              
+
                 int minAddr = addresses.Min();
                 int maxAddr = addresses.Max();
                 long range = (long)maxAddr - minAddr + 1;
@@ -115,7 +118,6 @@ namespace FZK.Application.Run.Service
                     return result;
                 }
 
-                // 映射到地址-值字典
                 for (int i = 0; i < addresses.Count; i++)
                 {
                     int address = addresses[i];
@@ -128,9 +130,8 @@ namespace FZK.Application.Run.Service
                     {
                         Logs.LogError($"[PLC] 地址{address}计算索引{index}超出范围");
                     }
-                }              
+                }
                 Logs.LogInfo($"[PLC] 读取DM寄存器成功 | 地址：{string.Join(",", addresses)} | 值：{string.Join(",", result.Values)}");
-                await Task.Delay(100); // 适当延时，避免过于频繁
             }
             catch (Exception ex)
             {
@@ -146,11 +147,16 @@ namespace FZK.Application.Run.Service
         /// </summary>
         public async Task WritePlcRegister(int address, int value)
         {
+            if (_hardwareManager.OmronPLC == null)
+            {
+                Logs.LogError("[PLC] 欧姆龙PLC实例未初始化");
+                throw new InvalidOperationException("欧姆龙PLC实例未初始化");
+            }
+
             for (int retry = 0; retry < MaxRetries; retry++)
             {
                 try
                 {
-                    // 校验PLC连接状态
                     if (!_hardwareManager.OmronPLC.Connected)
                     {
                         bool reconnectSuccess = _hardwareManager.OmronPLC.CheckConnection();
@@ -170,52 +176,38 @@ namespace FZK.Application.Run.Service
                     }
                     _eventAggregator.GetEvent<UILogEvent>().Publish($"[PLC] 写入DM{address} = {value} 成功");
                     Logs.LogDebug($"[PLC] 写入DM{address} = {value} 成功");
-                    return; // 成功返回
+                    return;
                 }
                 catch (Exception ex)
                 {
                     if (retry == MaxRetries - 1)
                     {
                         Logs.LogError(ex, $"[PLC] 写入DM{address} = {value} 失败，已重试{MaxRetries}次");
-                        throw; // 最后一次失败，抛出异常
+                        throw;
                     }
                     Logs.LogWarn(ex, $"[PLC] 写入DM{address} = {value} 失败（尝试{retry + 1}/{MaxRetries}），将重试");
-                    await Task.Delay(100 * (retry + 1)); // 递增延迟
+                    await Task.Delay(100 * (retry + 1));
                 }
             }
         }
 
         /// <summary>
-        /// 触发扫码枪扫码（适配康耐视扫码枪的TriggerAsync方法）
+        /// 触发扫码枪扫码（返回单码，向后兼容）
         /// </summary>
         public async Task<string> TriggerScanner(ScannerType scannerType)
         {
-            string scanCode = string.Empty;
-            IScanner targetScanner = null;
+            var codes = await TriggerScannerMultiCodesAsync(scannerType);
+            return codes.FirstOrDefault() ?? string.Empty;
+        }
 
-            switch (scannerType)
-            {
-                case ScannerType.治具1下:
-                    targetScanner = _hardwareManager.LeftDownScanner;
-                    break;
-                case ScannerType.治具1上:
-                    targetScanner = _hardwareManager.LeftUpScanner;
-                    break;
-                case ScannerType.机械臂:
-                    targetScanner = _hardwareManager.SPScanner;
-                    break;
-                case ScannerType.治具2上:
-                    targetScanner = _hardwareManager.RightUpScanner;
-                    break;
-                case ScannerType.治具2下:
-                    targetScanner = _hardwareManager.RightDownScanner;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(scannerType), "不支持的扫码类型");
-            }
-
+        /// <summary>
+        /// 触发扫码枪扫码（返回多码列表，基于Observable主动推送）
+        /// </summary>
+        public async Task<List<string>> TriggerScannerMultiCodesAsync(ScannerType scannerType)
+        {
             try
             {
+                IScanner targetScanner = GetScanner(scannerType);
                 if (targetScanner == null)
                 {
                     throw new Exception($"{scannerType}扫码枪实例未初始化");
@@ -231,42 +223,65 @@ namespace FZK.Application.Run.Service
                     Logs.LogInfo($"[Scanner] {scannerType}扫码枪重连成功");
                 }
 
-                bool triggerSuccess = await targetScanner.TriggerAsync();
-                if (triggerSuccess)
-                {
-                    int retry = 0;
-                    while (string.IsNullOrEmpty(targetScanner.Content) && retry < 10)
-                    {
-                        await Task.Delay(50);
-                        retry++;
-                    }
-                    scanCode = targetScanner.Content?.Trim();
-                    if (string.IsNullOrEmpty(scanCode))
-                    {
-                        Logs.LogWarn($"[Scanner] {scannerType}扫码枪触发成功但未返回有效码值");
-                        _eventAggregator.GetEvent<UILogEvent>().Publish("...");
+                // 触发前清空旧码
+                targetScanner.ClearContent();
 
+                // 创建任务源，用于接收第一个有效多码列表
+                var tcs = new TaskCompletionSource<List<string>>();
+
+                // 订阅MultiCodesObservable，只取第一个非空列表
+                var subscription = targetScanner.MultiCodesObservable
+                    .Where(codes => codes != null && codes.Count > 0)
+                    .Take(1)
+                    .Subscribe(
+                        codes => tcs.TrySetResult(codes),
+                        ex => tcs.TrySetException(ex)
+                    );
+
+                try
+                {
+                    bool triggerSuccess = await targetScanner.TriggerAsync();
+                    if (!triggerSuccess)
+                    {
+                        throw new Exception($"{scannerType}扫码枪触发失败");
+                    }
+
+                    // 等待结果，超时500ms
+                    var timeoutTask = Task.Delay(ScannerTimeoutMs);
+                    var completedTask = await Task.WhenAny(tcs.Task, timeoutTask);
+
+                    if (completedTask == tcs.Task)
+                    {
+                        var codes = await tcs.Task;
+                        _eventAggregator.GetEvent<UILogEvent>().Publish(
+                            $"[Scanner] {scannerType}扫码成功：{string.Join(" | ", codes)}");
+
+                        Logs.LogDebug($"[Scanner] {scannerType}扫码成功：{string.Join(" | ", codes)}");
+                        return codes;
                     }
                     else
                     {
-                        _eventAggregator.GetEvent<UILogEvent>().Publish($"[Scanner] {scannerType}扫码成功：{scanCode}");
-                        Logs.LogDebug($"[Scanner] {scannerType}扫码成功：{scanCode}");
+                        Logs.LogWarn($"[Scanner] {scannerType}扫码超时（{ScannerTimeoutMs}ms）或未检测到条码");
+                        _eventAggregator.GetEvent<UILogEvent>().Publish(
+                            $"[Scanner] {scannerType}扫码失败：超时或未检测到条码");
+                        return new List<string>();
                     }
                 }
-                else
+                finally
                 {
-                    throw new Exception($"{scannerType}扫码枪触发失败");
+                    // 确保订阅被释放，防止内存泄漏
+                    subscription.Dispose();
                 }
             }
             catch (Exception ex)
             {
                 Logs.LogError(ex, $"[Scanner] 触发{scannerType}扫码枪失败");
-                // 失败时返回空字符串，由上层根据业务逻辑处理
+                _eventAggregator.GetEvent<UILogEvent>().Publish(
+                    $"[Scanner] {scannerType}扫码异常：{ex.Message}");
+                return new List<string>();
             }
-
-            return scanCode;
         }
-        string robotCmd = "";
+
         /// <summary>
         /// 获取机械臂指令（适配EPSON机械臂的接收数据）
         /// </summary>
@@ -274,6 +289,12 @@ namespace FZK.Application.Run.Service
         {
             try
             {
+                if (_hardwareManager.EpsonRobot == null)
+                {
+                    Logs.LogError("[Robot] EPSON机械臂实例未初始化");
+                    return string.Empty;
+                }
+
                 if (!_hardwareManager.EpsonRobot.Connected)
                 {
                     bool reconnectSuccess = _hardwareManager.EpsonRobot.CheckConnection();
@@ -284,9 +305,10 @@ namespace FZK.Application.Run.Service
                     }
                     Logs.LogInfo("[Robot] EPSON机械臂重连成功");
                 }
-                robotCmd = "";
-                robotCmd = await Task.Run(() => _hardwareManager.EpsonRobot.ReceiveContent?.Trim());
+
+                string robotCmd = _hardwareManager.EpsonRobot.ReceiveContent?.Trim();
                 _hardwareManager.EpsonRobot.ClearReceiveContent();
+
                 if (string.IsNullOrEmpty(robotCmd))
                 {
                     Logs.LogDebug("[Robot] 未获取到机械臂指令");
@@ -311,6 +333,12 @@ namespace FZK.Application.Run.Service
         {
             try
             {
+                if (_hardwareManager.EpsonRobot == null)
+                {
+                    Logs.LogError("[Robot] EPSON机械臂实例未初始化");
+                    throw new InvalidOperationException("EPSON机械臂实例未初始化");
+                }
+
                 if (!_hardwareManager.EpsonRobot.Connected)
                 {
                     bool reconnectSuccess = _hardwareManager.EpsonRobot.CheckConnection();
@@ -322,21 +350,48 @@ namespace FZK.Application.Run.Service
                 }
 
                 string responseCmd = success ? "OK" : "NG";
-                bool sendSuccess = await Task.Run(() =>
-                    _hardwareManager.EpsonRobot.SendCommand(responseCmd));
+                bool sendSuccess = _hardwareManager.EpsonRobot.SendCommand(responseCmd);
 
                 if (!sendSuccess)
                 {
                     throw new Exception($"发送机械臂响应{responseCmd}失败");
                 }
-                _eventAggregator.GetEvent<UILogEvent>().Publish("发送机械臂:"+success);
-
+                _eventAggregator.GetEvent<UILogEvent>().Publish(
+                    $"[Robot] 发送机械臂响应：{(success ? "成功(OK)" : "失败(NG)")}");
                 Logs.LogInfo($"[Robot] 发送机械臂响应：{(success ? "成功(OK)" : "失败(NG)")}");
             }
             catch (Exception ex)
             {
                 Logs.LogError(ex, "[Robot] 发送机械臂响应失败");
+                _eventAggregator.GetEvent<UILogEvent>().Publish(
+                    $"[Robot] 发送响应失败：{ex.Message}");
                 throw;
+            }
+        }
+
+        #endregion
+
+        #region 私有辅助方法
+
+        /// <summary>
+        /// 根据扫码枪类型获取对应的硬件实例（兼容C# 7.3）
+        /// </summary>
+        private IScanner GetScanner(ScannerType scannerType)
+        {
+            switch (scannerType)
+            {
+                case ScannerType.治具1下:
+                    return _hardwareManager.LeftDownScanner;
+                case ScannerType.治具1上:
+                    return _hardwareManager.LeftUpScanner;
+                case ScannerType.机械臂:
+                    return _hardwareManager.SPScanner;
+                case ScannerType.治具2上:
+                    return _hardwareManager.RightUpScanner;
+                case ScannerType.治具2下:
+                    return _hardwareManager.RightDownScanner;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(scannerType), scannerType, "不支持的扫码类型");
             }
         }
 
@@ -345,15 +400,16 @@ namespace FZK.Application.Run.Service
         #region 扩展方法（可选）
 
         /// <summary>
-        /// 批量触发多个扫码枪
+        /// 批量触发多个扫码枪（返回多码列表）
         /// </summary>
-        public async Task<Dictionary<ScannerType, string>> BatchTriggerScanners(List<ScannerType> scannerTypes)
+        public async Task<Dictionary<ScannerType, List<string>>> BatchTriggerScannersMultiCodesAsync(
+            List<ScannerType> scannerTypes)
         {
-            var result = new Dictionary<ScannerType, string>();
+            var result = new Dictionary<ScannerType, List<string>>();
             foreach (var type in scannerTypes)
             {
-                string code = await TriggerScanner(type);
-                result[type] = code;
+                var codes = await TriggerScannerMultiCodesAsync(type);
+                result[type] = codes;
             }
             return result;
         }
@@ -365,6 +421,12 @@ namespace FZK.Application.Run.Service
         {
             try
             {
+                if (_hardwareManager.OmronPLC == null)
+                {
+                    Logs.LogError($"[PLC] 读取DM{address}失败：欧姆龙PLC实例未初始化");
+                    return -1;
+                }
+
                 if (!_hardwareManager.OmronPLC.Connected)
                 {
                     bool reconnectSuccess = _hardwareManager.OmronPLC.CheckConnection();
@@ -381,7 +443,7 @@ namespace FZK.Application.Run.Service
 
                 if (values != null && values.Count == 1)
                 {
-                    Logs.LogDebug($"[PLC] 读取DM{address} = {values[0]}"); 
+                    Logs.LogDebug($"[PLC] 读取DM{address} = {values[0]}");
                     return values[0];
                 }
                 else
@@ -408,7 +470,12 @@ namespace FZK.Application.Run.Service
                 return false;
             }
 
-            // 检查地址是否连续
+            if (_hardwareManager.OmronPLC == null)
+            {
+                Logs.LogError("[PLC] 欧姆龙PLC实例未初始化");
+                return false;
+            }
+
             var sorted = addressValues.Keys.OrderBy(k => k).ToList();
             bool isContinuous = true;
             for (int i = 1; i < sorted.Count; i++)
@@ -429,7 +496,7 @@ namespace FZK.Application.Run.Service
                     for (int i = 0; i < addressValues.Count; i++)
                     {
                         int addr = startAddr + i;
-                        values.Add(addressValues[addr]); // 按顺序取值
+                        values.Add(addressValues[addr]);
                     }
                     bool success = await Task.Run(() =>
                         _hardwareManager.OmronPLC.BatchWrite(PLCRegisterType.DM, startAddr, values));
@@ -441,11 +508,9 @@ namespace FZK.Application.Run.Service
                     else
                     {
                         Logs.LogWarn("[PLC] 批量写入失败，降级为逐个写入");
-                        // 降级到逐个写入
                     }
                 }
 
-                // 不连续或批量失败时逐个写入
                 bool allSuccess = true;
                 foreach (var kv in addressValues)
                 {
@@ -482,15 +547,18 @@ namespace FZK.Application.Run.Service
                     if (result.Success)
                     {
                         Logs.LogInfo("[HardwareService] 硬件停止成功");
+                        _eventAggregator.GetEvent<UILogEvent>().Publish("硬件已停止");
                     }
                     else
                     {
                         Logs.LogError($"[HardwareService] 硬件停止失败：{result.Message}");
+                        _eventAggregator.GetEvent<UILogEvent>().Publish($"硬件停止失败：{result.Message}");
                     }
                 }
                 catch (Exception ex)
                 {
                     Logs.LogError(ex, "[HardwareService] 硬件停止过程中发生异常");
+                    _eventAggregator.GetEvent<UILogEvent>().Publish($"硬件停止异常：{ex.Message}");
                 }
             });
         }
