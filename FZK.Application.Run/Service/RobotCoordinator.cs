@@ -1,5 +1,5 @@
 ﻿using FZK.Application.Share.Config;
-using FZK.Application.Share.Events;
+using FZK.Application.Share.Models;
 using FZK.Application.Share.Run;
 using FZK.Core.Enums;
 using FZK.Hardware.Scanner.Base;

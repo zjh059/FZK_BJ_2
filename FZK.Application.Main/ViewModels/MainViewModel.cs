@@ -7,8 +7,10 @@ using Prism.Regions;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -47,7 +49,7 @@ namespace FZK.Application.Main.ViewModels
         /// 通知切换用户
         /// </summary>
         private void OnLogoutCommand()
-        {
+        {          
             EventAggregator.GetEvent<LogoutEvent>().Publish();
         }
 
@@ -59,12 +61,42 @@ namespace FZK.Application.Main.ViewModels
             }
 
             var mainWindow = Session.MainWindow;
-            mainWindow.Width = 1800;
-            mainWindow.Height = 1000;
+            if (mainWindow == null) return; // 空值保护，防止启动时崩溃
+
+
             Rect workArea = SystemParameters.WorkArea;
-            mainWindow.Left = (workArea.Width - mainWindow.Width) / 2 + workArea.Left;
-            mainWindow.Top = (workArea.Height - mainWindow.Height) / 2 + workArea.Top;
+
+
+            //大屏幕适用
+            //double desiredWidth = Math.Min(1800, workArea.Width - 40); // 左右各留20px边距
+            //double desiredHeight = Math.Min(1000, workArea.Height - 40); // 上下各留20px边距
+
+            //小屏幕适用
+            double desiredWidth = Math.Min(1200, workArea.Width - 40);
+            double desiredHeight = Math.Min(900, workArea.Height - 40);
+
+            mainWindow.Width = desiredWidth;
+            mainWindow.Height = desiredHeight;
+
+
+            mainWindow.Left = Math.Max(workArea.Left, (workArea.Width - desiredWidth) / 2 + workArea.Left);
+            mainWindow.Top = Math.Max(workArea.Top, (workArea.Height - desiredHeight) / 2 + workArea.Top);
+
+
             mainWindow.WindowState = WindowState.Maximized;
+
+
+            //var mainWindow = Session.MainWindow;
+            //mainWindow.Width = 1800;
+            //mainWindow.Height = 1000;
+            //Rect workArea = SystemParameters.WorkArea;
+            //mainWindow.Left = (workArea.Width - mainWindow.Width) / 2 + workArea.Left;
+            //mainWindow.Top = (workArea.Height - mainWindow.Height) / 2 + workArea.Top;
+            //mainWindow.WindowState = WindowState.Maximized;
+
+
+
+
         }
     }
 }

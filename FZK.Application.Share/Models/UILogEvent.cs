@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FZK.Application.Share.Events
+namespace FZK.Application.Share.Models
 {
     /// <summary>
     /// UI日志事件

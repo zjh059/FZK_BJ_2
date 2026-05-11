@@ -32,8 +32,7 @@ namespace FZK.Application.Run
             // 业务服务注册（瞬态或单宿，根据实际情况选择）
             containerRegistry.Register<IPlcService, PlcService>();
             containerRegistry.Register<IDatabaseService, DatabaseService>();
-            containerRegistry.Register<IRobotCoordinator, RobotCoordinator>();
-            containerRegistry.RegisterSingleton<IEventAggregator, EventAggregator>();
+            containerRegistry.Register<IRobotCoordinator, RobotCoordinator>();          
         }
     }
 }
