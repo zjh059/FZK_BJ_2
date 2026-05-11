@@ -53,6 +53,7 @@
     <Compile Include="Models\InitSuccessEvent.cs" />
     <Compile Include="Models\LoginEvent.cs" />
     <Compile Include="Models\LogoutEvent.cs" />
+    <Compile Include="Models\ScanValidationResult.cs" />
     <Compile Include="Models\UILogEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Run\IDatabaseService.cs" />

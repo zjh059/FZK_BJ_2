@@ -23,16 +23,15 @@ namespace FZK.Application.Run.Service
     {
         private readonly IHardwareManager _hardwareManager;
         private const int MaxRetries = 3; // 写入PLC最大重试次数        
-        private const int ScannerTimeoutMs = 5000; // 扫码超时时间（毫秒）
+        private const int ScannerTimeoutMs = 1000; // 扫码超时时间（毫秒）
         private readonly IEventAggregator _eventAggregator;
-        private readonly IMesService _mes;
+       
         public HardwareService(
             IHardwareManager hardwareManager,
-            IEventAggregator eventAggregator,
-              IMesService mes
+            IEventAggregator eventAggregator
             )
         {
-            _mes = mes;
+           
             _hardwareManager = hardwareManager ?? throw new ArgumentNullException(nameof(hardwareManager));
             _eventAggregator = eventAggregator;
             Logs.LogInfo("[HardwareService] 服务初始化完成");
@@ -382,59 +381,57 @@ namespace FZK.Application.Run.Service
         /// </summary>
         /// <param name="scannerType">扫码枪类型</param>
         /// <param name="expectedLength">期望的条码长度（0 表示不校验）</param>
-        /// <param name="enableDebug">调试模式（跳过 MES 校验）</param>
-        /// <param name="enableSfc">是否启用 MES 校验</param>
+        /// <param name="enableDebug">调试模式（跳过 MES 校验）</param>          
         /// <returns>true：校验通过；false：失败</returns>
-        public async Task<bool> TriggerScannerAndValidateAsync(
-            ScannerType scannerType,
-            int expectedLength,
-            bool enableDebug,
-            bool enableSfc)
+        public async Task<ScanValidationResult> TriggerScannerAndValidateAsync(
+          ScannerType scannerType,
+          int expectedLength,
+          bool enableDebug)
         {
+            var result = new ScanValidationResult();
+
             // 1. 触发扫码（获得条码列表）
             var codes = await TriggerScannerMultiCodesAsync(scannerType);
+            result.Codes = codes ?? new List<string>();
+
             if (codes == null || codes.Count == 0)
             {
                 Logs.LogWarn($"[Scanner] {scannerType} 未读到条码");
-                return false;
+                result.IsValid = false;
+                return result;
             }
 
-            // 2. 取第一个条码（实际业务通常只处理一个主码）
+            // 2. 取第一个条码
             string scanCode = codes[0]?.Trim();
             if (string.IsNullOrEmpty(scanCode))
             {
                 Logs.LogWarn($"[Scanner] {scannerType} 条码为空");
-                return false;
+                result.IsValid = false;
+                return result;
             }
 
-            //3. 调试模式直接通过
+            // 3. 调试模式通过
             if (enableDebug)
             {
-                Logs.LogDebug($"[Scanner] {scannerType} 调试模式，跳过 MES 校验，条码：{scanCode}");
-                return true;
+                Logs.LogDebug($"[Scanner] {scannerType} 调试模式，跳过后续校验，条码：{scanCode}");
+                result.IsValid = true;
+                return result;
             }
-            // 4. 长度校验
+
+            // 4. 长度校验（先于调试，保证物理码正确）
             if (expectedLength > 0 && scanCode.Length != expectedLength)
             {
                 Logs.LogWarn($"[Scanner] {scannerType} 条码长度不符（期望{expectedLength}，实际{scanCode.Length}）");
-                return false;
+                result.IsValid = false;
+                return result;
             }
 
-            // 5. MES 校验
-            if (enableSfc)
-            {
-                bool mesResult = await _mes.ReportStation(scanCode); // _mes 是私有字段
-                if (!mesResult)
-                {
-                    Logs.LogWarn($"[Scanner] {scannerType} MES 校验失败，条码：{scanCode}");
-                }
-                return mesResult;
-            }
 
-            // 6. 默认通过
-            return true;
+
+            // 没有进一步校验，默认通过
+            result.IsValid = true;
+            return result;
         }
-
         #endregion
 
 

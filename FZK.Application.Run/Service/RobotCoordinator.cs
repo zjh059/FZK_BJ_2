@@ -21,15 +21,17 @@ namespace FZK.Application.Run.Service
         private readonly ScannerConfig _robotScannerConfig;
         private readonly SoftwareConfig _SoftwareConfig;
         private readonly ISystemConfigManager _systemConfigManager;
-
+        private readonly IMesService _mes;
         private readonly IEventAggregator _eventAggregator;
 
         public RobotCoordinator(IHardwareService hardware,          
              ISystemConfigManager systemConfigManager,             
-             IEventAggregator eventAggregator
+             IEventAggregator eventAggregator,
+              IMesService mes
             )
         {
-            _hardware = hardware;           
+            _hardware = hardware;
+            _mes = mes;
             _SoftwareConfig = systemConfigManager.SoftwareConfig;
             _robotScannerConfig = systemConfigManager.RobotScannerConfig;
             _eventAggregator = eventAggregator;
@@ -43,12 +45,37 @@ namespace FZK.Application.Run.Service
             {
                 Logs.LogInfo("机械臂到达扫码位");
                 _eventAggregator.GetEvent<UILogEvent>().Publish("机械臂到达扫码位");
-               // string spCode = await _hardware.TriggerScanner(ScannerType.机械臂);
-                var result = await _hardware.TriggerScannerAndValidateAsync(ScannerType.机械臂, _robotScannerConfig.SnLength,
-                    _SoftwareConfig.IsDebug, _SoftwareConfig.IsSFC);
-                _eventAggregator.GetEvent<UILogEvent>().Publish("回复机械臂:" + result);
-                await _hardware.SendRobotResponse(result);
-                Logs.LogInfo($"机械臂上报结果: {(result ? "成功" : "失败")}");
+                // string spCode = await _hardware.TriggerScanner(ScannerType.机械臂);
+                var result = await _hardware.TriggerScannerAndValidateAsync(
+                                                              ScannerType.机械臂,
+                                                               _robotScannerConfig.SnLength,
+                                                                    _SoftwareConfig.IsDebug);
+
+
+                // 5. MES 校验
+                bool reportResult;
+                string spCode = result.PrimaryCode; // 条码
+
+                if (result.IsValid)
+                {
+                    if (_SoftwareConfig.IsSFC && !_SoftwareConfig.IsDebug)
+                    {
+                        // 在这里调用 MES
+                        bool mesOk = await _mes.ReportStation(spCode);
+                        reportResult = mesOk;
+                    }
+                    else
+                    {
+                        reportResult = true;
+                    }
+                }
+                else
+                {
+                    reportResult = false;
+                }
+
+                _eventAggregator.GetEvent<UILogEvent>().Publish("回复机械臂:" + reportResult);
+                await _hardware.SendRobotResponse(reportResult);
             }
         }         
     }
