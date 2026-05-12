@@ -168,44 +168,44 @@
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource IP地址}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftUpScannerConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1UpScannerConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource 端口}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftUpScannerConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1UpScannerConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource 方向}" Style="{StaticResource FormLabelStyle}"/>
                                 <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormComboBoxStyle}"
                                           ItemsSource="{Binding Source={StaticResource ScannerTypeEnumValues}}"
-                                          SelectedItem="{Binding SystemConfigManager.LeftUpScannerConfig.Direction, UpdateSourceTrigger=PropertyChanged}"/>
+                                          SelectedItem="{Binding SystemConfigManager.Jig1UpScannerConfig.Direction, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="2" Text="{DynamicResource 扫码延迟ms}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="1" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftUpScannerConfig.DelayTime, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1UpScannerConfig.DelayTime, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource 触发指令}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftUpScannerConfig.TriggerCommand, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1UpScannerConfig.TriggerCommand, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="2" Grid.Column="2" Text="{DynamicResource 最大重连次数}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="2" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftUpScannerConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1UpScannerConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource 重连延迟ms}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftUpScannerConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1UpScannerConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="3" Grid.Column="2" Text="{DynamicResource 编码名称}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="3" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftUpScannerConfig.EncodingName, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1UpScannerConfig.EncodingName, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource 码值分隔符}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftUpScannerConfig.CodeDelimiter, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1UpScannerConfig.CodeDelimiter, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="4" Grid.Column="2" Text="{DynamicResource SN长度}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="4" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftUpScannerConfig.SnLength, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1UpScannerConfig.SnLength, UpdateSourceTrigger=PropertyChanged}"/>
                             </Grid>
                         </StackPanel>
                     </Border>
@@ -238,44 +238,44 @@
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource IP地址}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftDownScannerConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1DownScannerConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource 端口}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftDownScannerConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1DownScannerConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource 方向}" Style="{StaticResource FormLabelStyle}"/>
                                 <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormComboBoxStyle}"
                                           ItemsSource="{Binding Source={StaticResource ScannerTypeEnumValues}}"
-                                          SelectedItem="{Binding SystemConfigManager.LeftDownScannerConfig.Direction, UpdateSourceTrigger=PropertyChanged}"/>
+                                          SelectedItem="{Binding SystemConfigManager.Jig1DownScannerConfig.Direction, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="2" Text="{DynamicResource 扫码延迟ms}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="1" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftDownScannerConfig.DelayTime, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1DownScannerConfig.DelayTime, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource 触发指令}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftDownScannerConfig.TriggerCommand, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1DownScannerConfig.TriggerCommand, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="2" Grid.Column="2" Text="{DynamicResource 最大重连次数}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="2" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftDownScannerConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1DownScannerConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource 重连延迟ms}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftDownScannerConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1DownScannerConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="3" Grid.Column="2" Text="{DynamicResource 编码名称}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="3" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftDownScannerConfig.EncodingName, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1DownScannerConfig.EncodingName, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource 码值分隔符}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftDownScannerConfig.CodeDelimiter, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1DownScannerConfig.CodeDelimiter, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="4" Grid.Column="2" Text="{DynamicResource SN长度}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="4" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.LeftDownScannerConfig.SnLength, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig1DownScannerConfig.SnLength, UpdateSourceTrigger=PropertyChanged}"/>
                             </Grid>
                         </StackPanel>
                     </Border>
@@ -308,44 +308,44 @@
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource IP地址}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightUpScannerConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2UpScannerConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource 端口}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightUpScannerConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2UpScannerConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource 方向}" Style="{StaticResource FormLabelStyle}"/>
                                 <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormComboBoxStyle}"
                                           ItemsSource="{Binding Source={StaticResource ScannerTypeEnumValues}}"
-                                          SelectedItem="{Binding SystemConfigManager.RightUpScannerConfig.Direction, UpdateSourceTrigger=PropertyChanged}"/>
+                                          SelectedItem="{Binding SystemConfigManager.Jig2UpScannerConfig.Direction, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="2" Text="{DynamicResource 扫码延迟ms}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="1" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightUpScannerConfig.DelayTime, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2UpScannerConfig.DelayTime, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource 触发指令}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightUpScannerConfig.TriggerCommand, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2UpScannerConfig.TriggerCommand, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="2" Grid.Column="2" Text="{DynamicResource 最大重连次数}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="2" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightUpScannerConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2UpScannerConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource 重连延迟ms}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightUpScannerConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2UpScannerConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="3" Grid.Column="2" Text="{DynamicResource 编码名称}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="3" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightUpScannerConfig.EncodingName, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2UpScannerConfig.EncodingName, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource 码值分隔符}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightUpScannerConfig.CodeDelimiter, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2UpScannerConfig.CodeDelimiter, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="4" Grid.Column="2" Text="{DynamicResource SN长度}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="4" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightUpScannerConfig.SnLength, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2UpScannerConfig.SnLength, UpdateSourceTrigger=PropertyChanged}"/>
                             </Grid>
                         </StackPanel>
                     </Border>
@@ -378,44 +378,44 @@
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource IP地址}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightDownScannerConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2DownScannerConfig.IpAddress, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource 端口}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="0" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightDownScannerConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2DownScannerConfig.Port, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource 方向}" Style="{StaticResource FormLabelStyle}"/>
                                 <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormComboBoxStyle}"
                                           ItemsSource="{Binding Source={StaticResource ScannerTypeEnumValues}}"
-                                          SelectedItem="{Binding SystemConfigManager.RightDownScannerConfig.Direction, UpdateSourceTrigger=PropertyChanged}"/>
+                                          SelectedItem="{Binding SystemConfigManager.Jig2DownScannerConfig.Direction, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="1" Grid.Column="2" Text="{DynamicResource 扫码延迟ms}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="1" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightDownScannerConfig.DelayTime, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2DownScannerConfig.DelayTime, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource 触发指令}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightDownScannerConfig.TriggerCommand, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2DownScannerConfig.TriggerCommand, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="2" Grid.Column="2" Text="{DynamicResource 最大重连次数}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="2" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightDownScannerConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2DownScannerConfig.MaxReconnectCount, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource 重连延迟ms}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightDownScannerConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2DownScannerConfig.ReconnectDelay, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="3" Grid.Column="2" Text="{DynamicResource 编码名称}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="3" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightDownScannerConfig.EncodingName, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2DownScannerConfig.EncodingName, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource 码值分隔符}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightDownScannerConfig.CodeDelimiter, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2DownScannerConfig.CodeDelimiter, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="4" Grid.Column="2" Text="{DynamicResource SN长度}" Style="{StaticResource FormLabelStyle}"/>
                                 <TextBox Grid.Row="4" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
-                                         Text="{Binding SystemConfigManager.RightDownScannerConfig.SnLength, UpdateSourceTrigger=PropertyChanged}"/>
+                                         Text="{Binding SystemConfigManager.Jig2DownScannerConfig.SnLength, UpdateSourceTrigger=PropertyChanged}"/>
                             </Grid>
                         </StackPanel>
                     </Border>
@@ -492,7 +492,7 @@
                 </TabItem>
             </TabControl>
 
-            <!-- 底部按钮区 -->
+            <!-- 底部按钮区 --><!--
             <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
                 <Button Content="{DynamicResource 保存}" Width="80" Height="32" Margin="5" 
                         Command="{Binding SaveCommand}"
@@ -508,7 +508,7 @@
                         Command="{Binding CancelCommand}"
                         Background="#E2E8F0" Foreground="#2D3748" 
                         BorderThickness="0" Cursor="Hand"/>
-            </StackPanel>
+            </StackPanel>-->
         </Grid>
     </ScrollViewer>
 </UserControl>
