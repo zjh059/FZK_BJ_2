@@ -36,7 +36,7 @@
                         <iconPacks:PackIconFeatherIcons Kind="Settings" Width="20" Height="20" />
                     </RadioButton.Tag>
                 </RadioButton>
-                <RadioButton Content="{DynamicResource PLC调试}" Style="{StaticResource RadioButton.Menu.Style}"
+                <!--<RadioButton Content="{DynamicResource PLC调试}" Style="{StaticResource RadioButton.Menu.Style}"
                              Command="{Binding NavigationgToVewCommand}"
                              CommandParameter="{x:Static core:Names.PLCDebugView}">
 
@@ -48,7 +48,7 @@
                 <RadioButton Content="{DynamicResource 机械臂调试}" Style="{StaticResource RadioButton.Menu.Style}"
                                Command="{Binding NavigationgToVewCommand}"
                                CommandParameter="{x:Static core:Names.RobotDebugView}">
-                </RadioButton>
+                </RadioButton>-->
                 <RadioButton Content="{DynamicResource 数据管理}" Style="{StaticResource RadioButton.Menu.Style}"
                                Command="{Binding NavigationgToVewCommand}"
                                CommandParameter="{x:Static core:Names.DataBaseDebugView}">

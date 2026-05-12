@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using static FZK.Application.Run.ViewModels.RunViewModel;
+using FZK.Application.Run.Models;
 
 namespace FZK.Application.Run.Service
 {

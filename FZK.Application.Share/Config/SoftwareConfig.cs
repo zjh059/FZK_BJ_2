@@ -18,7 +18,7 @@ namespace FZK.Application.Share.Config
         public string InitUrl { get; set; }         
         public string StationID { get; set; } = "123";
         public bool IsSFC { get; set; } = false;
-        private bool _isDebug;
+
         public bool IsDebug { get; set; } = false;
         public string siteCode { get; set; } = "123";
         public string userCode { get; set; } = "123";

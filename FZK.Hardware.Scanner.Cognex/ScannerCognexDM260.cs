@@ -600,8 +600,8 @@ namespace FZK.Hardware.Scanner.Cognex
                 }
                 catch (InvalidOperationException ex)
                 {
-                    // 捕获队列已完成的异常（理论上不会触发）
-                    Logs.LogDebug($"[{GetDeviceId()}] 队列已完成添加，接收任务正常退出");
+                   
+                    Logs.LogDebug($"[{GetDeviceId()}] 队列已完成添加，接收任务正常退出,"+ ex);
                     break;
                 }
                 catch (Exception ex)

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -66,9 +66,6 @@
     <Compile Include="ViewModels\BTEntityDebugViewModel.cs" />
     <Compile Include="ViewModels\CodeEntityDebugViewModel.cs" />
     <Compile Include="ViewModels\DataBaseDebugViewModel.cs" />
-    <Compile Include="ViewModels\PLCDebugViewModel.cs" />
-    <Compile Include="ViewModels\RobotDebugViewModel.cs" />
-    <Compile Include="ViewModels\ScannerDebugViewModel.cs" />
     <Compile Include="ViewModels\UserEntityDebugViewModel.cs" />
     <Compile Include="Views\BTEntityDebugView.xaml.cs">
       <DependentUpon>BTEntityDebugView.xaml</DependentUpon>
@@ -80,15 +77,6 @@
       <DependentUpon>DataBaseDebugView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PasswordBoxHelper.cs" />
-    <Compile Include="Views\PLCDebugView.xaml.cs">
-      <DependentUpon>PLCDebugView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\RobotDebugView.xaml.cs">
-      <DependentUpon>RobotDebugView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ScannerDebugView.xaml.cs">
-      <DependentUpon>ScannerDebugView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\UserEntityDebugView.xaml.cs">
       <DependentUpon>UserEntityDebugView.xaml</DependentUpon>
     </Compile>
@@ -134,18 +122,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DataBaseDebugView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PLCDebugView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\RobotDebugView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ScannerDebugView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

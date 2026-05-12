@@ -21,10 +21,7 @@ namespace FZK.Application.Debug
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterForNavigation<PLCDebugView>();
-            containerRegistry.RegisterForNavigation<ScannerDebugView>();
             containerRegistry.RegisterForNavigation<DataBaseDebugView>();
-            containerRegistry.RegisterForNavigation<RobotDebugView>();
             containerRegistry.RegisterForNavigation<CodeEntityDebugView>();
             containerRegistry.RegisterForNavigation<BTEntityDebugView>();
             containerRegistry.RegisterForNavigation<UserEntityDebugView>();

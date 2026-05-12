@@ -36,8 +36,43 @@ namespace FZK.Shell.ViewModels
 
         private void OnLoadedComand()
         {
+            SettingScreen();
+            RegionManager.RequestNavigate(Names.ShellRegion, Names.LoginView);
+
+            EventAggregator.GetEvent<LoginEvent>().Subscribe(LoginSuccess, ThreadOption.UIThread);
+            EventAggregator.GetEvent<InitSuccessEvent>().Subscribe(InitSuccess, ThreadOption.UIThread);
+            EventAggregator.GetEvent<LogoutEvent>().Subscribe(Logout, ThreadOption.UIThread, true);
+        }
+        /// <summary>
+        /// 加载登录页面
+        /// </summary>
+        private void Logout()
+        {
+            RegionManager.RequestNavigate(Names.ShellRegion, Names.LoginView);
+            SettingScreen();
+        }
+        private bool IsHardwareInitialized = false;
+        private void InitSuccess()
+        {
+            IsHardwareInitialized = true;
+        }
+        private void LoginSuccess(UserEntity user)
+        {
+            if (IsHardwareInitialized)
+            {
+                ModuleManager.LoadModule(Names.MainModule);//先加载主模块
+                RegionManager.RequestNavigate(Names.ShellRegion, Names.MainView);//导航到首页面
+            }
+            else
+            {
+                ModuleManager.LoadModule(Names.InitializeModule);//先加载模块
+                RegionManager.RequestNavigate(Names.ShellRegion, Names.InitView);//导航到硬件加载页面
+            }
+        }
+        private void SettingScreen()
+        {
             Window mainWindow = System.Windows.Application.Current.MainWindow;
- if (mainWindow == null) return; // 空值保护，防止启动时崩溃
+            if (mainWindow == null) return; // 空值保护，防止启动时崩溃
 
 
             Rect workArea = SystemParameters.WorkArea;
@@ -58,44 +93,7 @@ namespace FZK.Shell.ViewModels
             mainWindow.Left = Math.Max(workArea.Left, (workArea.Width - desiredWidth) / 2 + workArea.Left);
             mainWindow.Top = Math.Max(workArea.Top, (workArea.Height - desiredHeight) / 2 + workArea.Top);
             mainWindow.WindowState = WindowState.Normal;
-            RegionManager.RequestNavigate(Names.ShellRegion, Names.LoginView);
 
-            EventAggregator.GetEvent<LoginEvent>().Subscribe(LoginSuccess, ThreadOption.UIThread);
-            EventAggregator.GetEvent<InitSuccessEvent>().Subscribe(InitSuccess, ThreadOption.UIThread);
-            EventAggregator.GetEvent<LogoutEvent>().Subscribe(Logout, ThreadOption.UIThread,true);
-        }
-        /// <summary>
-        /// 加载登录页面
-        /// </summary>
-        private void Logout()
-        {
-            RegionManager.RequestNavigate(Names.ShellRegion, Names.LoginView);
-            Window mainWindow = System.Windows.Application.Current.MainWindow;
-            mainWindow.Width = 1500;
-            mainWindow.Height = 850;
-            Rect workArea = SystemParameters.WorkArea;
-            mainWindow.Left = (workArea.Width - mainWindow.Width) / 2 + workArea.Left;
-            mainWindow.Top = (workArea.Height - mainWindow.Height) / 2 + workArea.Top;
-            mainWindow.WindowState = WindowState.Normal;
-
-        }
-        private bool IsHardwareInitialized = false;
-        private void InitSuccess()
-        {
-            IsHardwareInitialized = true;
-        }
-        private void LoginSuccess(UserEntity user)
-        {
-            if (IsHardwareInitialized)
-            {
-                ModuleManager.LoadModule(Names.MainModule);//先加载主模块
-                RegionManager.RequestNavigate(Names.ShellRegion, Names.MainView);//导航到首页面
-            }
-            else
-            {       
-                ModuleManager.LoadModule(Names.InitializeModule);//先加载模块
-                RegionManager.RequestNavigate(Names.ShellRegion, Names.InitView);//导航到硬件加载页面
-            }
         }
     }
 }
