@@ -23,7 +23,7 @@ namespace FZK.Application.Run.Service
     {
         private readonly IHardwareManager _hardwareManager;
         private const int MaxRetries = 3; // 写入PLC最大重试次数        
-        private const int ScannerTimeoutMs = 1000; // 扫码超时时间（毫秒）
+        private const int ScannerTimeoutMs = 2000; // 扫码超时时间（毫秒）
         private readonly IEventAggregator _eventAggregator;
        
         public HardwareService(
@@ -425,8 +425,6 @@ namespace FZK.Application.Run.Service
                 result.IsValid = false;
                 return result;
             }
-
-
 
             // 没有进一步校验，默认通过
             result.IsValid = true;

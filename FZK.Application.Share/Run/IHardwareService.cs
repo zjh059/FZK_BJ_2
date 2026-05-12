@@ -23,7 +23,7 @@ namespace FZK.Application.Share.Run
         Task<string> GetRobotCommand();
         Task SendRobotResponse(bool success);
         Task<int> ReadPlcRegister(int address);
-
+        Task<List<string>> TriggerScannerMultiCodesAsync(ScannerType scannerType);
         Task<ScanValidationResult> TriggerScannerAndValidateAsync(
            ScannerType scannerType,
            int expectedLength,
