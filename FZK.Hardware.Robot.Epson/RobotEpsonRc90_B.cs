@@ -467,7 +467,7 @@ namespace FZK.Hardware.Robot.Epson
                     else
                         ReceiveContent = frame;
 
-                    Logs.LogInfo($"收到完整帧：{frame}");
+                    //   Logs.LogInfo($"收到完整帧：{frame}");
                 }
             }
 

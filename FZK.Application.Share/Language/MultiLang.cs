@@ -40,12 +40,19 @@ namespace FZK.Application.Share.Language
         public static string 正在初始化所有硬件 => Get("正在初始化所有硬件");
 
         // RunViewModel 多语言
+        /// <summary>
+        /// 设备启动中...
+        /// </summary>
         public static string DeviceStarting => Get("DeviceStarting");
+        /// <summary>
+        /// 设备初始化完成
+        /// </summary>
         public static string DeviceInitCompleted => Get("DeviceInitCompleted");
+        /// <summary>
+        /// 空闲
+        /// </summary>
         public static string Idle => Get("Idle");
         public static string None => Get("None");
-        public static string NoHardwareModeOn => Get("NoHardwareModeOn");
-        public static string NoHardwareModeOff => Get("NoHardwareModeOff");
         public static string StartDevice => Get("StartDevice");
         public static string StopDevice => Get("StopDevice");
         public static string StatusCheckTimerFail => Get("StatusCheckTimerFail");

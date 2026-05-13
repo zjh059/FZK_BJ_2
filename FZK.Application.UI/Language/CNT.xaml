@@ -574,4 +574,5 @@
     <system:String x:Key="WritePlcDFailedDetail">寫入 PLC D{0} 失敗: {1}</system:String>
     <system:String x:Key="WritePlcDSuccess">寫入 PLC D{0} 成功</system:String>
     <system:String x:Key="WritePlcDSuccessSim">寫入 PLC D{0} 成功 (模擬)</system:String>
+    <system:String x:Key="AddBindInfo">新增綁定信息</system:String>
 </ResourceDictionary>

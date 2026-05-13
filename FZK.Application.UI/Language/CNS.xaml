@@ -278,7 +278,7 @@
     <system:String x:Key="None">无</system:String>
     <system:String x:Key="NoHardwareModeOn">无硬件模式（已开启）</system:String>
     <system:String x:Key="NoHardwareModeOff">无硬件模式（关闭）</system:String>
-    <system:String x:Key="StartDevice">启动设备</system:String>
+    <system:String x:Key="StartDevice">Start</system:String>
     <system:String x:Key="StopDevice">停止设备</system:String>
     <system:String x:Key="StatusCheckTimerFail">状态检查定时器执行失败</system:String>
     <system:String x:Key="RefreshHardwareStatusError">刷新硬件连接状态异常</system:String>
