@@ -152,7 +152,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- 左侧：扫码记录表格 -->
-                <Border Grid.Column="0" Style="{StaticResource Boder.MainStatus.CardStyle}" Margin="0,0,15,0">
+                <Border Grid.Column="0" Style="{StaticResource Boder.MainStatus.CardStyle}" Margin="0,0,15,0" Loaded="DataGrid_Loaded">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -161,7 +161,9 @@
                         <TextBlock Text="{DynamicResource 扫码记录_实时更新}" Style="{StaticResource TextBlock.Run.SubTitleStyle}" Margin="0,0,0,12"/>
                         <DataGrid Grid.Row="1" Style="{StaticResource DataGrid.Main.Style}"
                                   ItemsSource="{Binding ScanRecords}"
-                                  ColumnHeaderStyle="{StaticResource DataGrid.Main.DataGridColumnHeaderStyle}">
+                                  ColumnHeaderStyle="{StaticResource DataGrid.Main.DataGridColumnHeaderStyle}"                                 
+                                  ColumnWidth="Auto"
+                                  CanUserResizeColumns="True">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="{DynamicResource 时间}" Binding="{Binding CreateTime, StringFormat=yyyy-MM-dd HH:mm:ss}" Width="150"/>
                                 <DataGridTextColumn Header="{DynamicResource 治具编号}" Binding="{Binding JigNo}" Width="80"/>
@@ -206,7 +208,7 @@
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             <TextBlock Text="{DynamicResource 设备运行日志}" Style="{StaticResource TextBlock.Run.SubTitleStyle}" Margin="0,0,0,12"/>
-                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Height="280">
+                            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Height="150">
                                 <TextBlock Text="{Binding RunLog}" FontFamily="Consolas" FontSize="12"
                                            TextWrapping="Wrap" Padding="5"/>
                             </ScrollViewer>

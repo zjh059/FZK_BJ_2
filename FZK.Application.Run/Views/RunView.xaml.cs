@@ -24,5 +24,20 @@ namespace FZK.Application.Run.Views
         {
             InitializeComponent();
         }
+        private void DataGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            var dataGrid = sender as DataGrid;
+            if (dataGrid == null || dataGrid.Columns.Count == 0) return;
+
+            // 临时关闭再重新启用 Auto 宽度，触发重新测量
+            foreach (var column in dataGrid.Columns)
+            {
+                var oldWidth = column.Width;
+                column.Width = 0;
+                column.Width = oldWidth;
+                // 或者直接设置为 Auto
+                // column.Width = DataGridLength.Auto;
+            }
+        }
     }
 }
