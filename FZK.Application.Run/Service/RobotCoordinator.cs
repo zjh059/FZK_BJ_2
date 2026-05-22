@@ -55,24 +55,31 @@ namespace FZK.Application.Run.Service
                 // 5. MES 校验
                 bool reportResult;
                 string spCode = result.PrimaryCode; // 条码
-
-                if (result.IsValid)
+                if (_SoftwareConfig.IsDebug)
                 {
-                    if (_SoftwareConfig.IsSFC && !_SoftwareConfig.IsDebug)
-                    {
-                        // 在这里调用 MES
-                        bool mesOk = await _mes.ReportStation(spCode);
-                        reportResult = mesOk;
-                    }
-                    else
-                    {
-                        reportResult = true;
-                    }
+                    reportResult = true;
                 }
                 else
                 {
-                    reportResult = false;
+                    if (result.IsValid)
+                    {
+                        if (_SoftwareConfig.IsSFC && !_SoftwareConfig.IsDebug)
+                        {
+                            // 在这里调用 MES
+                            bool mesOk = await _mes.ReportStation(spCode);
+                            reportResult = mesOk;
+                        }
+                        else
+                        {
+                            reportResult = true;
+                        }
+                    }
+                    else
+                    {
+                        reportResult = false;
+                    }
                 }
+               
 
                 _eventAggregator.GetEvent<UILogEvent>().Publish("回复机械臂:" + reportResult);
                 await _hardware.SendRobotResponse(reportResult);

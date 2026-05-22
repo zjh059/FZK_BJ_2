@@ -134,12 +134,15 @@ namespace FZK.Hardware.Robot.Epson
                 _heartbeatInterval = _robotConfig.HeartbeatInterval;
                 _heartbeatTimeout = _robotConfig.CommandTimeout;
                 _heartbeatMaxRetry = _robotConfig.CommandRetryCount;
+                StartReconnectTask();
 
                 RobotState = RobotState.Connecting;
+
                 Message = $"正在连接 {_robotConfig.IpAddress}:{_robotConfig.Port}";
 
                 if (!TryConnect())
                 {
+                    Initialized = true;
                     Message = "首次连接失败";
                     Logs.LogError(Message);
                     RobotState = RobotState.UnInitialized;
@@ -151,7 +154,6 @@ namespace FZK.Hardware.Robot.Epson
                 _reconnectCount = 0;
 
                 ClearAllBuffers();
-                StartReconnectTask();
                 StartCommunicationTasks();
                 StartHeartbeat();
                 return true;
@@ -410,7 +412,7 @@ namespace FZK.Hardware.Robot.Epson
 
                     byte[] data = Encoding.UTF8.GetBytes(cmd);
                     await client.GetStream().WriteAsync(data, 0, data.Length, _cts.Token);
-                    Logs.LogInfo($"发送成功：{cmd.Trim()}");
+                    Logs.LogTrace($"发送成功：{cmd.Trim()}");
                 }
                 catch (Exception ex)
                 {
