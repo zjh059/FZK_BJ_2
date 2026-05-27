@@ -447,15 +447,25 @@ namespace FZK.Application.Run.Service
                 if (string.IsNullOrEmpty(trimmed))
                     continue;
 
-                if (trimmed.StartsWith(bottomPrefix, StringComparison.OrdinalIgnoreCase))
-                {
-                    bottomCode = trimmed;
-                }
-                else if (string.IsNullOrEmpty(spCode)) // 只取第一个非底板码作为主板码
-                {
-                    spCode = trimmed;
-                }
+                //if (trimmed.StartsWith(bottomPrefix, StringComparison.OrdinalIgnoreCase))
+                //{
+                //    bottomCode = trimmed;
+                //    var len = bottomCode.Length;
+                //}
+                //else if (string.IsNullOrEmpty(spCode)) // 只取第一个非底板码作为主板码
+                //{
+                //    spCode = trimmed;
+                //}
             }
+  
+
+            var ordered = codes.OrderByDescending(c => c.Length).ToList();
+
+            if (ordered.Count < 2)
+                return false;
+
+            spCode = ordered[0];     // 最长 -> SP码
+            bottomCode = ordered[1]; // 次长 -> 底板码
 
             return !string.IsNullOrEmpty(bottomCode) && !string.IsNullOrEmpty(spCode);
         }
