@@ -67,6 +67,7 @@
     <Compile Include="Service\HardwareService.cs" />
     <Compile Include="Service\JigFlowEngine.cs" />
     <Compile Include="Service\MesService.cs" />
+    <Compile Include="Service\CodeInfoRequest.cs" />
     <Compile Include="Service\PlcService.cs" />
     <Compile Include="Service\RobotCoordinator.cs" />
     <Compile Include="ViewModels\RunViewModel.cs" />

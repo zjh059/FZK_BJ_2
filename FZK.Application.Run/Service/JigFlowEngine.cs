@@ -390,6 +390,7 @@ namespace FZK.Application.Run.Service
                         Result = "1",
                         Remark = "清零成功"
                     });
+                    await _plc.WriteRegisterAsync(_config.WeldFinishAddr, _config.FinishFlag);
                 }
                 else
                 {

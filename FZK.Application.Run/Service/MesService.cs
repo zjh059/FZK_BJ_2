@@ -13,14 +13,16 @@ namespace FZK.Application.Run.Service
     public class MesService : IMesService
     {
         private readonly HttpClient _httpClient = new HttpClient();
-        private readonly string _testResultUrl;      // 完整 URL，例如 http://mes-server/api/TestResult
-        private readonly string _reportStationUrl;   // 完整 URL，例如 http://mes-server/api/ReportStation
-        private readonly string _stationCode;        // 工位编码
-        private readonly string _token;              // 认证令牌
+        private readonly string _testResultUrl;
+        private readonly string _reportStationUrl;
+        private readonly string _stationCode;
+        private readonly string _codeInfoUrl;          // 新增
+        private readonly string _equipmentIp;          // 新增
+        private readonly string _processDoPassConfig;  // 新增：配置中的制程
+        private readonly string _stationDoPassConfig;  // 新增：配置中的工站
 
         public MesService(ISystemConfigManager systemConfigManager)
         {
-            // 从配置中获取 MES 相关配置（直接使用 SoftwareConfig 的属性）
             var config = systemConfigManager.SoftwareConfig
                          ?? throw new ArgumentNullException(nameof(systemConfigManager.SoftwareConfig), "软件配置未找到");
 
@@ -30,15 +32,18 @@ namespace FZK.Application.Run.Service
                                 ?? throw new ArgumentNullException(nameof(config.ReportStationUrl), "ReportStationUrl未配置");
             _stationCode = config.StationCode
                            ?? throw new ArgumentNullException(nameof(config.StationCode), "StationCode未配置");
-            //_token = config.Token
-            //         ?? throw new ArgumentNullException(nameof(config.Token), "Token未配置");
 
-            //// 设置默认认证头
-            //_httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_token}");
+            // 新增配置读取
+            _codeInfoUrl = config.CodeInfoUrl
+                           ?? throw new ArgumentNullException(nameof(config.CodeInfoUrl), "CodeInfoUrl未配置");
+            _equipmentIp = config.EquipmentIp
+                           ?? throw new ArgumentNullException(nameof(config.EquipmentIp), "EquipmentIp未配置");
+            _processDoPassConfig = config.Process_dopass ?? string.Empty;
+            _stationDoPassConfig = config.Station_dopass ?? string.Empty;
         }
 
         /// <summary>
-        /// 从 MES 查询主板码测试结果
+        /// 从 MES 查询主板码测试结果（保持原有功能）
         /// </summary>
         public async Task<bool> GetMesTestResult(string spCode)
         {
@@ -52,12 +57,11 @@ namespace FZK.Application.Run.Service
             var response = await SendRequestAsync<MesReportResponseDto>(
                 async () => await _httpClient.GetAsync(uriBuilder.Uri), spCode, "查询测试结果").ConfigureAwait(false);
 
-            // 根据实际返回的 result 字段判断是否成功
             return response != null && string.Equals(response.Result, "OK", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
-        /// 向 MES 报站（上报扫码结果）
+        /// 向 MES 报站（上报扫码结果）（保持原有功能）
         /// </summary>
         public async Task<bool> ReportStation(string spCode)
         {
@@ -69,7 +73,7 @@ namespace FZK.Application.Run.Service
 
             var reportDto = new MesReportDto
             {
-                productCode = spCode  
+                productCode = spCode
             };
 
             var content = new StringContent(
@@ -81,23 +85,87 @@ namespace FZK.Application.Run.Service
             var response = await SendRequestAsync<MesReportResponseDto>(
                 async () => await _httpClient.PostAsync(_reportStationUrl, content), spCode, "报站").ConfigureAwait(false);
 
-            // 根据实际返回的 result 字段判断是否成功
             return response != null && string.Equals(response.Result, "OK", StringComparison.OrdinalIgnoreCase);
         }
 
-
         /// <summary>
-        /// 封装 HTTP 请求，统一处理异常、日志和超时
+        /// 获取码信息（新增接口）
+        /// 功能：调用获取码信息接口，检查返回码 rc，并校验制程与工站是否匹配配置。
         /// </summary>
+        /// <param name="codeNo">码号</param>
+        /// <param name="equipmentIp">设备IP，可选，默认使用配置中的IP</param>
+        /// <returns>包含校验结果的 CodeInfoResult</returns>
+        public async Task<CodeInfoResult> GetCodeInfoAsync(string codeNo, string equipmentIp = null)
+        {
+            if (string.IsNullOrEmpty(codeNo))
+            {
+                Logs.LogWarn("码号为空，无法获取码信息");
+                return CodeInfoResult.Fail("码号为空");
+            }
+
+            // 构建请求体
+            var requestDto = new CodeInfoRequest
+            {
+                CodeNo = codeNo,
+                EquipmentIp = equipmentIp ?? _equipmentIp,
+                Resv1 = "",
+                Resv2 = ""
+            };
+
+            var content = new StringContent(
+                JsonConvert.SerializeObject(requestDto),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            // 发送请求并获取原始响应
+            var responseDto = await SendRequestAsync<CodeInfoResponse>(
+                async () => await _httpClient.PostAsync(_codeInfoUrl, content), codeNo, "获取码信息").ConfigureAwait(false);
+
+            if (responseDto == null)
+            {
+                return CodeInfoResult.Fail("网络或服务异常，未能获取到码信息响应");
+            }
+
+            // 检查 rc 字段
+            if (!string.Equals(responseDto.Rc, "000", StringComparison.Ordinal))
+            {
+                var errorMsg = !string.IsNullOrEmpty(responseDto.Rm) ? responseDto.Rm : $"接口返回失败 rc={responseDto.Rc}";
+                Logs.LogError($"获取码信息失败（码号={codeNo}）：{errorMsg}");
+                return CodeInfoResult.Fail(errorMsg);
+            }
+
+            // 校验制程（process_dopass）
+            if (!string.IsNullOrEmpty(_processDoPassConfig) &&
+                !string.Equals(responseDto.ProcessDoPass, _processDoPassConfig, StringComparison.OrdinalIgnoreCase))
+            {
+                var msg = $"制程不匹配：接口返回 [{responseDto.ProcessDoPass}]，配置要求 [{_processDoPassConfig}]";
+                Logs.LogWarn($"码号={codeNo}：{msg}");
+                return CodeInfoResult.Fail(msg);
+            }
+
+            // 校验工站（station_dopass）
+            if (!string.IsNullOrEmpty(_stationDoPassConfig) &&
+                !string.Equals(responseDto.StationDoPass, _stationDoPassConfig, StringComparison.OrdinalIgnoreCase))
+            {
+                var msg = $"工站不匹配：接口返回 [{responseDto.StationDoPass}]，配置要求 [{_stationDoPassConfig}]";
+                Logs.LogWarn($"码号={codeNo}：{msg}");
+                return CodeInfoResult.Fail(msg);
+            }
+
+            Logs.LogInfo($"获取码信息成功（码号={codeNo}），制程={responseDto.ProcessDoPass}，工站={responseDto.StationDoPass}");
+            return CodeInfoResult.Ok(responseDto);
+        }
+
+        // ========== 以下为内部工具方法，与原来保持一致 ==========
+
         private async Task<T> SendRequestAsync<T>(Func<Task<HttpResponseMessage>> requestFunc, string spCode, string operationName)
             where T : class
         {
-            // 使用 CancellationToken 控制超时（10秒）
             using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)))
             {
                 try
                 {
-                    // 执行请求（带取消令牌）
                     var response = await requestFunc().WithCancellation(cts.Token).ConfigureAwait(false);
 
                     if (response.IsSuccessStatusCode)
@@ -108,7 +176,6 @@ namespace FZK.Application.Run.Service
                         return result;
                     }
 
-                    // 处理非成功状态码
                     Logs.LogError($"MES {operationName} 失败：HTTP {response.StatusCode}，SP码={spCode}");
                     return null;
                 }
@@ -130,40 +197,26 @@ namespace FZK.Application.Run.Service
             }
         }
 
-        // 查询结果 DTO
-        private class MesTestResultDto
-        {
-            public string SPCode { get; set; }
-            public bool IsOk { get; set; }
-            public string ErrorMsg { get; set; }
-        }
-
-        // 报站请求 DTO
+        // 原有内部 DTO
         private class MesReportDto
         {
             public string productCode { get; set; }
         }
+
         private class MesReportResponseDto
         {
             [JsonProperty("result")]
             public string Result { get; set; }
-
             [JsonProperty("nextStation")]
             public string NextStation { get; set; }
-
             [JsonProperty("message")]
             public string Message { get; set; }
         }
     }
 
-    /// <summary>
-    /// 扩展方法：为 Task 添加超时取消支持
-    /// </summary>
+    // Task 扩展方法保持不变
     internal static class TaskExtensions
     {
-        /// <summary>
-        /// 将 Task 与 CancellationToken 关联，当 token 取消时抛出 OperationCanceledException
-        /// </summary>
         public static async Task<T> WithCancellation<T>(this Task<T> task, CancellationToken cancellationToken)
         {
             var tcs = new TaskCompletionSource<bool>();
