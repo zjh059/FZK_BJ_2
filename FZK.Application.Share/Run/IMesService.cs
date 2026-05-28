@@ -10,5 +10,6 @@ namespace FZK.Application.Share.Run
     {
         Task<bool> GetMesTestResult(string spCode);
         Task<bool> ReportStation(string spCode);
+
     }
 }

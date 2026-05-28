@@ -159,4 +159,20 @@ namespace FZK.Application.Run.Service
             Message = message
         };
     }
+    // 原有内部 DTO
+    public class MesReportDto
+    {
+        public string productCode { get; set; }
+    }
+
+    public class MesReportResponseDto
+    {
+        [JsonProperty("result")]
+        public string Result { get; set; }
+        [JsonProperty("nextStation")]
+        public string NextStation { get; set; }
+        [JsonProperty("message")]
+        public string Message { get; set; }
+    }
 }
+

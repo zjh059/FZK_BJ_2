@@ -1,4 +1,5 @@
-﻿using FZK.Application.Share.Config;
+﻿using ControlzEx.Standard;
+using FZK.Application.Share.Config;
 using FZK.Application.Share.Run;
 using FZK.Logger;
 using Newtonsoft.Json;
@@ -16,7 +17,6 @@ namespace FZK.Application.Run.Service
         private readonly string _testResultUrl;
         private readonly string _reportStationUrl;
         private readonly string _stationCode;
-        private readonly string _codeInfoUrl;          // 新增
         private readonly string _equipmentIp;          // 新增
         private readonly string _processDoPassConfig;  // 新增：配置中的制程
         private readonly string _stationDoPassConfig;  // 新增：配置中的工站
@@ -26,16 +26,14 @@ namespace FZK.Application.Run.Service
             var config = systemConfigManager.SoftwareConfig
                          ?? throw new ArgumentNullException(nameof(systemConfigManager.SoftwareConfig), "软件配置未找到");
 
-            _testResultUrl = config.TestResultUrl
-                             ?? throw new ArgumentNullException(nameof(config.TestResultUrl), "TestResultUrl未配置");
             _reportStationUrl = config.ReportStationUrl
                                 ?? throw new ArgumentNullException(nameof(config.ReportStationUrl), "ReportStationUrl未配置");
             _stationCode = config.StationCode
                            ?? throw new ArgumentNullException(nameof(config.StationCode), "StationCode未配置");
 
             // 新增配置读取
-            _codeInfoUrl = config.CodeInfoUrl
-                           ?? throw new ArgumentNullException(nameof(config.CodeInfoUrl), "CodeInfoUrl未配置");
+            _testResultUrl = config.TestResultUrl
+                           ?? throw new ArgumentNullException(nameof(config.TestResultUrl), "TestResultUrl未配置");
             _equipmentIp = config.EquipmentIp
                            ?? throw new ArgumentNullException(nameof(config.EquipmentIp), "EquipmentIp未配置");
             _processDoPassConfig = config.Process_dopass ?? string.Empty;
@@ -46,7 +44,9 @@ namespace FZK.Application.Run.Service
         /// 从 MES 查询主板码测试结果（保持原有功能）
         /// </summary>
         public async Task<bool> GetMesTestResult(string spCode)
-        {
+        {        
+            var response = await GetCodeInfoAsync("DRC1054A8CSPQY0A1AA");
+
             if (string.IsNullOrEmpty(spCode))
             {
                 Logs.LogWarn("SP码为空，无需查询MES");
@@ -54,10 +54,7 @@ namespace FZK.Application.Run.Service
             }
 
             var uriBuilder = new UriBuilder(_testResultUrl) { Query = $"spCode={Uri.EscapeDataString(spCode)}" };
-            var response = await SendRequestAsync<MesReportResponseDto>(
-                async () => await _httpClient.GetAsync(uriBuilder.Uri), spCode, "查询测试结果").ConfigureAwait(false);
-
-            return response != null && string.Equals(response.Result, "OK", StringComparison.OrdinalIgnoreCase);
+            return response.Success;
         }
 
         /// <summary>
@@ -120,7 +117,7 @@ namespace FZK.Application.Run.Service
 
             // 发送请求并获取原始响应
             var responseDto = await SendRequestAsync<CodeInfoResponse>(
-                async () => await _httpClient.PostAsync(_codeInfoUrl, content), codeNo, "获取码信息").ConfigureAwait(false);
+                async () => await _httpClient.PostAsync(_testResultUrl, content), codeNo, "获取码信息").ConfigureAwait(false);
 
             if (responseDto == null)
             {
@@ -196,24 +193,7 @@ namespace FZK.Application.Run.Service
                 }
             }
         }
-
-        // 原有内部 DTO
-        private class MesReportDto
-        {
-            public string productCode { get; set; }
-        }
-
-        private class MesReportResponseDto
-        {
-            [JsonProperty("result")]
-            public string Result { get; set; }
-            [JsonProperty("nextStation")]
-            public string NextStation { get; set; }
-            [JsonProperty("message")]
-            public string Message { get; set; }
-        }
     }
-
     // Task 扩展方法保持不变
     internal static class TaskExtensions
     {

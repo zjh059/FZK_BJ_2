@@ -93,11 +93,19 @@
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
+                            <!-- 0 -->
                             <RowDefinition Height="Auto"/>
+                            <!-- 1 -->
                             <RowDefinition Height="Auto"/>
+                            <!-- 2 -->
                             <RowDefinition Height="Auto"/>
+                            <!-- 3 -->
                             <RowDefinition Height="Auto"/>
+                            <!-- 4 -->
                             <RowDefinition Height="Auto"/>
+                            <!-- 5：设备IP + Process_dopass -->
+                            <RowDefinition Height="Auto"/>
+                            <!-- 6：Station_dopass -->
                         </Grid.RowDefinitions>
 
                         <!-- 第一行：测试结果URL + 工位上报URL -->
@@ -132,10 +140,24 @@
                         <TextBox Grid.Row="3" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.SoftwareConfig.userCode, UpdateSourceTrigger=PropertyChanged}"/>
 
-                        <!-- 第五行：密码 -->
+                        <!-- 第五行：密码（原第四行，索引调整，但实际还是第四行索引4） -->
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource 密码}" Style="{StaticResource FormLabelStyle}"/>
                         <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
                                  Text="{Binding SystemConfigManager.SoftwareConfig.password, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- 第六行（新增）：设备IP + Process_dopass -->
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="设备IP" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.SoftwareConfig.EquipmentIp, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Grid.Row="5" Grid.Column="2" Text="制程校验" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="5" Grid.Column="3" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.SoftwareConfig.Process_dopass, UpdateSourceTrigger=PropertyChanged}"/>
+
+                        <!-- 第七行（新增）：Station_dopass，右侧留空保持布局平衡 -->
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="工站校验" Style="{StaticResource FormLabelStyle}"/>
+                        <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" 
+                                 Text="{Binding SystemConfigManager.SoftwareConfig.Station_dopass, UpdateSourceTrigger=PropertyChanged}"/>
+                        <!-- 右侧两列留空，不添加控件 -->
                     </Grid>
                 </StackPanel>
             </Border>
