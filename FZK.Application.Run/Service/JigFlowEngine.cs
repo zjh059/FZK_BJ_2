@@ -270,7 +270,7 @@ namespace FZK.Application.Run.Service
 
                 await _plc.WriteRegisterAsync(_config.WeldFinishAddr, _config.FinishFlag);
 
-               // if (success)
+                if (success)
                 {
                     bool mesOk = !_isSfcEnabled || await _mes.GetMesTestResult(spCode);
                     int weldResult = mesOk ? 1 : 2;
@@ -297,23 +297,23 @@ namespace FZK.Application.Run.Service
                         Remark = mesOk ? "MES OK" : "MES NG"
                     });
                 }
-                //else
-                //{
-                //    await _plc.WriteRegisterAsync(_config.WeldResultAddr, _config.NGFlag);
-                //    Logs.LogWarn($"{_config.JigName} 焊接扫码重试耗尽");
-                //    _onLogged?.Invoke($"{_config.JigName} 焊接扫码重试耗尽");
+                else
+                {
+                    await _plc.WriteRegisterAsync(_config.WeldResultAddr, _config.NGFlag);
+                    Logs.LogWarn($"{_config.JigName} 焊接扫码重试耗尽");
+                    _onLogged?.Invoke($"{_config.JigName} 焊接扫码重试耗尽");
 
-                //    _onRecordAdded?.Invoke(new ScanRecord
-                //    {
-                //        CreateTime = DateTime.Now,
-                //        JigNo = _config.JigName,
-                //        ScanType = "焊接结果扫码",
-                //        BottomCode = bottomCode,
-                //        SPCode = spCode,
-                //        Result = "2",
-                //        Remark = "扫码重试耗尽"
-                //    });
-                //}
+                    _onRecordAdded?.Invoke(new ScanRecord
+                    {
+                        CreateTime = DateTime.Now,
+                        JigNo = _config.JigName,
+                        ScanType = "焊接结果扫码",
+                        BottomCode = bottomCode,
+                        SPCode = spCode,
+                        Result = "2",
+                        Remark = "扫码重试耗尽"
+                    });
+                }
             }
             catch (Exception ex)
             {

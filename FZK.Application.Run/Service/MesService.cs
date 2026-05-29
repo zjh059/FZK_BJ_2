@@ -20,6 +20,7 @@ namespace FZK.Application.Run.Service
         private readonly string _equipmentIp;          // 新增
         private readonly string _processDoPassConfig;  // 新增：配置中的制程
         private readonly string _stationDoPassConfig;  // 新增：配置中的工站
+        private readonly bool _isDebug;  // 新增：配置中的工站
 
         public MesService(ISystemConfigManager systemConfigManager)
         {
@@ -30,7 +31,7 @@ namespace FZK.Application.Run.Service
                                 ?? throw new ArgumentNullException(nameof(config.ReportStationUrl), "ReportStationUrl未配置");
             _stationCode = config.StationCode
                            ?? throw new ArgumentNullException(nameof(config.StationCode), "StationCode未配置");
-
+            _isDebug = config.IsDebug;
             // 新增配置读取
             _testResultUrl = config.TestResultUrl
                            ?? throw new ArgumentNullException(nameof(config.TestResultUrl), "TestResultUrl未配置");
@@ -44,16 +45,21 @@ namespace FZK.Application.Run.Service
         /// 从 MES 查询主板码测试结果（保持原有功能）
         /// </summary>
         public async Task<bool> GetMesTestResult(string spCode)
-        {        
-            var response = await GetCodeInfoAsync("DRC1054A8CSPQY0A1AA");
-
-            if (string.IsNullOrEmpty(spCode))
+        {
+            var response = null;
+            if (_isDebug)
             {
-                Logs.LogWarn("SP码为空，无需查询MES");
-                return false;
+                 response = await GetCodeInfoAsync("DRC1054A8CSPQY0A1AA");
             }
-
-            var uriBuilder = new UriBuilder(_testResultUrl) { Query = $"spCode={Uri.EscapeDataString(spCode)}" };
+            else
+            {
+                if (string.IsNullOrEmpty(spCode))
+                {
+                    Logs.LogWarn("SP码为空，无需查询MES");
+                    return false;
+                }
+            }
+            response = await GetCodeInfoAsync(spCode);
             return response.Success;
         }
 
