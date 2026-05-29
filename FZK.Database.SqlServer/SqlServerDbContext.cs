@@ -9,10 +9,10 @@ namespace FZK.Database.SqlServer
         static SqlServerDbContext()
         {
             // 如果数据库不存在则创建（开发期用）
-            System.Data.Entity.Database.SetInitializer(new CreateDatabaseIfNotExists<SqlServerDbContext>());
+            //System.Data.Entity.Database.SetInitializer(new CreateDatabaseIfNotExists<SqlServerDbContext>());
 
             // 如果以后需要自动迁移，则改为：
-            // Database.SetInitializer(new MigrateDatabaseToLatestVersion<SqlServerDbContext, Migrations.Configuration>());
+            System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<SqlServerDbContext, Migrations.Configuration>());
         }
 
         public SqlServerDbContext() : base("name=SqlServerDbContext")
@@ -25,6 +25,8 @@ namespace FZK.Database.SqlServer
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            System.Data.Entity.Database.SetInitializer(new MigrateDatabaseToLatestVersion<SqlServerDbContext, Migrations.Configuration>());
+         
             // 这里不再需要 SetInitializer，可以保留用于其他 Fluent API 配置
             base.OnModelCreating(modelBuilder);
         }

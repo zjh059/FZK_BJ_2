@@ -137,6 +137,15 @@
   <ItemGroup>
     <Compile Include="BTRepository.cs" />
     <Compile Include="CodeRepository.cs" />
+    <Compile Include="Migrations\202605290251290_InitialCreate.cs" />
+    <Compile Include="Migrations\202605290251290_InitialCreate.Designer.cs">
+      <DependentUpon>202605290251290_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202605290323014_AddZDCode.cs" />
+    <Compile Include="Migrations\202605290323014_AddZDCode.Designer.cs">
+      <DependentUpon>202605290323014_AddZDCode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepositoryBase.cs" />
     <Compile Include="SqlServerDbContext.cs" />
@@ -152,6 +161,17 @@
       <Project>{8c0e8c31-f745-4ff0-87c6-a76075cd3776}</Project>
       <Name>FZK.Database.Base</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TextFile1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202605290251290_InitialCreate.resx">
+      <DependentUpon>202605290251290_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202605290323014_AddZDCode.resx">
+      <DependentUpon>202605290323014_AddZDCode.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

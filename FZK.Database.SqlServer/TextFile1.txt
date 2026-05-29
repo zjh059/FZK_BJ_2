@@ -1,0 +1,34 @@
+﻿Enable-Migrations -ProjectName FZK.Database.SqlServer -StartUpProjectName FZK.Shell -ContextTypeName FZK.Database.SqlServer.SqlServerDbContext
+Add-Migration InitialCreate -ProjectName FZK.Database.SqlServer -StartUpProjectName FZK.Shell
+Update-Database -ProjectName FZK.Database.SqlServer -StartUpProjectName FZK.Shell
+
+🔧 4. 之后模型变动时（如增加一个字段）
+修改实体类（例如在 UserEntity 中加一个 Email 属性）。
+
+添加迁移：
+Add-Migration AddZDCode -ProjectName FZK.Database.SqlServer -StartUpProjectName FZK.Shell
+
+更新数据库：
+Update-Database -ProjectName ... -StartUpProjectName ...
+
+数据保留，只新增字段。
+
+🔧 5. 让项目自动迁移（可选）
+如果你希望程序启动时自动更新到最新迁移，可以修改 SqlServerDbContext.cs：
+
+csharp
+protected override void OnModelCreating(DbModelBuilder modelBuilder)
+{
+    Database.SetInitializer(new MigrateDatabaseToLatestVersion<SqlServerDbContext, Migrations.Configuration>());
+    base.OnModelCreating(modelBuilder);
+}
+同时需要在 Migrations/Configuration.cs 构造函数中设置：
+
+csharp
+public Configuration()
+{
+    AutomaticMigrationsEnabled = false; // 建议保持 false，手动控制
+}
+这样每次程序启动时会检查数据库版本，并自动应用未执行的迁移。
+
+AddColumn("dbo.CodeEntities", "Remark", c => c.String(defaultValue: "默认备注"));
