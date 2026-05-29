@@ -355,7 +355,7 @@
     <system:String x:Key="BatchDeleteFailed">批量删除失败</system:String>
     <system:String x:Key="BottomCodeNotEmpty">底板码不能为空</system:String>
     <system:String x:Key="TopCodeNotEmpty">盖板码不能为空</system:String>
-    <system:String x:Key="BottomCodeExists">底板码</system:String>
+    <system:String x:Key="BottomCodeExists">底板码已存在</system:String>
     <system:String x:Key="Exists">已存在</system:String>
     <system:String x:Key="Add">新增</system:String>
     <system:String x:Key="Edit">编辑</system:String>

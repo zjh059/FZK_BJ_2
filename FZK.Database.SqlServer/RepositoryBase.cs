@@ -12,10 +12,15 @@ namespace FZK.Database.SqlServer
     {
         public abstract class RepositoryBase
         {
-            protected static readonly Lazy<SqlServerDbContext> LazyDb =
-                new Lazy<SqlServerDbContext>();
+            //protected static readonly Lazy<SqlServerDbContext> LazyDb =
+            //    new Lazy<SqlServerDbContext>();
 
-            protected static SqlServerDbContext db => LazyDb.Value;
+            //protected static SqlServerDbContext db => LazyDb.Value;
+            // 提供一个工厂方法，由子类在每个方法里调用
+            protected SqlServerDbContext CreateContext()
+            {
+                return new SqlServerDbContext();
+            }
         }
     }
 }

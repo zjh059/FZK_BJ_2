@@ -167,4 +167,8 @@
   <Import Project="..\packages\EntityFramework.6.5.2\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.2\build\EntityFramework.targets')" />
   <Import Project="..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets" Condition="Exists('..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" />
   <Import Project="..\packages\Fody.6.8.0\build\Fody.targets" Condition="Exists('..\packages\Fody.6.8.0\build\Fody.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>md "$(SolutionDir)FZK.Shell\bin\$(Configuration)\" 2&gt;nul
+xcopy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)FZK.Shell\bin\$(Configuration)" /S</PostBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -12,5 +12,6 @@ namespace FZK.Database.Base.Repositories
     /// </summary>
     public interface IBTRepository : IRepository<BTEntity>
     {
+        BTEntity GetByBottomCode(string bottomCode);
     }
 }

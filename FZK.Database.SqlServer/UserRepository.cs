@@ -11,46 +11,70 @@ namespace FZK.Database.SqlServer
     {
         public int Delete(UserEntity entity)
         {
-            db.Entry(entity).State = EntityState.Deleted;
-            return db.SaveChanges();
+            using (var db = CreateContext())
+            {
+                db.Entry(entity).State = EntityState.Deleted;
+                return db.SaveChanges();
+            }
         }
 
         public List<UserEntity> FindAll(string keyword)
         {
-            return db.Users.Where(t => t.UserName.Contains(keyword)).ToList();
+            using (var db = CreateContext())
+            {
+                return db.Users.Where(t => t.UserName.Contains(keyword)).ToList();
+            }
         }
 
         public UserEntity Get(int id)
         {
-            return db.Users.Find(id);
+            using (var db = CreateContext())
+            {
+                return db.Users.Find(id);
+            }
         }
 
         public List<UserEntity> GetAll()
         {
-            return db.Users.ToList();
+            using (var db = CreateContext())
+            {
+                return db.Users.ToList();
+            }
         }
 
         public int Insert(UserEntity entity)
         {
-            db.Entry(entity).State = EntityState.Added;
-            return db.SaveChanges();
+            using (var db = CreateContext())
+            {
+                db.Entry(entity).State = EntityState.Added;
+                return db.SaveChanges();
+            }
         }
 
         public int SaveChanged()
         {
-            return db.SaveChanges();
+            using (var db = CreateContext())
+            {
+                return db.SaveChanges();
+            }
         }
 
         public UserEntity Select(string keyword)
         {
-            return db.Users.ToList()
-                .Find(t => t.UserName == keyword);
+            using (var db = CreateContext())
+            {
+                return db.Users.FirstOrDefault(t => t.UserName == keyword);
+                // 原来用 ToList().Find(...) 改为数据库端查询，性能更好
+            }
         }
 
         public int Update(UserEntity entity)
         {
-            db.Entry(entity).State = EntityState.Modified;
-            return db.SaveChanges();
+            using (var db = CreateContext())
+            {
+                db.Entry(entity).State = EntityState.Modified;
+                return db.SaveChanges();
+            }
         }
     }
 }

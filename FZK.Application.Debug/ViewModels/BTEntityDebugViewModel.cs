@@ -136,9 +136,6 @@ namespace FZK.Application.Debug.ViewModels
         public ICommand RefreshCommand { get; }
         #endregion
 
-        #region 命令初始化
-
-        #endregion
 
         #region 核心业务逻辑（对齐BOMViewModel风格，补充异常处理）
         /// <summary>
@@ -332,7 +329,7 @@ namespace FZK.Application.Debug.ViewModels
             }
 
             // 唯一性验证（对齐BOMViewModel的重复校验）
-            var existEntity = _btDataManager.BTRepository.Select(CurrentEntity.BottomCode);
+            var existEntity = _btDataManager.BTRepository.GetByBottomCode(CurrentEntity.BottomCode);
             if (_isAddMode && existEntity != null)
             {
                 MessageBox.Show($"{MultiLang.BottomCodeExists}{CurrentEntity.BottomCode}", MultiLang.ValidateTip, MessageBoxButton.OK, MessageBoxImage.Warning);
