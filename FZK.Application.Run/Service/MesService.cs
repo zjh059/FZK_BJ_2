@@ -46,10 +46,11 @@ namespace FZK.Application.Run.Service
         /// </summary>
         public async Task<bool> GetMesTestResult(string spCode)
         {
-            var response = null;
+
             if (_isDebug)
             {
-                 response = await GetCodeInfoAsync("DRC1054A8CSPQY0A1AA");
+                var response = await GetCodeInfoAsync("DRC1054A8CSPQY0A1AA");
+                return response.Success;
             }
             else
             {
@@ -58,9 +59,9 @@ namespace FZK.Application.Run.Service
                     Logs.LogWarn("SP码为空，无需查询MES");
                     return false;
                 }
+                var response = await GetCodeInfoAsync(spCode);
+                return response.Success;
             }
-            response = await GetCodeInfoAsync(spCode);
-            return response.Success;
         }
 
         /// <summary>
