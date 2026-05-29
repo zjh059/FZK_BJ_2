@@ -44,7 +44,11 @@ namespace FZK.Databse.Sqlite
 
         public BTEntity Select(string keyword)
         {
-            return db.BT.ToList().Find(t => t.TopCode == keyword || t.BottomCode == keyword || t.Counts == keyword );
+            return db.BT.ToList().Find(t => t.TopCode == keyword || t.BottomCode == keyword || t.Counts == keyword);
+        }
+        public BTEntity GetByBottomCode(string bottomCode)
+        {
+            return db.BT.FirstOrDefault(t => t.BottomCode == bottomCode);
         }
         public int Update(BTEntity entity)
         {
