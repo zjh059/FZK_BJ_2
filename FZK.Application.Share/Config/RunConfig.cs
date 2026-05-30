@@ -15,7 +15,7 @@ namespace FZK.Application.Share.Config
         /// 重试次数
         /// </summary>
         public int ScanRetryCount { get; set; } = 3;
-        public int ScanRetryDelay { get; set; } = 200;
+        public int ScanRetryDelay { get; set; } = 300;
       
     }
 }

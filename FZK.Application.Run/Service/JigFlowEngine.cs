@@ -27,6 +27,7 @@ namespace FZK.Application.Run.Service
         private readonly IMesService _mes;
         private readonly RunConfig _runConfig;
         private readonly ScannerConfig _bottomScannerConfig;
+        private readonly ScannerConfig _topScannerConfig;
         private readonly bool _isNoHardwareMode;
         private readonly bool _isSfcEnabled;
         private readonly bool _isDebug;
@@ -45,6 +46,7 @@ namespace FZK.Application.Run.Service
             IMesService mes,
             RunConfig runConfig,
             ScannerConfig bottomScannerConfig,
+            ScannerConfig topScannerConfig,
             bool isNoHardwareMode,
             bool isSfcEnabled,
             bool isDebug,
@@ -58,6 +60,7 @@ namespace FZK.Application.Run.Service
             _mes = mes;
             _runConfig = runConfig;
             _bottomScannerConfig = bottomScannerConfig;
+            _topScannerConfig = topScannerConfig;
             _isNoHardwareMode = isNoHardwareMode;
             _isSfcEnabled = isSfcEnabled;
             _isDebug = isDebug;
@@ -88,43 +91,20 @@ namespace FZK.Application.Run.Service
                     List<string> bottomCodes = new List<string>();
                     ScanValidationResult topResult = new ScanValidationResult();
 
-                    if (_isNoHardwareMode)
-                    {
-                        // 模拟：直接返回多码列表，无需字符串拆分
-                        bottomCodes = new List<string>
-                        {
-                            $"{BottomCodePrefix}B{DateTime.Now:yyyyMMddHHmmss}",
-                            $"SP{DateTime.Now:yyyyMMddHHmmss}"
-                        };
 
-                        // 无硬件模式适配：未配置顶部扫码时返回空且有效
-                        topResult = _config.TopScanner.HasValue
-                            ? new ScanValidationResult
-                            {
-                                IsValid = true,
-                                Codes = new List<string> { $"T{DateTime.Now:yyyyMMddHHmmss}" }
-                            }
-                            : new ScanValidationResult
-                            {
-                                IsValid = true,
-                                Codes = new List<string> { "" }
-                            };
-                    }
-                    else
-                    {
-                        // 并行触发底部多码扫码和顶部标准化扫码
-                        var bottomTask = _hardware.TriggerScannerMultiCodesAsync(_config.BottomScanner);
-                        var topTask = _config.TopScanner.HasValue
-                            ? _hardware.TriggerScannerAndValidateAsync(
-                                _config.TopScanner.Value,
-                                expectedLength: 0, // 如需顶部码长度校验，改为配置值
-                                enableDebug: _isDebug)
-                            : Task.FromResult(new ScanValidationResult { IsValid = true, Codes = new List<string> { "" } });
+                    // 并行触发底部多码扫码和顶部标准化扫码
+                    var bottomTask = _hardware.TriggerScannerMultiCodesAsync(_config.BottomScanner);
+                    var topTask = _config.TopScanner.HasValue
+                        ? _hardware.TriggerScannerAndValidateAsync(
+                            _config.TopScanner.Value,
+                            expectedLength:0, 
+                            enableDebug: _isDebug)
+                        : Task.FromResult(new ScanValidationResult { IsValid = true, Codes = new List<string> { "" } });
 
-                        await Task.WhenAll(bottomTask, topTask);
-                        bottomCodes = await bottomTask;
-                        topResult = await topTask;
-                    }
+                    await Task.WhenAll(bottomTask, topTask);
+                    bottomCodes = await bottomTask;
+                    topResult = await topTask;
+
 
                     // 从多码列表中识别底板码和主板码
                     if (TryIdentifyCodes(bottomCodes, BottomCodePrefix, out bottomCode, out spCode))
@@ -143,12 +123,18 @@ namespace FZK.Application.Run.Service
                 _onLogged?.Invoke($"{_config.JigName} 扫码完成: {bottomCode} / {topCode}");
 
                 if (success)
-                {
-                    // ✅ 修复：未配置顶部扫码枪时，直接跳过数据库比对
+                {                 
                     bool verifyOk = true;
                     if (_config.TopScanner.HasValue)
                     {
-                        verifyOk = await _db.VerifyBottomTopCodeAsync(bottomCode, topCode);
+                        if (!_isDebug)
+                        {
+                            verifyOk = await _db.VerifyBottomTopCodeAsync(bottomCode, topCode);
+                        }
+                        else
+                        {
+                            await _db.AddBTEntityAsync(bottomCode, topCode);
+                        }
                     }
                     else
                     {
@@ -160,9 +146,7 @@ namespace FZK.Application.Run.Service
 
                     if (verifyOk)
                     {
-                        // ✅ 修复：未配置顶部扫码枪时，传入空topCode更新数据库
-                        // 数据库方法应支持空topCode的情况，若不支持可改为传入特殊标记如"NO_TOP_CODE"
-                        await _db.UpdateOrAddCodeEntityAsync(bottomCode, topCode, spCode);
+                        //await _db.UpdateOrAddCodeEntityAsync(bottomCode, topCode, spCode);
                         Logs.LogInfo($"{_config.JigName} 流程成功");
                         _onLogged?.Invoke($"{_config.JigName} 流程成功");
                     }
@@ -458,7 +442,7 @@ namespace FZK.Application.Run.Service
                 //    spCode = trimmed;
                 //}
             }
-  
+
 
             var ordered = codes.OrderByDescending(c => c.Length).ToList();
 

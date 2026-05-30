@@ -49,7 +49,24 @@ namespace FZK.Application.Run.Service
                 _dbManager.SaveChanged();
             });
         }
-
+        public async Task AddBTEntityAsync(string bottomCode, string topCode)
+        {
+            await Task.Run(() =>
+            {
+                var existing = _dbManager.BTEntities.FirstOrDefault(c => c.BottomCode == bottomCode&&c.TopCode==topCode);
+                if (existing == null)
+                {                
+                    _dbManager.BTRepository.Insert(new BTEntity
+                    {
+                        BottomCode = bottomCode,
+                        TopCode = topCode,                       
+                        Counts = "0",
+                        InsertDate = DateTime.Now
+                    });
+                }
+                _dbManager.SaveChanged();
+            });
+        }
         public async Task UpdateTestResultAsync(string spCode, int result)
         {
             await Task.Run(() =>

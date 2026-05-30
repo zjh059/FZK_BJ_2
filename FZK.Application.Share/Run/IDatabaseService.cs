@@ -10,6 +10,7 @@ namespace FZK.Application.Share.Run
     {
         Task<bool> VerifyBottomTopCodeAsync(string bottomCode, string topCode);
         Task UpdateOrAddCodeEntityAsync(string bottomCode, string topCode, string spCode);
+        Task AddBTEntityAsync(string bottomCode, string topCode);
         Task UpdateTestResultAsync(string spCode, int result);
         Task<string> IncrementCountAsync(string bottomCode);  // 返回递增后的计数
         Task ClearCountAsync(string bottomCode);

@@ -142,8 +142,9 @@ namespace FZK.Application.Run.ViewModels
             };
             _jig1Engine = new JigFlowEngine(
                 jig1Config, _plcService, hardwareService, _databaseService, _mesService,
-                _runConfig, systemConfigManager.Jig1DownScannerConfig,
-                IsNoHardwareMode, _softwareConfig.IsSFC,_softwareConfig.IsDebug,
+                _runConfig, systemConfigManager.Jig1DownScannerConfig, 
+                systemConfigManager.Jig1UpScannerConfig,
+                IsNoHardwareMode, _softwareConfig.IsSFC, _softwareConfig.IsDebug,
                  record => AddScanRecordAsync(record),
                  msg => AppendLog(msg));
 
@@ -162,9 +163,11 @@ namespace FZK.Application.Run.ViewModels
                 BottomScanner = ScannerType.治具2下,
                 TopScanner = ScannerType.治具2上
             };
+
             _jig2Engine = new JigFlowEngine(
                 jig2Config, _plcService, hardwareService, _databaseService, _mesService,
                 _runConfig, systemConfigManager.Jig2DownScannerConfig,
+                systemConfigManager.Jig2UpScannerConfig,
                 IsNoHardwareMode, _softwareConfig.IsSFC, _softwareConfig.IsDebug,
                 record => AddScanRecordAsync(record),
                 msg => AppendLog(msg));
@@ -177,8 +180,7 @@ namespace FZK.Application.Run.ViewModels
             ToggleRunCommand = ReactiveCommand.Create(OnToggleRun);
             RefreshStatusCommand = ReactiveCommand.Create(OnRefreshStatus);
             ClearLogCommand = ReactiveCommand.Create(OnClearLog);
-            ClearJig1CountCommand = ReactiveCommand.Create(OnClearJig1Count);
-            ClearJig2CountCommand = ReactiveCommand.Create(OnClearJig2Count);
+
 
             // 初始化状态检查定时器
             _statusCheckTimer = new Timer(_runConfig.StatusCheckInterval);
@@ -199,7 +201,8 @@ namespace FZK.Application.Run.ViewModels
         {
             PlcD0 = PlcD1 = PlcD2 = PlcD3 = PlcD4 = PlcD5 = "0";
             PlcD100 = PlcD101 = PlcD102 = PlcD103 = PlcD104 = PlcD105 = 0;
-            PlcD106 = PlcD107 = PlcD108 = PlcD109 = 0;
+            PlcD106 = PlcD107 = 0;
+            PlcD108 = PlcD109 = 0;
         }
 
         private void InitPlcReadTimer()
@@ -215,7 +218,7 @@ namespace FZK.Application.Run.ViewModels
 
         [Reactive] public bool IsNoHardwareMode { get; set; }
         [Reactive] public bool IsRunning { get; set; }
-       
+
         public string RunStatusText => IsRunning ? MultiLang.StopDevice : MultiLang.StartDevice;
 
         public Style RunStatusButtonStyle
@@ -281,16 +284,6 @@ namespace FZK.Application.Run.ViewModels
         public ICommand ToggleRunCommand { get; }
         public ICommand RefreshStatusCommand { get; }
         public ICommand ClearLogCommand { get; }
-        public ICommand ClearJig1CountCommand { get; }
-        public ICommand ClearJig2CountCommand { get; }
-
-        public ICommand ManualTriggerLeftDownScanCommand { get; }
-        public ICommand ManualTriggerLeftUpScanCommand { get; }
-        public ICommand ManualTriggerRightUpScanCommand { get; }
-        public ICommand ManualTriggerRightDownScanCommand { get; }
-        public ICommand ManualTriggerRobotScanCommand { get; }
-        public ICommand SimulateRobotToScanPosCommand { get; }
-        public ICommand SimulateRobotReportCommand { get; }
 
         #endregion
 
@@ -375,8 +368,8 @@ namespace FZK.Application.Run.ViewModels
                 // 1. 读取 PLC 触发寄存器并更新 UI
                 var addresses = new List<int>
         {
-            _plcAddr.Jig1TriggerScan, _plcAddr.Jig1TriggerWeld, _plcAddr.Jig1TriggerClear,
-            _plcAddr.Jig2TriggerScan, _plcAddr.Jig2TriggerWeld, _plcAddr.Jig2TriggerClear
+            _plcAddr.Jig1TriggerScan, _plcAddr.Jig1TriggerWeld, _plcAddr.Jig1TriggerClear,_plcAddr.Jig1Counts,
+            _plcAddr.Jig2TriggerScan, _plcAddr.Jig2TriggerWeld, _plcAddr.Jig2TriggerClear,_plcAddr.Jig2Counts
         };
                 var values = await _plcService.ReadTriggerRegistersAsync(addresses);
 
@@ -386,6 +379,8 @@ namespace FZK.Application.Run.ViewModels
                 PlcD3 = values.TryGetValue(_plcAddr.Jig2TriggerScan, out int d3) ? d3.ToString() : "0";
                 PlcD4 = values.TryGetValue(_plcAddr.Jig2TriggerWeld, out int d4) ? d4.ToString() : "0";
                 PlcD5 = values.TryGetValue(_plcAddr.Jig2TriggerClear, out int d5) ? d5.ToString() : "0";
+                PlcD108 = values.TryGetValue(_plcAddr.Jig1Counts, out int d108) ? d108 : 0;
+                PlcD109 = values.TryGetValue(_plcAddr.Jig2Counts, out int d109) ? d109 : 0;
 
                 // 2. 刷新数据库缓存（注意：原代码是同步调用，此处保持同步避免行为变化）
                 _databaseManager.GetAll();
@@ -405,64 +400,6 @@ namespace FZK.Application.Run.ViewModels
             RunLog = string.Empty;
             this.RaisePropertyChanged(nameof(RunLog));
             Logs.LogInfo(MultiLang.LogCleared);
-        }
-
-        private async void OnClearJig1Count()
-        {
-            try
-            {
-                // 1. 清除 PLC 计数器
-                await _plcService.WriteRegisterAsync(_plcAddr.Jig1Counts, 0);
-                PlcD108 = 0;
-                this.RaisePropertyChanged(nameof(Jig1UseCount));
-
-
-                // 2. 清除数据库中对应底板码的使用次数（如果存在当前底板码）
-                if (!string.IsNullOrEmpty(_currentJig1BottomCode))
-                {
-                    await _databaseService.ClearCountAsync(_currentJig1BottomCode);
-                    Logs.LogInfo(string.Format(MultiLang.DbClearJigCountSuccess, 1, _currentJig1BottomCode));
-                }
-                else
-                {
-                    Logs.LogWarn(MultiLang.DbClearNoBottomCode + " 治具1");
-                }
-
-                Logs.LogInfo(MultiLang.Jig1CountCleared);
-                AppendLog(MultiLang.Jig1CountCleared);
-
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, MultiLang.ClearJig1CountFail);
-            }
-        }
-
-        private async void OnClearJig2Count()
-        {
-            try
-            {
-                await _plcService.WriteRegisterAsync(_plcAddr.Jig2Counts, 0);
-                PlcD109 = 0;
-                this.RaisePropertyChanged(nameof(Jig2UseCount));
-
-                if (!string.IsNullOrEmpty(_currentJig2BottomCode))
-                {
-                    await _databaseService.ClearCountAsync(_currentJig2BottomCode);
-                    Logs.LogInfo(string.Format(MultiLang.DbClearJigCountSuccess, 2, _currentJig2BottomCode));
-                }
-                else
-                {
-                    Logs.LogWarn(MultiLang.DbClearNoBottomCode + " 治具2");
-                }
-
-                Logs.LogInfo(MultiLang.Jig2CountCleared);
-                AppendLog(MultiLang.Jig2CountCleared);
-            }
-            catch (Exception ex)
-            {
-                Logs.LogError(ex, MultiLang.ClearJig2CountFail);
-            }
         }
 
         #endregion
@@ -533,18 +470,10 @@ namespace FZK.Application.Run.ViewModels
                 _timerProcessLock.Release();
             }
         }
-       
 
 
         #endregion
 
-
-
-   
-
- 
-
-      
 
         #region 辅助方法
         private void OnUILogReceived(string message)
@@ -647,8 +576,8 @@ namespace FZK.Application.Run.ViewModels
 
         #endregion
 
-       
 
-    
+
+
     }
 }

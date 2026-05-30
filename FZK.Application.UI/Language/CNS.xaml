@@ -20,29 +20,29 @@
     <system:String x:Key="清空日志">清空日志</system:String>
 
     <!-- PLC寄存器 -->
-    <system:String x:Key="PLC寄存器状态_实时监控">PLC寄存器状态（实时监控）</system:String>
-    <system:String x:Key="治具1_D0_底导向板扫码">治具1-D0（底/导向板扫码）</system:String>
-    <system:String x:Key="治具1_D1_焊接结果扫码">治具1-D1（焊接结果扫码）</system:String>
-    <system:String x:Key="治具1_D2_清零">治具1-D2（清零）</system:String>
-    <system:String x:Key="治具2_D3_底导向板扫码">治具2-D3（底/导向板扫码）</system:String>
-    <system:String x:Key="治具2_D4_焊接结果扫码">治具2-D4（焊接结果扫码）</system:String>
-    <system:String x:Key="治具2_D5_清零">治具2-D5（清零）</system:String>
-    <system:String x:Key="心跳监控_D110">心跳监控 D110</system:String>
+    <system:String x:Key="PLC寄存器状态_实时监控">PLC信号</system:String>
+    <system:String x:Key="治具1_D0_底导向板扫码">1-D0（扫码）</system:String>
+    <system:String x:Key="治具1_D1_焊接结果扫码">1-D1（结果）</system:String>
+    <system:String x:Key="治具1_D2_清零">1-D2（清零）</system:String>
+    <system:String x:Key="治具2_D3_底导向板扫码">2-D3（扫码）</system:String>
+    <system:String x:Key="治具2_D4_焊接结果扫码">2-D4（结果）</system:String>
+    <system:String x:Key="治具2_D5_清零">2-D5（清零）</system:String>
+    <system:String x:Key="心跳监控_D110">心跳 D110</system:String>
 
     <!-- 治具次数 -->
-    <system:String x:Key="治具1焊接使用次数_D108">治具1焊接使用次数（D108）</system:String>
-    <system:String x:Key="治具2焊接使用次数_D109">治具2焊接使用次数（D109）</system:String>
+    <system:String x:Key="治具1焊接使用次数_D108">①焊接次数</system:String>
+    <system:String x:Key="治具2焊接使用次数_D109">②焊接次数</system:String>
     <system:String x:Key="次数上限">/40</system:String>
 
     <!-- 扫码记录 -->
-    <system:String x:Key="扫码记录_实时更新">扫码记录（实时更新）</system:String>
+    <system:String x:Key="扫码记录_实时更新">扫码记录</system:String>
     <system:String x:Key="时间">时间</system:String>
-    <system:String x:Key="治具编号">治具编号</system:String>
-    <system:String x:Key="扫码类型">扫码类型</system:String>
-    <system:String x:Key="底板码">底板码</system:String>
-    <system:String x:Key="导向板码">导向板码</system:String>
-    <system:String x:Key="主板码">主板码</system:String>
-    <system:String x:Key="扫码结果">扫码结果</system:String>
+    <system:String x:Key="治具编号">治具</system:String>
+    <system:String x:Key="扫码类型">类型</system:String>
+    <system:String x:Key="底板码">底板</system:String>
+    <system:String x:Key="导向板码">导向板</system:String>
+    <system:String x:Key="主板码">主板</system:String>
+    <system:String x:Key="扫码结果">结果</system:String>
     <system:String x:Key="备注">备注</system:String>
 
     <!-- 机械臂 & 日志 -->
@@ -52,13 +52,13 @@
     <system:String x:Key="设备运行日志">设备运行日志</system:String>
 
     <!-- 硬件状态 -->
-    <system:String x:Key="硬件连接状态_实时监控">硬件连接状态（实时监控）</system:String>
+    <system:String x:Key="硬件连接状态_实时监控">硬件状态</system:String>
     <system:String x:Key="欧姆龙PLC">欧姆龙PLC</system:String>
-    <system:String x:Key="左上扫码枪">左上扫码枪</system:String>
-    <system:String x:Key="左下扫码枪">左下扫码枪</system:String>
-    <system:String x:Key="右上扫码枪">右上扫码枪</system:String>
-    <system:String x:Key="右下扫码枪">右下扫码枪</system:String>
-    <system:String x:Key="机械臂扫码枪">机械臂扫码枪</system:String>
+    <system:String x:Key="左上扫码枪">①上扫码枪</system:String>
+    <system:String x:Key="左下扫码枪">①下扫码枪</system:String>
+    <system:String x:Key="右上扫码枪">②上扫码枪</system:String>
+    <system:String x:Key="右下扫码枪">②下扫码枪</system:String>
+    <system:String x:Key="机械臂扫码枪">Epson扫码枪</system:String>
     <system:String x:Key="EPSON机械臂">EPSON机械臂</system:String>
     <!-- 初始化页面 -->
     <system:String x:Key="重试">重试</system:String>
