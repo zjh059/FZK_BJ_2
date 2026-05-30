@@ -97,7 +97,7 @@ namespace FZK.Application.Run.Service
                     var topTask = _config.TopScanner.HasValue
                         ? _hardware.TriggerScannerAndValidateAsync(
                             _config.TopScanner.Value,
-                            expectedLength:0, 
+                            expectedLength: 0,
                             enableDebug: _isDebug)
                         : Task.FromResult(new ScanValidationResult { IsValid = true, Codes = new List<string> { "" } });
 
@@ -105,12 +105,9 @@ namespace FZK.Application.Run.Service
                     bottomCodes = await bottomTask;
                     topResult = await topTask;
 
-
-                    // 从多码列表中识别底板码和主板码
                     if (TryIdentifyCodes(bottomCodes, BottomCodePrefix, out bottomCode, out spCode))
                     {
                         topCode = topResult.Codes.FirstOrDefault() ?? "";
-                        // 未配置顶部扫码时，跳过topCode非空检查
                         success = !string.IsNullOrEmpty(bottomCode)
                                   && !string.IsNullOrEmpty(spCode)
                                   && topResult.IsValid
@@ -123,7 +120,7 @@ namespace FZK.Application.Run.Service
                 _onLogged?.Invoke($"{_config.JigName} 扫码完成: {bottomCode} / {topCode}");
 
                 if (success)
-                {                 
+                {
                     bool verifyOk = true;
                     if (_config.TopScanner.HasValue)
                     {
@@ -217,7 +214,7 @@ namespace FZK.Application.Run.Service
             }
         }
 
-        public async Task ProcessWeldAsync()
+        public async Task<int> ProcessWeldAsync()
         {
             try
             {
@@ -233,22 +230,8 @@ namespace FZK.Application.Run.Service
                     if (retry > 0)
                         await Task.Delay(_runConfig.ScanRetryDelay);
 
-                    List<string> bottomCodes = new List<string>();
-
-                    if (_isNoHardwareMode)
-                    {
-                        bottomCodes = new List<string>
-                        {
-                            $"{BottomCodePrefix}B{DateTime.Now:yyyyMMddHHmmss}",
-                            $"SP{DateTime.Now:yyyyMMddHHmmss}"
-                        };
-                    }
-                    else
-                    {
-                        bottomCodes = await _hardware.TriggerScannerMultiCodesAsync(_config.BottomScanner);
-                    }
-
-                    success = TryIdentifyCodes(bottomCodes, BottomCodePrefix, out bottomCode, out spCode);
+                    var bottomCodes = await _hardware.TriggerScannerMultiCodesAsync(_config.BottomScanner);
+                    success = TryIdentifyCodes(bottomCodes, BottomCodePrefix, out bottomCode, out spCode,true);
                     retry++;
                 }
 
@@ -280,6 +263,7 @@ namespace FZK.Application.Run.Service
                         Result = weldResult.ToString(),
                         Remark = mesOk ? "MES OK" : "MES NG"
                     });
+                    return countVal;
                 }
                 else
                 {
@@ -297,6 +281,7 @@ namespace FZK.Application.Run.Service
                         Result = "2",
                         Remark = "扫码重试耗尽"
                     });
+                    return 0;
                 }
             }
             catch (Exception ex)
@@ -313,6 +298,7 @@ namespace FZK.Application.Run.Service
                 {
                     Logs.LogError(plcEx, $"{_config.JigName} 焊接异常时写入PLC失败");
                     _onLogged?.Invoke($"{_config.JigName} 异常时PLC通信失败：{plcEx.Message}");
+                    return 0;
                 }
 
                 _onRecordAdded?.Invoke(new ScanRecord
@@ -323,6 +309,7 @@ namespace FZK.Application.Run.Service
                     Result = "2",
                     Remark = $"系统异常：{ex.Message}"
                 });
+                return 0;
             }
         }
 
@@ -333,28 +320,16 @@ namespace FZK.Application.Run.Service
                 Logs.LogInfo($"{_config.JigName} 开始清零流程");
                 _onLogged?.Invoke($"{_config.JigName} 开始清零流程");
 
-                string bottomCode = "";
+                string bottomCode = "",spCode="";
                 bool success = false;
                 int retry = 0;
 
                 while (retry < _runConfig.ScanRetryCount && !success)
                 {
                     if (retry > 0)
-                        await Task.Delay(_runConfig.ScanRetryDelay);
-
-                    if (_isNoHardwareMode)
-                    {
-                        bottomCode = $"{BottomCodePrefix}B{DateTime.Now:yyyyMMddHHmmss}";
-                        success = true;
-                    }
-                    else
-                    {
-                        // 清零只需底板码，使用多码接口确保准确识别
-                        var codes = await _hardware.TriggerScannerMultiCodesAsync(_config.BottomScanner);
-                        bottomCode = codes.FirstOrDefault(c =>
-                            c.Trim().StartsWith(BottomCodePrefix, StringComparison.OrdinalIgnoreCase))?.Trim();
-                        success = !string.IsNullOrEmpty(bottomCode);
-                    }
+                        await Task.Delay(_runConfig.ScanRetryDelay);                  
+                    var codes = await _hardware.TriggerScannerMultiCodesAsync(_config.BottomScanner);
+                    success = TryIdentifyCodes(codes, BottomCodePrefix, out bottomCode, out spCode); 
                     retry++;
                 }
 
@@ -418,7 +393,9 @@ namespace FZK.Application.Run.Service
         /// <param name="bottomCode">输出底板码</param>
         /// <param name="spCode">输出主板码</param>
         /// <returns>是否同时识别到底板码和主板码</returns>
-        private bool TryIdentifyCodes(List<string> codes, string bottomPrefix, out string bottomCode, out string spCode)
+        private bool TryIdentifyCodes(List<string> codes, string bottomPrefix,
+            out string bottomCode, out string spCode,
+            bool isdoubleCode = false)
         {
             bottomCode = null;
             spCode = null;
@@ -426,33 +403,48 @@ namespace FZK.Application.Run.Service
             if (codes == null || codes.Count == 0)
                 return false;
 
+            var cleanedCodes = new List<string>();
             foreach (var code in codes)
             {
-                var trimmed = code.Trim();
-                if (string.IsNullOrEmpty(trimmed))
+                if (string.IsNullOrWhiteSpace(code))
                     continue;
-
-                //if (trimmed.StartsWith(bottomPrefix, StringComparison.OrdinalIgnoreCase))
-                //{
-                //    bottomCode = trimmed;
-                //    var len = bottomCode.Length;
-                //}
-                //else if (string.IsNullOrEmpty(spCode)) // 只取第一个非底板码作为主板码
-                //{
-                //    spCode = trimmed;
-                //}
+                var cleaned = code.Trim();
+                cleaned = cleaned.Replace("\r", "").Replace("\n", "");
+                if (!string.IsNullOrEmpty(cleaned))
+                    cleanedCodes.Add(cleaned);
             }
 
 
-            var ordered = codes.OrderByDescending(c => c.Length).ToList();
+       
 
-            if (ordered.Count < 2)
-                return false;
+            if (cleanedCodes.Count < 2)
+            {
+                foreach (var code in cleanedCodes)
+                {
+                    if (code.Contains("+"))
+                    {
+                        if (string.IsNullOrEmpty(spCode))
+                            spCode = code;
+                    }
+                    else
+                    {
+                        if (string.IsNullOrEmpty(bottomCode))
+                            bottomCode = code;
+                    }
+                }
+                if (isdoubleCode)
+                    return !string.IsNullOrEmpty(bottomCode) && !string.IsNullOrEmpty(spCode);
+                else
+                    return !string.IsNullOrEmpty(bottomCode) || !string.IsNullOrEmpty(spCode);
 
-            spCode = ordered[0];     // 最长 -> SP码
-            bottomCode = ordered[1]; // 次长 -> 底板码
-
-            return !string.IsNullOrEmpty(bottomCode) && !string.IsNullOrEmpty(spCode);
+            }
+            else
+            {
+                var ordered = cleanedCodes.OrderByDescending(c => c.Length).ToList();
+                spCode = ordered[0];     // 最长 -> SP码
+                bottomCode = ordered[1]; // 次长 -> 底板码
+                return !string.IsNullOrEmpty(bottomCode) && !string.IsNullOrEmpty(spCode);
+            }
         }
     }
 }

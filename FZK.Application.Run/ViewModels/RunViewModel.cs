@@ -142,7 +142,7 @@ namespace FZK.Application.Run.ViewModels
             };
             _jig1Engine = new JigFlowEngine(
                 jig1Config, _plcService, hardwareService, _databaseService, _mesService,
-                _runConfig, systemConfigManager.Jig1DownScannerConfig, 
+                _runConfig, systemConfigManager.Jig1DownScannerConfig,
                 systemConfigManager.Jig1UpScannerConfig,
                 IsNoHardwareMode, _softwareConfig.IsSFC, _softwareConfig.IsDebug,
                  record => AddScanRecordAsync(record),
@@ -369,7 +369,7 @@ namespace FZK.Application.Run.ViewModels
                 var addresses = new List<int>
         {
             _plcAddr.Jig1TriggerScan, _plcAddr.Jig1TriggerWeld, _plcAddr.Jig1TriggerClear,_plcAddr.Jig1Counts,
-            _plcAddr.Jig2TriggerScan, _plcAddr.Jig2TriggerWeld, _plcAddr.Jig2TriggerClear,_plcAddr.Jig2Counts
+            _plcAddr.Jig2TriggerScan, _plcAddr.Jig2TriggerWeld, _plcAddr.Jig2TriggerClear,_plcAddr.Jig2Counts,_plcAddr.HeartbeatMonitor
         };
                 var values = await _plcService.ReadTriggerRegistersAsync(addresses);
 
@@ -381,6 +381,9 @@ namespace FZK.Application.Run.ViewModels
                 PlcD5 = values.TryGetValue(_plcAddr.Jig2TriggerClear, out int d5) ? d5.ToString() : "0";
                 PlcD108 = values.TryGetValue(_plcAddr.Jig1Counts, out int d108) ? d108 : 0;
                 PlcD109 = values.TryGetValue(_plcAddr.Jig2Counts, out int d109) ? d109 : 0;
+                PlcD110 = values.TryGetValue(_plcAddr.Jig2TriggerClear, out int d110) ? d110.ToString() : "0";
+
+
 
                 // 2. 刷新数据库缓存（注意：原代码是同步调用，此处保持同步避免行为变化）
                 _databaseManager.GetAll();
@@ -431,9 +434,23 @@ namespace FZK.Application.Run.ViewModels
                 int d4 = values.TryGetValue(_plcAddr.Jig2TriggerWeld, out int v4) ? v4 : 0;
                 int d5 = values.TryGetValue(_plcAddr.Jig2TriggerClear, out int v5) ? v5 : 0;
 
-                // 更新 UI 显示（仅用于界面，不影响业务逻辑）
+
+                var addresses2 = new List<int>
+                {
+                  _plcAddr.Jig1Counts,_plcAddr.Jig2Counts,_plcAddr.HeartbeatMonitor
+                };
+
+                var values2 = await _plcService.ReadTriggerRegistersAsync(addresses2);
+               
+                int d108 = values2.TryGetValue(_plcAddr.Jig1TriggerClear, out int v108) ? v108 : 0;
+                int d109 = values2.TryGetValue(_plcAddr.Jig2TriggerClear, out int v109) ? v109 : 0;
+                int d110 = values2.TryGetValue(_plcAddr.HeartbeatMonitor, out int v110) ? v110 : 0;
+
+
                 PlcD0 = d0.ToString(); PlcD1 = d1.ToString(); PlcD2 = d2.ToString();
                 PlcD3 = d3.ToString(); PlcD4 = d4.ToString(); PlcD5 = d5.ToString();
+                PlcD108 = d108; PlcD109 = d109; PlcD110 = d110.ToString();
+
 
                 // 边沿检测并处理
                 if (_lastD0 == 0 && d0 == 1)
