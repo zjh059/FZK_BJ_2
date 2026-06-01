@@ -176,22 +176,27 @@
     <system:String x:Key="寄存器地址配置">暫存器位址設定</system:String>
     <system:String x:Key="治具1寄存器地址">治具1暫存器位址</system:String>
     <system:String x:Key="治具2寄存器地址">治具2暫存器位址</system:String>
-    <system:String x:Key="D0底导向扫码">D0 (底/導向掃碼):</system:String>
-    <system:String x:Key="D1焊接扫码">D1 (焊接掃碼):</system:String>
-    <system:String x:Key="D2清零">D2 (歸零):</system:String>
-    <system:String x:Key="D100扫码完成">D100 (掃碼完成):</system:String>
-    <system:String x:Key="D101焊接完成">D101 (焊接完成):</system:String>
-    <system:String x:Key="D106比对结果">D106 (比對結果):</system:String>
-    <system:String x:Key="D104焊接最终">D104 (焊接最終):</system:String>
-    <system:String x:Key="D108计数">D108 (計數):</system:String>
-    <system:String x:Key="D3底导向扫码">D3 (底/導向掃碼):</system:String>
-    <system:String x:Key="D4焊接扫码">D4 (焊接掃碼):</system:String>
-    <system:String x:Key="D5清零">D5 (歸零):</system:String>
-    <system:String x:Key="D102扫码完成">D102 (掃碼完成):</system:String>
-    <system:String x:Key="D103焊接完成">D103 (焊接完成):</system:String>
-    <system:String x:Key="D107比对结果">D107 (比對結果):</system:String>
-    <system:String x:Key="D105焊接最终">D105 (焊接最終):</system:String>
-    <system:String x:Key="D109计数">D109 (計數):</system:String>
+
+
+    <!-- Jig1 -->
+    <system:String x:Key="Jig1扫码">Jig1掃碼:</system:String>
+    <system:String x:Key="Jig1焊接结果">Jig1焊接結果:</system:String>
+    <system:String x:Key="Jig1清零">Jig1歸零:</system:String>
+    <system:String x:Key="Jig1扫码完成">Jig1掃碼完成:</system:String>
+    <system:String x:Key="Jig1焊接扫码完成">Jig1焊接掃碼完成:</system:String>
+    <system:String x:Key="Jig1扫码结果">Jig1掃碼結果:</system:String>
+    <system:String x:Key="Jig1焊接计数">Jig1焊接計數:</system:String>
+
+    <!-- Jig2 -->
+    <system:String x:Key="Jig2扫码">Jig2掃碼:</system:String>
+    <system:String x:Key="Jig2焊接结果">Jig2焊接結果:</system:String>
+    <system:String x:Key="Jig2清零">Jig2歸零:</system:String>
+    <system:String x:Key="Jig2扫码完成">Jig2掃碼完成:</system:String>
+    <system:String x:Key="Jig2焊接扫码完成">Jig2焊接掃碼完成:</system:String>
+    <system:String x:Key="Jig2扫码结果">Jig2掃碼結果:</system:String>
+    <system:String x:Key="Jig2计数">Jig2計數:</system:String>
+
+
     <system:String x:Key="心跳监控配置">心跳監控設定</system:String>
     <system:String x:Key="寄存器类型">暫存器類型</system:String>
     <system:String x:Key="心跳间隔">心跳間隔 (ms)</system:String>
@@ -247,6 +252,9 @@
     <system:String x:Key="IP设置">IP設定</system:String>
     <system:String x:Key="扫码设置">掃碼設定</system:String>
     <system:String x:Key="Robot设置">Robot設定</system:String>
+    <system:String x:Key="设备IP">設備IP:</system:String>
+    <system:String x:Key="制程校验">製程校驗:</system:String>
+    <system:String x:Key="工站校验">工站校驗:</system:String>
 
     <system:String x:Key="重复初始化硬件">重複初始化硬體</system:String>
     <system:String x:Key="初始化硬件失败">初始化硬體失敗</system:String>

@@ -180,28 +180,28 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Jig1底导扫码" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource Jig1扫码}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1TriggerScan}"/>
 
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Jig1焊接扫码" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource Jig1焊接结果}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1TriggerWeld}"/>
 
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Jig1清零}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Jig1清零}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1TriggerClear}"/>
 
-                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Jig1扫码完成" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource Jig1扫码完成}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1ScanFinish}"/>
 
-                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Jig1焊接扫码完成" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource Jig1焊接扫码完成}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1WeldFinish}"/>
 
-                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Jig1扫码结果" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="{DynamicResource Jig1扫码结果}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1ScanResult}"/>
 
-                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Jig1焊接结果" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource Jig1焊接结果}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1WeldResult}"/>
 
-                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Jig1焊接计数" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="{DynamicResource Jig1焊接计数}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="7" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig1Counts}"/>
                                 </Grid>
                             </StackPanel>
@@ -227,28 +227,28 @@
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Jig2底导扫码" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource Jig2扫码}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2TriggerScan}"/>
 
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Jig2焊接扫码" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource Jig2焊接结果}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2TriggerWeld}"/>
 
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Jig2清零" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource Jig2清零}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2TriggerClear}"/>
 
-                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Jig2扫码完成" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource Jig2扫码完成}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2ScanFinish}"/>
 
-                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Jig2焊接完成" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource Jig2焊接扫码完成}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2WeldFinish}"/>
 
-                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Jig2扫码结果" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="5" Grid.Column="0" Text="{DynamicResource Jig2扫码结果}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2ScanResult}"/>
 
-                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Jig2焊接结果" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource Jig2焊接结果}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2WeldResult}"/>
 
-                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Jig2计数" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
+                                    <TextBlock Grid.Row="7" Grid.Column="0" Text="{DynamicResource Jig2计数}" Style="{StaticResource FormLabelStyle}" Margin="0,5,5,5"/>
                                     <TextBox Grid.Row="7" Grid.Column="1" Style="{StaticResource FormTextBoxStyle}" Text="{Binding SystemConfigManager.plcAddressConfig.Jig2Counts}"/>
                                 </Grid>
                             </StackPanel>

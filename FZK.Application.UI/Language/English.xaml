@@ -121,33 +121,6 @@
     <system:String x:Key="写入">Write</system:String>
     <system:String x:Key="操作日志">Operation Log</system:String>
 
-    <!-- 网络调试工具（机器人/串口/TCP/UDP） -->
-    <system:String x:Key="网络调试工具">Network Debug Tool (TCP/UDP)</system:String>
-    <system:String x:Key="服务器模式">Server Mode</system:String>
-    <system:String x:Key="客户端模式">Client Mode</system:String>
-    <system:String x:Key="协议">Protocol:</system:String>
-    <system:String x:Key="TCP">TCP</system:String>
-    <system:String x:Key="UDP">UDP</system:String>
-    <system:String x:Key="监听IP">Listen IP:</system:String>
-    <system:String x:Key="目标IP">Target IP:</system:String>
-    <system:String x:Key="客户端连接列表">Client Connection List</system:String>
-    <system:String x:Key="清空列表">Clear List</system:String>
-    <system:String x:Key="十六进制发送">Hex Send</system:String>
-    <system:String x:Key="自动换行">Auto Wrap</system:String>
-    <system:String x:Key="发送后清空">Clear After Send</system:String>
-    <system:String x:Key="编码">Encoding:</system:String>
-    <system:String x:Key="UTF8">UTF-8</system:String>
-    <system:String x:Key="GB2312">GB2312</system:String>
-    <system:String x:Key="ASCII">ASCII</system:String>
-    <system:String x:Key="加载指令库">Load Command Library</system:String>
-    <system:String x:Key="发送">Send</system:String>
-    <system:String x:Key="显示时间戳">Show Timestamp</system:String>
-    <system:String x:Key="显示收发标识">Show Send/Recv Mark</system:String>
-    <system:String x:Key="十六进制显示">Hex Display</system:String>
-    <system:String x:Key="保存日志">Save Log</system:String>
-    <system:String x:Key="导出配置">Export Config</system:String>
-    <system:String x:Key="导入配置">Import Config</system:String>
-
     <!-- 扫码器调试页面 -->
     <system:String x:Key="扫码器连接配置">Scanner Connection</system:String>
     <system:String x:Key="调试日志扫码数据">Debug Log / Scan Data</system:String>
@@ -164,7 +137,9 @@
     <system:String x:Key="管理员">Administrator</system:String>
     <system:String x:Key="超级管理员">Super Admin</system:String>
     <system:String x:Key="密码">Password:</system:String>
-
+    <system:String x:Key="设备IP">Device IP:</system:String>
+    <system:String x:Key="制程校验">Process Check:</system:String>
+    <system:String x:Key="工站校验">Station Check:</system:String>
     <!-- PLC配置页面 -->
     <system:String x:Key="PLC设置">PLC Settings</system:String>
     <system:String x:Key="基础连接配置">Basic Connection</system:String>
@@ -176,22 +151,27 @@
     <system:String x:Key="寄存器地址配置">Register Address Config</system:String>
     <system:String x:Key="治具1寄存器地址">Jig1 Register Address</system:String>
     <system:String x:Key="治具2寄存器地址">Jig2 Register Address</system:String>
-    <system:String x:Key="D0底导向扫码">D0 (Base/Guide Scan):</system:String>
-    <system:String x:Key="D1焊接扫码">D1 (Weld Scan):</system:String>
-    <system:String x:Key="D2清零">D2 (Reset):</system:String>
-    <system:String x:Key="D100扫码完成">D100 (Scan Done):</system:String>
-    <system:String x:Key="D101焊接完成">D101 (Weld Done):</system:String>
-    <system:String x:Key="D106比对结果">D106 (Compare Result):</system:String>
-    <system:String x:Key="D104焊接最终">D104 (Final Weld):</system:String>
-    <system:String x:Key="D108计数">D108 (Count):</system:String>
-    <system:String x:Key="D3底导向扫码">D3 (Base/Guide Scan):</system:String>
-    <system:String x:Key="D4焊接扫码">D4 (Weld Scan):</system:String>
-    <system:String x:Key="D5清零">D5 (Reset):</system:String>
-    <system:String x:Key="D102扫码完成">D102 (Scan Done):</system:String>
-    <system:String x:Key="D103焊接完成">D103 (Weld Done):</system:String>
-    <system:String x:Key="D107比对结果">D107 (Compare Result):</system:String>
-    <system:String x:Key="D105焊接最终">D105 (Final Weld):</system:String>
-    <system:String x:Key="D109计数">D109 (Count):</system:String>
+
+
+    <!-- Jig1 -->
+    <system:String x:Key="Jig1扫码">Jig1 Scan Code:</system:String>
+    <system:String x:Key="Jig1焊接结果">Jig1 Weld Result:</system:String>
+    <system:String x:Key="Jig1清零">Jig1 Reset:</system:String>
+    <system:String x:Key="Jig1扫码完成">Jig1 Scan Completed:</system:String>
+    <system:String x:Key="Jig1焊接扫码完成">Jig1 WeldScan Completed:</system:String>
+    <system:String x:Key="Jig1扫码结果">Jig1 Scan Result:</system:String>
+    <system:String x:Key="Jig1焊接计数">Jig1 Weld Count:</system:String>
+
+    <!-- Jig2 -->
+    <system:String x:Key="Jig2扫码">Jig2 Scan Code:</system:String>
+    <system:String x:Key="Jig2焊接结果">Jig2 Weld Result:</system:String>
+    <system:String x:Key="Jig2清零">Jig2 Reset:</system:String>
+    <system:String x:Key="Jig2扫码完成">Jig2 Scan Completed:</system:String>
+    <system:String x:Key="Jig2焊接扫码完成">Jig2 WeldScan Completed:</system:String>
+    <system:String x:Key="Jig2扫码结果">Jig2 Scan Result:</system:String>
+    <system:String x:Key="Jig2计数">Jig2 Count:</system:String>
+
+
     <system:String x:Key="心跳监控配置">Heartbeat Monitor Config</system:String>
     <system:String x:Key="寄存器类型">Register Type</system:String>
     <system:String x:Key="心跳间隔">Heartbeat Interval (ms)</system:String>
