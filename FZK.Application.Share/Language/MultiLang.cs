@@ -372,5 +372,9 @@ namespace FZK.Application.Share.Language
         public static string WritePlcDFailedDetail => Get("WritePlcDFailedDetail");
         public static string WritePlcDSuccess => Get("WritePlcDSuccess");
         public static string WritePlcDSuccessSim => Get("WritePlcDSuccessSim");
+
+
+
+
     }
 }

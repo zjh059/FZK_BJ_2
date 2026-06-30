@@ -63,16 +63,18 @@ namespace FZK.Application.Run.Service
                 {
                     if (result.IsValid)
                     {
-                        if (_SoftwareConfig.IsSFC && !_SoftwareConfig.IsDebug)
-                        {
-                            // 在这里调用 MES
-                            bool mesOk = await _mes.ReportStation(spCode);
-                            reportResult = mesOk;
-                        }
-                        else
-                        {
-                            reportResult = true;
-                        }
+                        //if (_SoftwareConfig.IsSFC && !_SoftwareConfig.IsDebug)
+                        //{
+                        //    // 在这里调用 MES
+                        //    bool mesOk = await _mes.ReportStation(spCode);
+                        //    reportResult = mesOk;
+                        //}
+                        //else
+                        //{
+                        //    reportResult = true;
+                        //}
+
+                        reportResult = true;
                     }
                     else
                     {
