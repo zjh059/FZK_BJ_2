@@ -102,7 +102,7 @@ namespace FZK.Application.Run.Service
 
                 // 这里触发机械臂上的扫码枪。
                 var scanWatch = Stopwatch.StartNew();
-                await Task.Delay(200);
+                await Task.Delay(200); 
                 var result = await _hardware.TriggerScannerAndValidateAsync(
                     ScannerType.机械臂,
                     _robotScannerConfig.SnLength,
