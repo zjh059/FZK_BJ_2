@@ -581,4 +581,6 @@
     <system:String x:Key="WritePlcDFailedDetail">Writing to PLC D{0} failed: {1}</system:String>
     <system:String x:Key="WritePlcDSuccess">Write to PLC D{0} succeeded</system:String>
     <system:String x:Key="WritePlcDSuccessSim">Write to PLC D{0} succeeded (simulated)</system:String>
+
+    <system:String x:Key="DeviceInitFail">Init Fail ,Please Check the HardWare IsRunning or not?</system:String>
 </ResourceDictionary>

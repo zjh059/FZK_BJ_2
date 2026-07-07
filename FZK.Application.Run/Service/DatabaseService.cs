@@ -53,16 +53,28 @@ namespace FZK.Application.Run.Service
         {
             await Task.Run(() =>
             {
-                var existing = _dbManager.BTEntities.FirstOrDefault(c => c.BottomCode == bottomCode&&c.TopCode==topCode);
+                //26_7_1修改：
+                //防呆：先前要求底板和盖板同时相等才算存在
+                //下面改成只按底板码判断是否已存在，不再要求底板码+盖板码同时匹配
+                //var existing = _dbManager.BTEntities.FirstOrDefault(c => c.BottomCode == bottomCode&&c.TopCode==topCode);
+                var existing = _dbManager.BTEntities.FirstOrDefault(c => c.BottomCode == bottomCode);
+
                 if (existing == null)
-                {                
+                {
                     _dbManager.BTRepository.Insert(new BTEntity
                     {
                         BottomCode = bottomCode,
-                        TopCode = topCode,                       
+                        TopCode = topCode,
                         Counts = "0",
                         InsertDate = DateTime.Now
                     });
+                }
+                else
+                {
+                    //（可选）若底板码存在说明之前绑定过了，若有相同的码进来，只需比对信息
+                    //如果要系统每次以最新导向板为准，可选择下面两行
+                    //existing.TopCode = topCode;
+                    //existing.UpdateTime = DateTime.Now;
                 }
                 _dbManager.SaveChanged();
             });

@@ -49,7 +49,19 @@ namespace FZK.Application.Run.Service
 
             if (_isDebug)
             {
-                var response = await GetCodeInfoAsync("DRC1054A8CSPQY0A1AA");
+
+
+                // var response = await GetCodeInfoAsync("DR8HSW000CH0001NQN+5+12+T001DH77221000");DR8HSW000CG0001NQN+5+12+T001DH77221000
+                //var response = await GetCodeInfoAsync("DR8HSW000CG0001NQN+5+12+T001DH77221000");
+                // var response = await GetCodeInfoAsync("DR8HSW000CL0001NQN+5+12+T001DH77221000");
+                //var response = await GetCodeInfoAsync("DR8HSW000D90001NQN+5+12+T001DH77221000");
+
+                //7sc
+                //DR8HT7000960001NQN+5+12+T001BH77221000
+                var response = await GetCodeInfoAsync("DR8HT7000980001NQN+5+12+T001BH77221000");
+
+
+
                 return response.Success;
             }
             else
@@ -116,15 +128,20 @@ namespace FZK.Application.Run.Service
                 Resv2 = ""
             };
 
-            var content = new StringContent(
-                JsonConvert.SerializeObject(requestDto),
-                Encoding.UTF8,
-                "application/json"
-            );
+            var requestJson = JsonConvert.SerializeObject(requestDto);
+            Logs.LogInfo($"[MES] 准备请求获取码信息，URL={_testResultUrl}，请求体={requestJson}，时间={DateTime.Now:HH:mm:ss.fff}");
+                var content = new StringContent(
+                    requestJson,
+                    Encoding.UTF8,
+                    "application/json"
+                    );
+            Logs.LogInfo($"发送GetCodeInfoAsync");
+          
 
-            // 发送请求并获取原始响应
             var responseDto = await SendRequestAsync<CodeInfoResponse>(
                 async () => await _httpClient.PostAsync(_testResultUrl, content), codeNo, "获取码信息").ConfigureAwait(false);
+           
+            Logs.LogInfo($"接收GetCodeInfoAsync");
 
             if (responseDto == null)
             {
@@ -166,7 +183,7 @@ namespace FZK.Application.Run.Service
         private async Task<T> SendRequestAsync<T>(Func<Task<HttpResponseMessage>> requestFunc, string spCode, string operationName)
             where T : class
         {
-            using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)))
+            using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(2)))
             {
                 try
                 {
@@ -175,9 +192,15 @@ namespace FZK.Application.Run.Service
                     if (response.IsSuccessStatusCode)
                     {
                         var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        // 这里打印 MES 原始响应体
+                        // 如果 MES 说我们发错了，或者我们怀疑 MES 返回 NG，就能直接拿这行日志对
+                        Logs.LogInfo($"[MES] {operationName} 响应成功，SP码={spCode}，HTTP={(int)response.StatusCode}，响应体={json}");
+                       
                         var result = JsonConvert.DeserializeObject<T>(json);
-                        Logs.LogInfo($"MES {operationName} 成功：SP码={spCode}");
+                        
+                        Logs.LogInfo($"接收SendRequestAsync:" + result);
                         return result;
+                      
                     }
 
                     Logs.LogError($"MES {operationName} 失败：HTTP {response.StatusCode}，SP码={spCode}");

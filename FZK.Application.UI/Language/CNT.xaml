@@ -583,4 +583,5 @@
     <system:String x:Key="WritePlcDSuccess">寫入 PLC D{0} 成功</system:String>
     <system:String x:Key="WritePlcDSuccessSim">寫入 PLC D{0} 成功 (模擬)</system:String>
     <system:String x:Key="AddBindInfo">新增綁定信息</system:String>
+    <system:String x:Key="DeviceInitFail">初始化硬件失敗,請檢查對應設備是否啟動</system:String>
 </ResourceDictionary>

@@ -553,4 +553,7 @@
     <system:String x:Key="WritePlcDFailedDetail">写入 PLC D{0} 失败: {1}</system:String>
     <system:String x:Key="WritePlcDSuccess">写入 PLC D{0} 成功</system:String>
     <system:String x:Key="WritePlcDSuccessSim">写入 PLC D{0} 成功 (模拟)</system:String>
+
+    <system:String x:Key="DeviceInitFail">初始化硬件失败,请检查对应设备是否启动</system:String>
+
 </ResourceDictionary>

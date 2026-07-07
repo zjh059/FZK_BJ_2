@@ -338,8 +338,12 @@ namespace FZK.Hardware.Robot.Epson
                 if (_analysisTask == null || _analysisTask.IsCompleted)
                     _analysisTask = Task.Run(AnalysisLoop, token);
 
-                if (_commandRetryTask == null || _commandRetryTask.IsCompleted)
-                    _commandRetryTask = Task.Run(CommandRetryLoop, token);
+                //if (_commandRetryTask == null || _commandRetryTask.IsCompleted)
+                //    _commandRetryTask = Task.Run(CommandRetryLoop, token);
+                //    _commandRetryTask = Task.Run(CommandRetryLoop, token); 
+
+                //代码改了吗^_^
+
             }
         }
 
@@ -493,15 +497,15 @@ namespace FZK.Hardware.Robot.Epson
                         continue;
                     }
 
-                    int max = _robotConfig.MaxReconnectCount;
-                    if (max > 0 && _reconnectCount >= max)
-                    {
-                        Message = "重连次数超限，已停止";
-                        Logs.LogError(Message);
-                        Initialized = false;
-                        TransitionToState(RobotState.UnInitialized);
-                        break;
-                    }
+                    //int max = _robotConfig.MaxReconnectCount;
+                    //if (max > 0 && _reconnectCount >= max)
+                    //{
+                    //    Message = "重连次数超限，已停止";
+                    //    Logs.LogError(Message);
+                    //    Initialized = false;
+                    //    TransitionToState(RobotState.UnInitialized);
+                    //    break;
+                    //}
 
                     _reconnectCount++;
                     TransitionToState(RobotState.Reconnecting);
@@ -692,7 +696,6 @@ namespace FZK.Hardware.Robot.Epson
                     _heartbeatTimeoutCts = null;
                 }
             }
-
         }
 
         private bool IsHeartResponse(string content)

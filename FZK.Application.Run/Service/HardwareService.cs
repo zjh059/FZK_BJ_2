@@ -8,6 +8,7 @@ using FZK.Logger;
 using Prism.Events;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -42,9 +43,9 @@ namespace FZK.Application.Run.Service
         /// <summary>
         /// 初始化（触发硬件重连，避免阻塞调用线程）
         /// </summary>
-        public void Init()
+        public bool Init()
         {
-            Task.Run(async () =>
+            Task.Run<bool>(async () =>
             {
                 try
                 {
@@ -53,19 +54,23 @@ namespace FZK.Application.Run.Service
                     {
                         Logs.LogInfo("[HardwareService] 硬件重连成功");
                         _eventAggregator.GetEvent<UILogEvent>().Publish("硬件重连成功");
+                        return true;
                     }
                     else
                     {
                         Logs.LogError($"[HardwareService] 硬件重连失败：{result.Message}");
-                        _eventAggregator.GetEvent<UILogEvent>().Publish($"硬件重连失败：{result.Message}");
+                        _eventAggregator.GetEvent<UILogEvent>().Publish($"硬件重连失败：{result.Message}");                     
                     }
+                    return false;
                 }
                 catch (Exception ex)
                 {
                     Logs.LogError(ex, "[HardwareService] 硬件重连过程中发生异常");
                     _eventAggregator.GetEvent<UILogEvent>().Publish($"硬件重连异常：{ex.Message}");
+                    return false;
                 }
             });
+            return false;
         }
 
         /// <summary>
@@ -132,7 +137,7 @@ namespace FZK.Application.Run.Service
                         Logs.LogError($"[PLC] 地址{address}计算索引{index}超出范围");
                     }
                 }
-                Logs.LogInfo($"[PLC] 读取DM寄存器成功 | 地址：{string.Join(",", addresses)} | 值：{string.Join(",", result.Values)}");
+              //  Logs.LogInfo($"[PLC] 读取DM寄存器成功 | 地址：{string.Join(",", addresses)} | 值：{string.Join(",", result.Values)}");
             }
             catch (Exception ex)
             {
@@ -146,6 +151,59 @@ namespace FZK.Application.Run.Service
         /// <summary>
         /// 写入PLC单个寄存器值（带重试机制）
         /// </summary>
+        //public async Task WritePlcRegister(int address, int value)
+        //{
+        //    if (_hardwareManager.OmronPLC == null)
+        //    {
+        //        Logs.LogError("[PLC] 欧姆龙PLC实例未初始化");
+        //        throw new InvalidOperationException("欧姆龙PLC实例未初始化");
+        //    }
+
+        //    for (int retry = 0; retry < MaxRetries; retry++)
+        //    {
+        //        try
+        //        {
+        //            if (!_hardwareManager.OmronPLC.Connected)
+        //            {
+        //                bool reconnectSuccess = _hardwareManager.OmronPLC.CheckConnection();
+        //                if (!reconnectSuccess)
+        //                {
+        //                    throw new Exception("PLC连接异常，重连失败");
+        //                }
+        //                Logs.LogInfo("[PLC] 重连成功，继续写入");
+        //            }
+
+        //            // 新增日志：记录发起写入的时刻
+        //            //
+        //            //Logs.LogInfo($"[PLC] 准备发起写入 DM{address} = {value}，时间：{DateTime.Now:HH:mm:ss.fff}");
+
+        //            bool writeSuccess = await Task.Run(() =>
+        //                _hardwareManager.OmronPLC.Write(PLCRegisterType.DM, (ushort)address, value));
+
+        //            if (!writeSuccess)
+        //            {
+        //                throw new Exception($"写入DM{address} = {value} 返回失败");
+        //            }
+        //            _eventAggregator.GetEvent<UILogEvent>().Publish($"[PLC] 写入DM{address} = {value} 成功");
+
+        //            Logs.LogInfo($"[PLC] 准备发起写入 DM{address} = {value}，时间：{DateTime.Now:HH:mm:ss.fff}");
+        //            Logs.LogDebug($"[PLC] 写入DM{address} = {value} 成功");
+        //            return;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            if (retry == MaxRetries - 1)
+        //            {
+        //                Logs.LogError(ex, $"[PLC] 写入DM{address} = {value} 失败，已重试{MaxRetries}次");
+        //                throw;
+        //            }
+        //            Logs.LogWarn(ex, $"[PLC] 写入DM{address} = {value} 失败（尝试{retry + 1}/{MaxRetries}），将重试");
+        //            await Task.Delay(100 * (retry + 1));
+        //        }
+        //    }
+        //}
+
+        //(4)
         public async Task WritePlcRegister(int address, int value)
         {
             if (_hardwareManager.OmronPLC == null)
@@ -156,6 +214,8 @@ namespace FZK.Application.Run.Service
 
             for (int retry = 0; retry < MaxRetries; retry++)
             {
+                // 每次重试都单独计时，方便判断 PLC 通信到底慢不慢
+                Stopwatch writeWatch = null;
                 try
                 {
                     if (!_hardwareManager.OmronPLC.Connected)
@@ -168,25 +228,39 @@ namespace FZK.Application.Run.Service
                         Logs.LogInfo("[PLC] 重连成功，继续写入");
                     }
 
+                    // 这行在真正 Write 之前，所以它才是“发起写入”的时间
+                    writeWatch = Stopwatch.StartNew();
+                    Logs.LogInfo($"[PLC] 开始写入 DM{address} = {value}，尝试 {retry + 1}/{MaxRetries}，时间: {DateTime.Now:HH:mm:ss.fff}");
+
+                    // OmronPLC.Write 是真正和 PLC 通信的动作。await 会等它返回
                     bool writeSuccess = await Task.Run(() =>
                         _hardwareManager.OmronPLC.Write(PLCRegisterType.DM, (ushort)address, value));
+                    writeWatch.Stop();
 
                     if (!writeSuccess)
                     {
-                        throw new Exception($"写入DM{address} = {value} 返回失败");
+                        throw new Exception($"写入DM{address} = {value} 返回失败，耗时 {writeWatch.ElapsedMilliseconds}ms");
                     }
+
                     _eventAggregator.GetEvent<UILogEvent>().Publish($"[PLC] 写入DM{address} = {value} 成功");
+                    Logs.LogInfo($"[PLC] 写入完成 DM{address} = {value}，尝试 {retry + 1}/{MaxRetries}，耗时: {writeWatch.ElapsedMilliseconds}ms，时间: {DateTime.Now:HH:mm:ss.fff}");
                     Logs.LogDebug($"[PLC] 写入DM{address} = {value} 成功");
                     return;
                 }
                 catch (Exception ex)
                 {
+                    if (writeWatch != null && writeWatch.IsRunning)
+                        writeWatch.Stop();
+
+                    string elapsedText = writeWatch == null ? "" : $"，耗时 {writeWatch.ElapsedMilliseconds}ms";
+
                     if (retry == MaxRetries - 1)
                     {
-                        Logs.LogError(ex, $"[PLC] 写入DM{address} = {value} 失败，已重试{MaxRetries}次");
+                        Logs.LogError(ex, $"[PLC] 写入DM{address} = {value} 失败，已重试{MaxRetries}次{elapsedText}");
                         throw;
                     }
-                    Logs.LogWarn(ex, $"[PLC] 写入DM{address} = {value} 失败（尝试{retry + 1}/{MaxRetries}），将重试");
+
+                    Logs.LogWarn(ex, $"[PLC] 写入DM{address} = {value} 失败（尝试{retry + 1}/{MaxRetries}）{elapsedText}，将重试");
                     await Task.Delay(100 * (retry + 1));
                 }
             }
@@ -308,6 +382,7 @@ namespace FZK.Application.Run.Service
                 }
 
                 string robotCmd = _hardwareManager.EpsonRobot.ReceiveContent?.Trim();
+
                 _hardwareManager.EpsonRobot.ClearReceiveContent();
 
                 if (string.IsNullOrEmpty(robotCmd))
@@ -351,7 +426,18 @@ namespace FZK.Application.Run.Service
                 }
 
                 string responseCmd = success ? "OK" : "NG";
+
+                //bool sendSuccess = _hardwareManager.EpsonRobot.SendCommand(responseCmd);
+
+                //(8)
+                // SendCommand 这里只是把 OK/NG 指令交给机械臂通信层发送。
+                // 此处为了判断它是不是马上返回，还是在这里卡住。
+                var sendWatch = Stopwatch.StartNew();
+                Logs.LogInfo($"[Robot] 准备发送机械臂响应 {responseCmd}，时间={DateTime.Now:HH:mm:ss.fff}");
                 bool sendSuccess = _hardwareManager.EpsonRobot.SendCommand(responseCmd);
+                sendWatch.Stop();
+                Logs.LogInfo($"[Robot] SendCommand返回，响应={responseCmd}，结果={sendSuccess}，耗时={sendWatch.ElapsedMilliseconds}ms");
+
 
                 if (!sendSuccess)
                 {

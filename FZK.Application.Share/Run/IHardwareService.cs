@@ -15,7 +15,7 @@ namespace FZK.Application.Share.Run
     /// </summary>
     public interface IHardwareService
     {
-        void Init();
+        bool Init();
         void Stop();
         Task<Dictionary<int, int>> ReadPlcRegisters(List<int> addresses);
         Task WritePlcRegister(int address, int value);

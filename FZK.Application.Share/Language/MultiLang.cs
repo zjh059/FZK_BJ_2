@@ -59,6 +59,7 @@ namespace FZK.Application.Share.Language
         public static string RefreshHardwareStatusError => Get("RefreshHardwareStatusError");
         public static string RefreshHardwareStatusFail => Get("RefreshHardwareStatusFail");
         public static string DeviceStartedMonitorPLC => Get("DeviceStartedMonitorPLC");
+        public static string DeviceInitFail => Get("DeviceInitFail");
         public static string DeviceStarted => Get("DeviceStarted");
         public static string HardwareInitCompleted => Get("HardwareInitCompleted");
         public static string SkipHardwareInit => Get("SkipHardwareInit");
