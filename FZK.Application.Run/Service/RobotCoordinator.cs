@@ -102,7 +102,7 @@ namespace FZK.Application.Run.Service
 
                 // 这里触发机械臂上的扫码枪。
                 var scanWatch = Stopwatch.StartNew();
-                await Task.Delay(200); 
+                await Task.Delay(200);
                 var result = await _hardware.TriggerScannerAndValidateAsync(
                     ScannerType.机械臂,
                     _robotScannerConfig.SnLength,
@@ -112,35 +112,18 @@ namespace FZK.Application.Run.Service
 
                 Logs.LogInfo($"[RobotFlow] 机械臂扫码结束，耗时={scanWatch.ElapsedMilliseconds}ms，结果={(result.IsValid ? "OK" : "NG")}，条码={result.PrimaryCode}");
 
-                bool reportResult;
-                if (_SoftwareConfig.IsDebug)
-                {
+            
+                bool reportResult = result.IsValid;
+                if (result.IsValid)
+                {                   
                     reportResult = true;
                 }
                 else
                 {
-
-                    reportResult = result.IsValid;
-                    if (result.IsValid)
-                    {
-                        //if (_SoftwareConfig.IsSFC && !_SoftwareConfig.IsDebug)
-                        //{
-                        //    // 在这里调用 MES
-                        //    bool mesOk = await _mes.ReportStation(spCode);
-                        //    reportResult = mesOk;
-                        //}
-                        //else
-                        //{
-                        //    reportResult = true;
-                        //}
-                        reportResult = true;
-                    }
-                    else
-                    {
-                        reportResult = false;
-                    }
-
+                    reportResult = false;
                 }
+
+                //}
 
                 _eventAggregator.GetEvent<UILogEvent>().Publish("回复机械臂:" + reportResult);
 

@@ -1,6 +1,7 @@
 ﻿using FZK.Application.Share.DebugFolder;
 using FZK.Application.Share.Language;
 using FZK.Database.Base.Models;
+using FZK.Logger;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -330,8 +331,9 @@ namespace FZK.Application.Debug.ViewModels
 
             // 唯一性验证（对齐BOMViewModel的重复校验）
             var existEntity = _btDataManager.BTRepository.GetByBottomCode(CurrentEntity.BottomCode);
-            if (_isAddMode && existEntity != null)
+            if (existEntity != null)//&&_isAddMode
             {
+                Logs.LogInfo($"{MultiLang.BottomCodeExists}{CurrentEntity.BottomCode}");
                 MessageBox.Show($"{MultiLang.BottomCodeExists}{CurrentEntity.BottomCode}", MultiLang.ValidateTip, MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }

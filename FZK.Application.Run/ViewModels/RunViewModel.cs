@@ -123,6 +123,7 @@ namespace FZK.Application.Run.ViewModels
             _softwareConfig = systemConfigManager.SoftwareConfig ?? new SoftwareConfig();
             bottomCodeLength = _leftDownScannerConfig.SnLength;
             _eventAggregator = eventAggregator;
+            _databaseManager = databaseManager;
             // 订阅日志事件
             _logSubscriptionToken = _eventAggregator.GetEvent<UILogEvent>()
                 .Subscribe(OnUILogReceived, ThreadOption.UIThread);
@@ -269,11 +270,6 @@ namespace FZK.Application.Run.ViewModels
         [Reactive] public int PlcD109 { get; set; }
         [Reactive] public string PlcD110 { get; set; }
 
-        [DependsOn(nameof(PlcD108))]
-        public int Jig1UseCount => PlcD108;
-
-        [DependsOn(nameof(PlcD109))]
-        public int Jig2UseCount => PlcD109;
 
         [Reactive] public string RobotStatus { get; set; } = MultiLang.Idle;
         [Reactive] public string RobotScanPosition { get; set; } = MultiLang.None;
@@ -310,11 +306,12 @@ namespace FZK.Application.Run.ViewModels
                 Logs.LogWarn($"{MultiLang.StatusCheckTimerFail}:{ex.Message}");
             }
         }
-
+        int iRefresh=0;
         private void RefreshHardwareConnectionStatus()
         {
             try
             {
+                iRefresh++;
                 IsPlcConnected = _hardwareManager.OmronPLC?.Connected ?? false;
                 IsLeftUpScannerConnected = _hardwareManager.LeftUpScanner?.Connected ?? false;
                 IsLeftDownScannerConnected = _hardwareManager.LeftDownScanner?.Connected ?? false;
@@ -322,6 +319,14 @@ namespace FZK.Application.Run.ViewModels
                 IsRightDownScannerConnected = _hardwareManager.RightDownScanner?.Connected ?? false;
                 IsSPScannerConnected = _hardwareManager.SPScanner?.Connected ?? false;
                 IsRobotConnected = _hardwareManager.EpsonRobot?.Connected ?? false;
+
+                //每秒刷新一次.一分钟=60s 五分钟自动清理一下Log
+                if (iRefresh == 300)
+                {
+                    OnClearLog();
+                    iRefresh = 0;
+                }
+
             }
             catch (Exception ex)
             {
@@ -334,8 +339,9 @@ namespace FZK.Application.Run.ViewModels
 
         #region 设备启动/停止
 
-        private void OnToggleRun()
+        private  void OnToggleRun()
         {
+          //  await _mesService.GetMesTestResult("spCode");
             IsRunning = !IsRunning;
 
             if (IsRunning)
@@ -353,7 +359,7 @@ namespace FZK.Application.Run.ViewModels
 
                 if (!IsNoHardwareMode)
                 {
-                   var flag =  _hardwareService?.Init();
+                    var flag = _hardwareService?.Init();
                     //if (flag.Value)
                     //{
                     //    Logs.LogInfo(MultiLang.HardwareInitCompleted);
@@ -368,13 +374,13 @@ namespace FZK.Application.Run.ViewModels
                     //    return;
                     //}
                     Logs.LogInfo(MultiLang.HardwareInitCompleted);
-                  //  _mesService.GetMesTestResult(" spCode");
+                    //  _mesService.GetMesTestResult(" spCode");
 
                 }
                 else
                 {
                     Logs.LogInfo(MultiLang.SkipHardwareInit);
-                }                
+                }
             }
             else
             {
@@ -395,8 +401,8 @@ namespace FZK.Application.Run.ViewModels
                 // 1. 读取 PLC 触发寄存器并更新 UI
                 var addresses = new List<int>
         {
-            _plcAddr.Jig1TriggerScan, _plcAddr.Jig1TriggerWeld, _plcAddr.Jig1TriggerClear,_plcAddr.Jig1Counts,
-            _plcAddr.Jig2TriggerScan, _plcAddr.Jig2TriggerWeld, _plcAddr.Jig2TriggerClear,_plcAddr.Jig2Counts,_plcAddr.HeartbeatMonitor
+            _plcAddr.Jig1TriggerScan, _plcAddr.Jig1TriggerWeld, _plcAddr.Jig1TriggerClear,
+            _plcAddr.Jig2TriggerScan, _plcAddr.Jig2TriggerWeld, _plcAddr.Jig2TriggerClear
         };
                 var values = await _plcService.ReadTriggerRegistersAsync(addresses);
 
@@ -406,11 +412,18 @@ namespace FZK.Application.Run.ViewModels
                 PlcD3 = values.TryGetValue(_plcAddr.Jig2TriggerScan, out int d3) ? d3.ToString() : "0";
                 PlcD4 = values.TryGetValue(_plcAddr.Jig2TriggerWeld, out int d4) ? d4.ToString() : "0";
                 PlcD5 = values.TryGetValue(_plcAddr.Jig2TriggerClear, out int d5) ? d5.ToString() : "0";
-                PlcD108 = values.TryGetValue(_plcAddr.Jig1Counts, out int d108) ? d108 : 0;
-                PlcD109 = values.TryGetValue(_plcAddr.Jig2Counts, out int d109) ? d109 : 0;
-                PlcD110 = values.TryGetValue(_plcAddr.Jig2TriggerClear, out int d110) ? d110.ToString() : "0";
 
+                var addresses2 = new List<int>
+        {
+            _plcAddr.Jig1Counts, _plcAddr.Jig2Counts, _plcAddr.HeartbeatMonitor
+        };
 
+                var values2 = await _plcService.ReadTriggerRegistersAsync(addresses2);
+
+                // 注意：这里要用 Jig1Counts/Jig2Counts 取值，不要写成 Jig1TriggerClear/Jig2TriggerClear。
+                PlcD108 = values2.TryGetValue(_plcAddr.Jig1Counts, out int v108) ? v108 : 0;
+                PlcD109 = values2.TryGetValue(_plcAddr.Jig2Counts, out int v109) ? v109 : 0;
+                PlcD110 = values.TryGetValue(_plcAddr.HeartbeatMonitor, out int v110) ? v110.ToString() : "0";
 
                 // 2. 刷新数据库缓存（注意：原代码是同步调用，此处保持同步避免行为变化）
                 _databaseManager.GetAll();
@@ -429,118 +442,13 @@ namespace FZK.Application.Run.ViewModels
         {
             RunLog = string.Empty;
             this.RaisePropertyChanged(nameof(RunLog));
-            Logs.LogInfo(MultiLang.LogCleared);
+           // Logs.LogInfo(MultiLang.LogCleared);
         }
 
         #endregion
 
         #region PLC读写
 
-        //private async void PlcReadTimer_Elapsed(object sender, ElapsedEventArgs e)
-        //{
-        //    if (_disposed || !IsRunning) return;
-
-
-
-        //    //(3)
-        //    //if (!await _timerProcessLock.WaitAsync(0)) return;
-        //    // 这里用锁保证同一时间只跑一轮 PLC 读取
-        //    // 如果上一轮还没跑完，新一轮会直接跳过；现场排查时必须把这个跳过打出来
-        //    if (!await _timerProcessLock.WaitAsync(0))
-        //    {
-        //        Logs.LogWarn($"[Timer] 本轮PLC读取跳过：上一轮还没结束，时间={DateTime.Now:HH:mm:ss.fff}");
-        //        return;
-        //    }
-        //    var timerWatch = Stopwatch.StartNew();
-        //    Logs.LogInfo($"[Timer] 本轮PLC读取开始，时间={DateTime.Now:HH:mm:ss.fff}");
-
-
-
-        //    try
-        //    {
-        //        // 读取 PLC 寄存器值
-        //        // 第一组地址 D0-D5：PLC 触发信号
-        //        // D0=治具1扫码比对，D1=治具1焊接结果，D2=治具1清零
-        //        // D3=治具2扫码比对，D4=治具2焊接结果，D5=治具2清零
-        //        var addresses = new List<int>
-        //        {
-        //            _plcAddr.Jig1TriggerScan, _plcAddr.Jig1TriggerWeld, _plcAddr.Jig1TriggerClear,
-        //            _plcAddr.Jig2TriggerScan, _plcAddr.Jig2TriggerWeld, _plcAddr.Jig2TriggerClear
-        //        };
-
-        //        var values = await _plcService.ReadTriggerRegistersAsync(addresses);
-
-        //        // 获取当前值（默认 0）
-        //        int d0 = values.TryGetValue(_plcAddr.Jig1TriggerScan, out int v0) ? v0 : 0;
-        //        int d1 = values.TryGetValue(_plcAddr.Jig1TriggerWeld, out int v1) ? v1 : 0;
-        //        int d2 = values.TryGetValue(_plcAddr.Jig1TriggerClear, out int v2) ? v2 : 0;
-        //        int d3 = values.TryGetValue(_plcAddr.Jig2TriggerScan, out int v3) ? v3 : 0;
-        //        int d4 = values.TryGetValue(_plcAddr.Jig2TriggerWeld, out int v4) ? v4 : 0;
-        //        int d5 = values.TryGetValue(_plcAddr.Jig2TriggerClear, out int v5) ? v5 : 0;
-
-
-        //        // 第二组地址 D108-D110：显示/监控用
-        //        // D108=治具1使用次数，D109=治具2使用次数，D110=心跳/监控
-        //        var addresses2 = new List<int>
-        //        {
-        //          _plcAddr.Jig1Counts,_plcAddr.Jig2Counts,_plcAddr.HeartbeatMonitor
-        //        };
-
-        //        var values2 = await _plcService.ReadTriggerRegistersAsync(addresses2);
-
-        //        // 注意：这里要用 Jig1Counts/Jig2Counts 取值，不要写成 Jig1TriggerClear/Jig2TriggerClear
-        //        int d108 = values2.TryGetValue(_plcAddr.Jig1TriggerClear, out int v108) ? v108 : 0;
-        //        int d109 = values2.TryGetValue(_plcAddr.Jig2TriggerClear, out int v109) ? v109 : 0;
-        //        int d110 = values2.TryGetValue(_plcAddr.HeartbeatMonitor, out int v110) ? v110 : 0;
-
-
-        //        PlcD0 = d0.ToString(); PlcD1 = d1.ToString(); PlcD2 = d2.ToString();
-        //        PlcD3 = d3.ToString(); PlcD4 = d4.ToString(); PlcD5 = d5.ToString();
-        //        PlcD108 = d108; PlcD109 = d109; PlcD110 = d110.ToString();
-
-
-        //        // 边沿检测并处理
-        //        // 下面就是“上升沿判断”。
-        //        // 只有上一次是0、这一次是1，才认为 PLC 触发了一次动作
-        //        if (_lastD0 == 0 && d0 == 1)
-        //            await _jig1Engine.ProcessScanAsync();
-        //        if (_lastD1 == 0 && d1 == 1)
-        //            await _jig1Engine.ProcessWeldAsync();
-        //        if (_lastD2 == 0 && d2 == 1)
-        //            await _jig1Engine.ProcessClearAsync();
-        //        if (_lastD3 == 0 && d3 == 1)
-        //            await _jig2Engine.ProcessScanAsync();
-        //        if (_lastD4 == 0 && d4 == 1)
-        //            await _jig2Engine.ProcessWeldAsync();
-        //        if (_lastD5 == 0 && d5 == 1)
-        //            await _jig2Engine.ProcessClearAsync();
-
-        //        await _robotCoordinator.ProcessCommandAsync();
-
-        //        // 更新上次值
-        //        _lastD0 = d0; _lastD1 = d1; _lastD2 = d2;
-        //        _lastD3 = d3; _lastD4 = d4; _lastD5 = d5;
-        //    }
-        //    catch (ObjectDisposedException)
-        //    {
-        //        // 信号量已释放，直接返回
-        //        return;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Logs.LogError(ex, MultiLang.PLCReadProcessError);
-        //        // await ResetPlcErrorRegisters();
-        //    }
-        //    finally
-        //    {
-
-        //        //(3)
-        //        timerWatch.Stop();
-        //        Logs.LogInfo($"[Timer] 本轮PLC读取结束，耗时={timerWatch.ElapsedMilliseconds}ms，时间={DateTime.Now:HH:mm:ss.fff}");
-
-        //        _timerProcessLock.Release();
-        //    }
-        //}
         private async void PlcReadTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             if (_disposed || !IsRunning) return;
@@ -550,12 +458,12 @@ namespace FZK.Application.Run.ViewModels
             // 如果上一轮还没跑完，新一轮会直接跳过；现场排查时必须把这个跳过打出来。
             if (!await _timerProcessLock.WaitAsync(0))
             {
-              //  Logs.LogWarn($"[Timer] 本轮PLC读取跳过：上一轮还没结束，时间={DateTime.Now:HH:mm:ss.fff}");
+                //  Logs.LogWarn($"[Timer] 本轮PLC读取跳过：上一轮还没结束，时间={DateTime.Now:HH:mm:ss.fff}");
                 return;
             }
 
             var timerWatch = Stopwatch.StartNew();
-           // Logs.LogInfo($"[Timer] 本轮PLC读取开始，间隔配置={_runConfig.PlcReadInterval}ms，时间={DateTime.Now:HH:mm:ss.fff}");
+            // Logs.LogInfo($"[Timer] 本轮PLC读取开始，间隔配置={_runConfig.PlcReadInterval}ms，时间={DateTime.Now:HH:mm:ss.fff}");
 
             try
             {
@@ -593,27 +501,41 @@ namespace FZK.Application.Run.ViewModels
 
                 PlcD0 = d0.ToString(); PlcD1 = d1.ToString(); PlcD2 = d2.ToString();
                 PlcD3 = d3.ToString(); PlcD4 = d4.ToString(); PlcD5 = d5.ToString();
-                PlcD108 = d108; PlcD109 = d109; PlcD110 = d110.ToString();
+                PlcD108 = d108;
+                PlcD109 = d109;
+                PlcD110 = d110.ToString();
 
                 // 下面就是“上升沿判断”。
                 // 只有上一次是0、这一次是1，才认为 PLC 触发了一次动作。
                 if (_lastD0 == 0 && d0 == 1)
+                {
                     await _jig1Engine.ProcessScanAsync();
+                }
                 if (_lastD1 == 0 && d1 == 1)
+                {
                     await _jig1Engine.ProcessWeldAsync();
+                }
                 if (_lastD2 == 0 && d2 == 1)
+                {
                     await _jig1Engine.ProcessClearAsync();
+                }
                 if (_lastD3 == 0 && d3 == 1)
+                {
                     await _jig2Engine.ProcessScanAsync();
+                }
                 if (_lastD4 == 0 && d4 == 1)
+                {
                     await _jig2Engine.ProcessWeldAsync();
+                }
                 if (_lastD5 == 0 && d5 == 1)
+                {
                     await _jig2Engine.ProcessClearAsync();
+                }
 
                 await _robotCoordinator.ProcessCommandAsync();
+                _lastD0 = d0; _lastD1 = d1; _lastD2 = d2; _lastD3 = d3; _lastD4 = d4; _lastD5 = d5;
 
-                _lastD0 = d0; _lastD1 = d1; _lastD2 = d2;
-                _lastD3 = d3; _lastD4 = d4; _lastD5 = d5;
+
             }
             catch (ObjectDisposedException)
             {
@@ -627,7 +549,7 @@ namespace FZK.Application.Run.ViewModels
             {
                 //(3)
                 timerWatch.Stop();
-               // Logs.LogInfo($"[Timer] 本轮PLC读取结束，耗时={timerWatch.ElapsedMilliseconds}ms，时间={DateTime.Now:HH:mm:ss.fff}");
+                // Logs.LogInfo($"[Timer] 本轮PLC读取结束，耗时={timerWatch.ElapsedMilliseconds}ms，时间={DateTime.Now:HH:mm:ss.fff}");
                 _timerProcessLock.Release();
             }
         }

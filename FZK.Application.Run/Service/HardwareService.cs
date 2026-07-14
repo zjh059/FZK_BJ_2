@@ -298,13 +298,9 @@ namespace FZK.Application.Run.Service
                     Logs.LogInfo($"[Scanner] {scannerType}扫码枪重连成功");
                 }
 
-                // 触发前清空旧码
+              
                 targetScanner.ClearContent();
-
-                // 创建任务源，用于接收第一个有效多码列表
-                var tcs = new TaskCompletionSource<List<string>>();
-
-                // 订阅MultiCodesObservable，只取第一个非空列表
+                var tcs = new TaskCompletionSource<List<string>>();              
                 var subscription = targetScanner.MultiCodesObservable
                     .Where(codes => codes != null && codes.Count > 0)
                     .Take(1)
@@ -320,8 +316,7 @@ namespace FZK.Application.Run.Service
                     {
                         throw new Exception($"{scannerType}扫码枪触发失败");
                     }
-
-                    // 等待结果，超时500ms
+                                      
                     var timeoutTask = Task.Delay(ScannerTimeoutMs);
                     var completedTask = await Task.WhenAny(tcs.Task, timeoutTask);
 
@@ -475,9 +470,8 @@ namespace FZK.Application.Run.Service
           bool enableDebug)
         {
             var result = new ScanValidationResult();
-
-            // 1. 触发扫码（获得条码列表）
             var codes = await TriggerScannerMultiCodesAsync(scannerType);
+
             result.Codes = codes ?? new List<string>();
 
             if (codes == null || codes.Count == 0)
@@ -486,8 +480,7 @@ namespace FZK.Application.Run.Service
                 result.IsValid = false;
                 return result;
             }
-
-            // 2. 取第一个条码
+          
             string scanCode = codes[0]?.Trim();
             if (string.IsNullOrEmpty(scanCode))
             {
@@ -496,15 +489,6 @@ namespace FZK.Application.Run.Service
                 return result;
             }
 
-            // 3. 调试模式通过
-            if (enableDebug)
-            {
-                Logs.LogDebug($"[Scanner] {scannerType} 调试模式，跳过后续校验，条码：{scanCode}");
-                result.IsValid = true;
-                return result;
-            }
-
-            // 4. 长度校验（先于调试，保证物理码正确）
             if (expectedLength > 0 && scanCode.Length != expectedLength)
             {
                 Logs.LogWarn($"[Scanner] {scannerType} 条码长度不符（期望{expectedLength}，实际{scanCode.Length}）");
@@ -512,7 +496,16 @@ namespace FZK.Application.Run.Service
                 return result;
             }
 
-            // 没有进一步校验，默认通过
+            if (enableDebug)
+            {
+                Logs.LogDebug($"[Scanner] {scannerType} 调试模式，跳过后续校验，条码：{scanCode}");
+                result.IsValid = true;
+                return result;
+            }    
+
+
+
+          
             result.IsValid = true;
             return result;
         }

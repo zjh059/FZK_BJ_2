@@ -58,7 +58,7 @@ namespace FZK.Application.Run.Service
 
                 //7sc
                 //DR8HT7000960001NQN+5+12+T001BH77221000
-                var response = await GetCodeInfoAsync("DR8HT7000980001NQN+5+12+T001BH77221000");
+                var response = await GetCodeInfoAsync("DR8HV3A001S1234567+6+08+T001DS12345678");
 
 
 
@@ -149,21 +149,22 @@ namespace FZK.Application.Run.Service
             }
 
             // 检查 rc 字段
-            if (!string.Equals(responseDto.Rc, "000", StringComparison.Ordinal))
+            //if (!string.Equals(responseDto.Rc, "000", StringComparison.Ordinal))
+            if(!responseDto.Rc.ToString().Contains("000"))
             {
                 var errorMsg = !string.IsNullOrEmpty(responseDto.Rm) ? responseDto.Rm : $"接口返回失败 rc={responseDto.Rc}";
                 Logs.LogError($"获取码信息失败（码号={codeNo}）：{errorMsg}");
                 return CodeInfoResult.Fail(errorMsg);
             }
 
-            // 校验制程（process_dopass）
-            if (!string.IsNullOrEmpty(_processDoPassConfig) &&
-                !string.Equals(responseDto.ProcessDoPass, _processDoPassConfig, StringComparison.OrdinalIgnoreCase))
-            {
-                var msg = $"制程不匹配：接口返回 [{responseDto.ProcessDoPass}]，配置要求 [{_processDoPassConfig}]";
-                Logs.LogWarn($"码号={codeNo}：{msg}");
-                return CodeInfoResult.Fail(msg);
-            }
+            //// 校验制程（process_dopass）
+            //if (!string.IsNullOrEmpty(_processDoPassConfig) &&
+            //    !string.Equals(responseDto.ProcessDoPass, _processDoPassConfig, StringComparison.OrdinalIgnoreCase))
+            //{
+            //    var msg = $"制程不匹配：接口返回 [{responseDto.ProcessDoPass}]，配置要求 [{_processDoPassConfig}]";
+            //    Logs.LogWarn($"码号={codeNo}：{msg}");
+            //    return CodeInfoResult.Fail(msg);
+            //}
 
             // 校验工站（station_dopass）
             if (!string.IsNullOrEmpty(_stationDoPassConfig) &&

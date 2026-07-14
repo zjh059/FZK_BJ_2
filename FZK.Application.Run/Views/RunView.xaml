@@ -128,7 +128,7 @@
                     <StackPanel HorizontalAlignment="Center">
                         <TextBlock Text="{DynamicResource 治具1焊接使用次数_D108}" Style="{StaticResource TextBlock.Run.SubTitleStyle}" Margin="0,0,0,8"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <TextBlock Text="{Binding Jig1UseCount}" FontSize="32" FontWeight="Bold" Foreground="#3182CE"/>
+                            <TextBlock Text="{Binding PlcD108}" FontSize="32" FontWeight="Bold" Foreground="#3182CE"/>
                             <TextBlock Text="{DynamicResource 次数上限}" FontSize="20" Margin="5,0,0,0" Foreground="#7F8C8D" VerticalAlignment="Bottom"/>
                         </StackPanel>
                     </StackPanel>
@@ -137,7 +137,7 @@
                     <StackPanel HorizontalAlignment="Center">
                         <TextBlock Text="{DynamicResource 治具2焊接使用次数_D109}" Style="{StaticResource TextBlock.Run.SubTitleStyle}" Margin="0,0,0,8"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <TextBlock Text="{Binding Jig2UseCount}" FontSize="32" FontWeight="Bold" Foreground="#3182CE"/>
+                            <TextBlock Text="{Binding PlcD109}" FontSize="32" FontWeight="Bold" Foreground="#3182CE"/>
                             <TextBlock Text="{DynamicResource 次数上限}" FontSize="20" Margin="5,0,0,0" Foreground="#7F8C8D" VerticalAlignment="Bottom"/>
                         </StackPanel>
                     </StackPanel>

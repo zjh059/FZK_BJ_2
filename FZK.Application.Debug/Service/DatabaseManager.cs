@@ -95,6 +95,7 @@ namespace FZK.Application.Debug.Service
                 BTRepository.SaveChanged();
                 CodeRepository.SaveChanged();
                 UserRepository.SaveChanged();
+                GetAll();
                 return true;
             }
             catch (Exception ex)

@@ -1,11 +1,14 @@
 ﻿using FZK.Application.Share.DebugFolder;
+using FZK.Application.Share.Language;
 using FZK.Application.Share.Run;
 using FZK.Database.Base.Models;
+using FZK.Logger;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace FZK.Application.Run.Service
 {
@@ -20,9 +23,21 @@ namespace FZK.Application.Run.Service
 
         public async Task<bool> VerifyBottomTopCodeAsync(string bottomCode, string topCode)
         {
-            if (string.IsNullOrEmpty(bottomCode) || string.IsNullOrEmpty(topCode)) return false;
-            var btEntity = await Task.Run(() => _dbManager.BTEntities.FirstOrDefault(t => t.BottomCode == bottomCode));
-            return btEntity != null && btEntity.TopCode == topCode;
+            if (string.IsNullOrEmpty(bottomCode) || string.IsNullOrEmpty(topCode))
+                return false;
+            else
+            {
+                bottomCode = bottomCode.Replace(" ", "");
+                topCode = topCode.Replace(" ", "");
+            }
+            //添加记录
+            await AddBTEntityAsync(bottomCode, topCode);
+
+            if (bottomCode == topCode)
+                return true;
+            else
+                return false;
+
         }
 
         public async Task UpdateOrAddCodeEntityAsync(string bottomCode, string topCode, string spCode)
@@ -52,31 +67,56 @@ namespace FZK.Application.Run.Service
         public async Task AddBTEntityAsync(string bottomCode, string topCode)
         {
             await Task.Run(() =>
-            {
-                //26_7_1修改：
-                //防呆：先前要求底板和盖板同时相等才算存在
-                //下面改成只按底板码判断是否已存在，不再要求底板码+盖板码同时匹配
-                //var existing = _dbManager.BTEntities.FirstOrDefault(c => c.BottomCode == bottomCode&&c.TopCode==topCode);
-                var existing = _dbManager.BTEntities.FirstOrDefault(c => c.BottomCode == bottomCode);
+            {               
+                //var existing = _dbManager.BTEntities.FirstOrDefault(c => c.BottomCode == bottomCode && c.TopCode == topCode);
+                //if (existing == null)
+                //{
+                //    _dbManager.BTRepository.Insert(new BTEntity
+                //    {
+                //        BottomCode = bottomCode,
+                //        TopCode = topCode,
+                //        Counts = "0",
+                //        InsertDate = DateTime.Now
+                //    });
+                //    _dbManager.SaveChanged();
+                //}
 
-                if (existing == null)
+                var existEntity = _dbManager.BTRepository.GetByBottomCode(bottomCode);
+                if (existEntity != null)
                 {
-                    _dbManager.BTRepository.Insert(new BTEntity
+                    Logs.LogInfo($"{MultiLang.BottomCodeExists}{bottomCode}");
+                    return;
+                }
+
+                try
+                {
+                    int count = 0;
+
+                    // 新增
+                    count = _dbManager.BTRepository.Insert(new BTEntity
                     {
                         BottomCode = bottomCode,
                         TopCode = topCode,
                         Counts = "0",
                         InsertDate = DateTime.Now
                     });
+
+                    if (count > 0)
+                    {
+                        Logs.LogInfo($"{bottomCode}添加成功");
+
+                    }
+                    else
+                    {
+                        Logs.LogInfo($"{bottomCode}添加失败");
+
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    //（可选）若底板码存在说明之前绑定过了，若有相同的码进来，只需比对信息
-                    //如果要系统每次以最新导向板为准，可选择下面两行
-                    //existing.TopCode = topCode;
-                    //existing.UpdateTime = DateTime.Now;
+                    Logs.LogInfo($"{bottomCode}添加异常:{ex.ToString()}");
+
                 }
-                _dbManager.SaveChanged();
             });
         }
         public async Task UpdateTestResultAsync(string spCode, int result)
@@ -95,8 +135,9 @@ namespace FZK.Application.Run.Service
 
         public async Task<string> IncrementCountAsync(string bottomCode)
         {
+
             return await Task.Run(() =>
-            {
+            {               
                 var bt = _dbManager.BTEntities.FirstOrDefault(b => b.BottomCode == bottomCode);
                 if (bt == null) return "0";
                 int current = int.TryParse(bt.Counts, out var val) ? val : 0;
@@ -110,7 +151,7 @@ namespace FZK.Application.Run.Service
         public async Task ClearCountAsync(string bottomCode)
         {
             await Task.Run(() =>
-            {
+            {              
                 var bt = _dbManager.BTEntities.FirstOrDefault(b => b.BottomCode == bottomCode);
                 if (bt != null)
                 {
