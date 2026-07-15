@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <title>镀金片焊接设备软件用户手册 2.0</title>
+  <style>
+    :root {
+      --navy: #173a5e;
+      --blue: #2563a6;
+      --blue-2: #eaf3fb;
+      --ink: #17212b;
+      --muted: #5f6b76;
+      --line: #d9e2ea;
+      --bg: #f4f7fa;
+      --card: #ffffff;
+      --ok: #18794e;
+      --ok-bg: #e8f6ef;
+      --warn: #8a5a00;
+      --warn-bg: #fff6dd;
+      --danger: #a12622;
+      --danger-bg: #fff0ef;
+      --shadow: 0 8px 24px rgba(23, 58, 94, .08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", Arial, sans-serif;
+      line-height: 1.72;
+      -webkit-text-size-adjust: 100%;
+    }
+    a { color: var(--blue); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    img { max-width: 100%; height: auto; display: block; }
+    code, .mono { font-family: Consolas, "SFMono-Regular", monospace; }
+    code { padding: .1em .35em; border-radius: 5px; background: #eef2f6; color: #173a5e; }
+    .page-shell { width: min(1380px, 100%); margin: 0 auto; padding: 18px; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: clamp(30px, 7vw, 84px) clamp(22px, 7vw, 76px);
+      border-radius: 22px;
+      color: white;
+      background: linear-gradient(135deg, #102f4e 0%, #215e91 70%, #2b78b9 100%);
+      box-shadow: var(--shadow);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 330px;
+      height: 330px;
+      right: -120px;
+      top: -150px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.09);
+    }
+    .kicker { margin: 0 0 8px; font-size: .92rem; letter-spacing: .12em; opacity: .86; }
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.45rem); line-height: 1.18; }
+    .hero-subtitle { margin: 12px 0 24px; font-size: clamp(1.02rem, 2vw, 1.25rem); opacity: .92; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 9px; }
+    .badge { padding: 5px 11px; border-radius: 999px; background: rgba(255,255,255,.16); font-size: .9rem; }
+    .layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 20px; margin-top: 20px; align-items: start; }
+    .toc {
+      position: sticky;
+      top: 14px;
+      max-height: calc(100vh - 28px);
+      overflow: auto;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+    .toc summary { font-weight: 700; color: var(--navy); cursor: pointer; }
+    .toc nav { margin-top: 10px; display: grid; gap: 2px; }
+    .toc a { display: block; padding: 7px 9px; border-radius: 8px; color: #34495e; text-decoration: none; font-size: .93rem; }
+    .toc a:hover, .toc a:focus { background: var(--blue-2); color: var(--navy); }
+    main { min-width: 0; }
+    section {
+      scroll-margin-top: 18px;
+      margin-bottom: 18px;
+      padding: clamp(20px, 4vw, 38px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+    h2 { margin: 0 0 18px; color: var(--navy); font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.3; }
+    h3 { margin: 28px 0 10px; color: #24577f; font-size: 1.2rem; line-height: 1.4; }
+    h4 { margin: 22px 0 8px; color: #304c64; font-size: 1.03rem; }
+    p { margin: .65em 0; }
+    ul, ol { padding-left: 1.4rem; }
+    li + li { margin-top: .35rem; }
+    .lead { color: #354a5d; font-size: 1.05rem; }
+    .callout { margin: 16px 0; padding: 14px 16px; border-left: 5px solid var(--blue); border-radius: 9px; background: var(--blue-2); }
+    .callout strong:first-child { color: var(--navy); }
+    .callout.warn { border-color: #d99a12; background: var(--warn-bg); }
+    .callout.warn strong:first-child { color: var(--warn); }
+    .callout.danger { border-color: #d44842; background: var(--danger-bg); }
+    .callout.danger strong:first-child { color: var(--danger); }
+    .callout.ok { border-color: #35a36e; background: var(--ok-bg); }
+    .callout.ok strong:first-child { color: var(--ok); }
+    .grid { display: grid; gap: 14px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card { padding: 16px; border: 1px solid var(--line); border-radius: 11px; background: #fbfdff; }
+    .card h3, .card h4 { margin-top: 0; }
+    .role { border-top: 4px solid var(--blue); }
+    .step-list { counter-reset: step; padding: 0; list-style: none; }
+    .step-list > li { position: relative; min-height: 44px; margin: 0 0 14px; padding: 12px 14px 12px 54px; border: 1px solid var(--line); border-radius: 10px; background: #fcfdff; }
+    .step-list > li::before { counter-increment: step; content: counter(step); position: absolute; left: 12px; top: 12px; display: grid; place-items: center; width: 29px; height: 29px; border-radius: 50%; color: white; background: var(--blue); font-weight: 700; }
+    .checklist { list-style: none; padding-left: 0; }
+    .checklist li { position: relative; padding-left: 30px; }
+    .checklist li::before { content: "□"; position: absolute; left: 2px; top: -2px; color: var(--blue); font-size: 1.28rem; font-weight: 700; }
+    .table-wrap { width: 100%; overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 10px; }
+    table { width: 100%; border-collapse: collapse; min-width: 650px; background: white; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: #173a5e; background: #e8f1f8; white-space: nowrap; }
+    tr:last-child td { border-bottom: 0; }
+    .status-ok { color: var(--ok); font-weight: 700; }
+    .status-ng { color: var(--danger); font-weight: 700; }
+    .flow { display: grid; grid-template-columns: repeat(5, minmax(120px, 1fr)); gap: 9px; margin: 16px 0; }
+    .flow > div { position: relative; padding: 13px 9px; border-radius: 9px; background: #edf5fb; color: #204b70; text-align: center; font-weight: 700; }
+    .flow > div:not(:last-child)::after { content: "→"; position: absolute; right: -13px; top: 50%; transform: translateY(-50%); z-index: 2; color: #4a789e; }
+    details.issue { margin: 10px 0; border: 1px solid var(--line); border-radius: 10px; background: #fcfdff; }
+    details.issue summary { padding: 13px 15px; cursor: pointer; color: var(--navy); font-weight: 700; }
+    details.issue > div { padding: 0 16px 16px; }
+    figure { margin: 18px 0 28px; }
+    figure img { margin: 0 auto; border: 1px solid var(--line); border-radius: 10px; background: white; box-shadow: 0 6px 18px rgba(23,58,94,.09); }
+    figcaption { margin-top: 8px; color: var(--muted); text-align: center; font-size: .92rem; }
+    .muted { color: var(--muted); }
+    .small { font-size: .9rem; }
+    .footer { margin: 24px 0 8px; color: var(--muted); text-align: center; font-size: .88rem; }
+    .top-link { display: inline-block; margin-top: 12px; }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .toc { position: static; max-height: none; }
+      .grid.three { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 680px) {
+      .page-shell { padding: 9px; }
+      .hero { border-radius: 14px; }
+      section { padding: 18px 15px; border-radius: 12px; }
+      .grid.two, .grid.three { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr; }
+      .flow > div:not(:last-child)::after { content: "↓"; right: auto; left: 50%; top: auto; bottom: -17px; transform: translateX(-50%); }
+      .step-list > li { padding-left: 49px; }
+      table { min-width: 600px; }
+      body { font-size: 16px; }
+    }
+    @media print {
+      body { background: white; font-size: 10.5pt; }
+      .page-shell { width: 100%; padding: 0; }
+      .hero, section, .toc { box-shadow: none; }
+      .hero { border-radius: 0; break-after: page; }
+      .layout { display: block; }
+      .toc { position: static; max-height: none; break-after: page; }
+      section { border: 0; border-radius: 0; padding: 0; margin: 0 0 18pt; break-before: page; }
+      a { color: inherit; text-decoration: none; }
+      details.issue[open] > div { display: block; }
+      figure, .card, .callout, tr { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero" id="top">
+      <p class="kicker">焊接上下料扫码系统 · 操作与维护参考</p>
+      <h1>镀金片焊接设备软件用户手册</h1>
+      <p class="hero-subtitle">面向现场操作员、班组长、设备维护员与系统管理员的 2.0 优化版</p>
+      <div class="hero-meta">
+        <span class="badge">文档版本：2.0</span>
+        <span class="badge">发布日期：2026-07-14</span>
+        <span class="badge">编码：UTF-8</span>
+        <span class="badge">适配电脑与手机</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <details class="toc" open>
+        <summary>目录（点击跳转）</summary>
+        <nav aria-label="手册目录">
+          <a href="#quick">1. 一页快速上手</a>
+          <a href="#scope">2. 安全、范围与权限</a>
+          <a href="#login">3. 登录与初始化</a>
+          <a href="#screen">4. 主界面说明</a>
+          <a href="#precheck">5. 班前检查与启动</a>
+          <a href="#production">6. 正常生产操作</a>
+          <a href="#exception">7. 异常、报警与恢复</a>
+          <a href="#shutdown">8. 停机与交接班</a>
+          <a href="#trace">9. 数据、日志与追溯</a>
+          <a href="#settings">10. 设置与维护员操作</a>
+          <a href="#plc">11. PLC 地址附录</a>
+          <a href="#images">12. 现场参考图片</a>
+          <a href="#faq">13. 故障快速索引</a>
+          <a href="#support">14. 报修资料包</a>
+          <a href="#training">15. 上岗确认清单</a>
+        </nav>
+      </details>
+
+      <main>
+        <section id="quick">
+          <h2>1. 一页快速上手</h2>
+          <div class="callout danger"><strong>先记住：</strong>软件里的“停止设备”只停止上位机的 PLC 轮询并关闭相关服务，<strong>不等于急停</strong>。出现人员危险、夹伤风险、机械臂异常运动、冒烟或异味时，应立即使用设备的物理急停/总停，并按整机安全规程处理。</div>
+          <div class="flow" aria-label="标准生产流程">
+            <div>班前安全检查</div><div>登录并初始化</div><div>确认全部连接</div><div>启动设备并监控</div><div>停机与交接</div>
+          </div>
+          <ol class="step-list">
+            <li><strong>检查现场。</strong>急停已按规定复位，安全门/防护罩正常，机械臂运动区域无人，治具和扫码窗口无异物。</li>
+            <li><strong>使用指定账号登录。</strong>不要自行试建账号；当前版本输入不存在的用户名时可能自动注册新用户。</li>
+            <li><strong>等待硬件初始化完成。</strong>初始化失败先看提示并点“重试”；普通操作员不得点“跳过”进入生产。</li>
+            <li><strong>进入“开始”页。</strong>确认欧姆龙 PLC、①/②上下扫码器、Epson 扫码器、EPSON 机械臂均显示“已连接”。必要时点“刷新状态”。</li>
+            <li><strong>核对生产前关键值。</strong><span class="mono">D0-D5</span> 应处于待机状态，<span class="mono">D110</span> 心跳应符合现场约定，①/②焊接次数不得超过已批准上限。</li>
+            <li><strong>点击“启动设备”。</strong>按钮变为“停止设备”，运行日志出现启动/监控信息后，才允许按工艺流程上料。</li>
+            <li><strong>生产中盯三处。</strong>扫码记录的 OK/NG、硬件连接文字、设备运行日志。出现 NG、断线、超时或记录缺失，立即停止放行并隔离在制品。</li>
+            <li><strong>下班前正常停机。</strong>等待当前循环结束并确认机械机构处于安全位置，再点“停止设备”；完成交接记录后，硬件断电按整机电气/机器人规程执行。</li>
+          </ol>
+          <div class="callout warn"><strong>质量红线：</strong>当前程序在 SFC 关闭时会跳过 MES 查询并把焊接校验按通过处理。生产配置必须由工艺/质量/软件负责人确认 SFC 已启用；操作员不得为“临时生产”关闭 SFC。</div>
+        </section>
+
+        <section id="scope">
+          <h2>2. 安全、范围与权限</h2>
+          <p class="lead">本手册说明上位机软件的使用方法，不替代整机电气手册、机械臂安全手册、锁定挂牌（LOTO）制度或现场工艺文件。</p>
+          <h3>2.1 软件实际负责什么</h3>
+          <ul>
+            <li>监控 PLC 触发信号和心跳，执行治具 1、治具 2 的扫码、焊接结果处理和清零流程。</li>
+            <li>连接五个扫码器、欧姆龙 PLC 和 EPSON 机械臂，并显示连接状态。</li>
+            <li>显示治具焊接次数、扫码记录、运行日志和机械臂状态区域。</li>
+            <li>在启用 SFC 时查询 MES 测试结果；管理底板/导向板/主板码绑定和用户数据。</li>
+          </ul>
+          <h3>2.2 软件没有的安全功能</h3>
+          <div class="grid two">
+            <div class="card"><h4>没有独立软件急停</h4><p>界面中没有急停、安全门复位或安全互锁按钮。必须使用设备实体安全回路。</p></div>
+            <div class="card"><h4>没有暂停/复位按钮</h4><p>当前运行页只有启动/停止、刷新状态、清空日志。不要在手册中寻找不存在的“暂停”或“复位”。</p></div>
+            <div class="card"><h4>停止不会取消已在执行的一轮</h4><p>点击停止主要停止后续 PLC 轮询；若某次扫码/MES请求已进入执行，不能把软件停止当作即时运动制动。</p></div>
+            <div class="card"><h4>无独立报警中心</h4><p>当前版本主要通过连接状态、扫码记录和运行日志暴露异常，现场应把 PLC/整机报警作为第一依据。</p></div>
+          </div>
+          <h3>2.3 建议权限矩阵</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>角色</th><th>允许操作</th><th>禁止或需审批</th></tr></thead>
+              <tbody>
+                <tr><td>操作员</td><td>登录、开始页监控、启动/停止、刷新状态、查看记录、切换用户</td><td>修改设置、改 PLC 地址、删绑定、清计数、关闭 SFC、跳过初始化</td></tr>
+                <tr><td>班组长/质量</td><td>确认 NG 隔离、批准重试/返工、审核交接记录</td><td>未经工艺批准修改通信或结果规则</td></tr>
+                <tr><td>设备维护员</td><td>安全停机后检查通信、镜头、配置、日志与硬件</td><td>绕过安全回路、直接伪造 OK 值</td></tr>
+                <tr><td>管理员/软件工程师</td><td>用户、配置、数据维护、升级回退、程序验证</td><td>未备份/未审批直接改生产参数</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout warn"><strong>当前版本注意：</strong>代码中存在“开发商、管理员、操作员”角色，但界面并未完整使用角色来限制所有菜单。也就是说，看得到某个菜单不代表你有权操作；现场必须用账号管理和作业制度补足权限控制。</div>
+        </section>
+
+        <section id="login">
+          <h2>3. 登录与初始化</h2>
+          <h3>3.1 登录</h3>
+          <ol class="step-list">
+            <li>启动程序后，在登录页输入由负责人分配的用户名和密码。</li>
+            <li>点击“登录”。密码错误时会提示登录失败；请核对大小写和输入法，不要连续尝试他人账号。</li>
+            <li>登录成功后进入硬件初始化阶段。若需要换班，使用顶部“切换用户”，不要多人共用同一账号。</li>
+          </ol>
+          <div class="callout danger"><strong>账户风险：</strong>当前程序在用户名不存在时会自动创建用户；用户名为 <code>admin</code> 时还可能被赋予管理员角色。生产电脑应由管理员预先创建并保管账号，操作员发现“注册成功”提示时应停止操作并上报，而不是继续生产。</div>
+          <h3>3.2 硬件初始化</h3>
+          <div class="grid two">
+            <div class="card"><h4>初始化成功</h4><p>系统自动进入主界面。进入“开始”页后仍需核对每个硬件的“已连接”文字，不能只看是否进入页面。</p></div>
+            <div class="card"><h4>初始化失败</h4><p>记录屏幕提示；确认设备已上电、网络和接线正常后点“重试”。连续失败则停止生产并联系维护。</p></div>
+          </div>
+          <div class="callout warn"><strong>“跳过”不是模拟模式：</strong>初始化页的“跳过”只会打开主界面，不会建立虚拟 PLC、虚拟扫码器或虚拟机械臂。普通操作员不得用“跳过”绕过硬件故障投入生产。</div>
+        </section>
+
+        <section id="screen">
+          <h2>4. 主界面说明</h2>
+          <h3>4.1 顶部导航</h3>
+          <div class="grid two">
+            <div class="card"><h4>开始</h4><p>进入设备运行监控页，是操作员日常使用的主页面。</p></div>
+            <div class="card"><h4>设置</h4><p>PLC、扫码器、机械臂、MES/运行参数和用户配置；仅授权人员使用。</p></div>
+            <div class="card"><h4>数据管理</h4><p>底板绑定、主板绑定、用户管理以及部分导出/删除操作；修改前必须备份。</p></div>
+            <div class="card"><h4>切换用户</h4><p>结束当前账号会话并返回登录流程，换班时必须使用。</p></div>
+          </div>
+          <h3>4.2 “开始”页的三个按钮</h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>按钮</th><th>实际作用</th><th>操作员怎么判断</th></tr></thead>
+            <tbody>
+              <tr><td>启动设备 / 停止设备</td><td>切换 PLC 轮询与硬件服务运行状态</td><td>观察按钮文字和日志；不要把“停止设备”当急停</td></tr>
+              <tr><td>刷新状态</td><td>立即读取 PLC 触发位、计数、心跳并刷新数据库缓存</td><td>查看是否提示刷新完成；报错时停止生产</td></tr>
+              <tr><td>清空日志</td><td>只清空当前页面的运行日志文本</td><td>磁盘日志仍在程序目录 <code>logs</code> 中</td></tr>
+            </tbody>
+          </table></div>
+          <div class="callout"><strong>版本纠正：</strong>原手册提到的“手动触发扫码、手动清零治具、模拟机械臂、直接编辑 D100-D110”等按钮，当前活动界面中均不存在。请以本节的三个按钮为准。</div>
+          <h3>4.3 运行监控区域</h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>区域</th><th>显示内容</th><th>生产中关注点</th></tr></thead>
+            <tbody>
+              <tr><td>PLC 信号</td><td>①-D0扫码、①-D1结果、①-D2清零、②-D3扫码、②-D4结果、②-D5清零、D110心跳</td><td>触发应按工艺从 0→1；长时间不变化或心跳异常要停机检查</td></tr>
+              <tr><td>焊接次数</td><td>D108、D109，界面显示“/40”</td><td>40 是显示参考，不能假定软件一定自动拦截；到限前按工艺更换/保养</td></tr>
+              <tr><td>扫码记录</td><td>时间、治具、类型、底板、导向板、主板、结果、备注</td><td>确认最新一行属于当前工件且结果为 OK；记录缺失等同未确认</td></tr>
+              <tr><td>机械臂状态</td><td>状态、当前扫码位、最新报站结果</td><td>当前代码未完整更新这些字段，不可作为唯一放行依据</td></tr>
+              <tr><td>设备运行日志</td><td>流程、异常和时间信息</td><td>用于快速判断，但会被页面清空；追溯以磁盘日志/数据库为准</td></tr>
+              <tr><td>硬件状态</td><td>PLC、五个扫码器、机械臂的“已连接/未连接”</td><td>绿色/红色主要对连接布尔值有效；数值状态应以文字和数字为准</td></tr>
+            </tbody>
+          </table></div>
+        </section>
+
+        <section id="precheck">
+          <h2>5. 班前检查与启动</h2>
+          <h3>5.1 班前检查表</h3>
+          <ul class="checklist">
+            <li>查看上一班交接记录，确认没有未关闭故障、未隔离在制品或待处理 NG。</li>
+            <li>确认设备周围无人员、工具和散料，机械臂运动区域无人进入。</li>
+            <li>确认急停、安全门、防护罩等实体安全装置按整机点检要求正常。</li>
+            <li>确认治具 1、治具 2 的实体标识与软件 ①/②一致。</li>
+            <li>清洁扫码器镜头和条码经过区域；不得使用会刮伤镜头的材料。</li>
+            <li>确认电脑、PLC、扫码器、机械臂和网络设备已按规定上电。</li>
+            <li>确认当前产品、工单、站点和 SFC/MES 配置属于本批次。</li>
+            <li>确认 D108/D109 次数未达到更换或保养阈值。</li>
+          </ul>
+          <h3>5.2 软件启动步骤</h3>
+          <ol class="step-list">
+            <li>使用分配账号登录，等待初始化成功。</li>
+            <li>进入“开始”页，先不要放入首件。</li>
+            <li>逐项确认 PLC、①上、①下、②上、②下、Epson 扫码器和 EPSON 机械臂均为“已连接”。</li>
+            <li>点击“刷新状态”，确认无错误弹窗，D0-D5 处于合理待机值，D110 心跳符合 PLC 约定。</li>
+            <li>核对焊接次数和 MES/SFC 生产配置，必要时由班组长或质量人员复核。</li>
+            <li>点击“启动设备”，确认日志出现设备启动、PLC 读取定时器开始等信息。</li>
+            <li>用批准的首件执行一轮，核对扫码记录、条码、OK/NG 与 PLC/设备动作一致。首件未确认不得批量生产。</li>
+          </ol>
+          <div class="callout ok"><strong>启动成功判定：</strong>硬件全部已连接；无初始化/通信错误；启动按钮已变为“停止设备”；日志持续更新；首件记录与实物条码一致；工艺规定的 MES/SFC 校验有效。</div>
+        </section>
+
+        <section id="production">
+          <h2>6. 正常生产操作</h2>
+          <h3>6.1 操作员标准循环</h3>
+          <ol class="step-list">
+            <li><strong>放入工件。</strong>按工艺确认方向、到位和治具编号，不遮挡条码。</li>
+            <li><strong>等待 PLC 触发。</strong>治具 1 使用 D0/D1/D2，治具 2 使用 D3/D4/D5。上位机只在信号由 0 变 1 的上升沿启动对应流程。</li>
+            <li><strong>观察扫码记录。</strong>核对时间、治具、底板码、导向板码、主板码、结果和备注是否属于当前工件。</li>
+            <li><strong>确认结果。</strong>OK 才能按工艺进入下一步；NG、空码、记录缺失或条码不一致必须隔离。</li>
+            <li><strong>监控次数与连接。</strong>每批次切换、发生卡料/重扫、连接颜色改变时重新确认。</li>
+          </ol>
+          <h3>6.2 扫码比对流程（D0 / D3）</h3>
+          <ul>
+            <li>下扫码器读取多个码并识别底板码与主板码；上扫码器读取导向板码。</li>
+            <li>系统按配置的次数和延迟自动重试；识别成功后，在数据库中核对底板码与导向板码绑定关系。</li>
+            <li>流程完成后写入“扫码完成”和“扫码结果”地址，并在扫码记录中增加一行。</li>
+            <li>若顶部扫码器未配置，代码会跳过底板/导向板比对。生产现场必须确认顶部扫码器确实需要并已配置。</li>
+          </ul>
+          <h3>6.3 焊接结果流程（D1 / D4）</h3>
+          <ul>
+            <li>下扫码器读取底板码与主板码，识别成功后写入“焊接扫码完成”。</li>
+            <li>SFC 启用时，软件向 MES 查询主板码测试结果；MES/网络超时或返回失败应按 NG 处理。</li>
+            <li>系统更新主板测试结果、底板使用次数，并将焊接结果写给 PLC。</li>
+            <li><strong>禁止关闭 SFC 来绕过 MES。</strong>当前代码在 SFC 关闭时会把 MES 校验直接视为通过。</li>
+          </ul>
+          <h3>6.4 清零流程（D2 / D5）</h3>
+          <ul>
+            <li>清零由 PLC 触发，不是当前界面上的手动按钮。</li>
+            <li>系统先用对应下扫码器识别底板码，再清除数据库计数并把 D108/D109 写为 0。</li>
+            <li>清零会影响治具寿命追踪，只有已批准的更换/保养流程才允许触发；记录清零前值、底板码、执行人和原因。</li>
+          </ul>
+          <h3>6.5 机械臂扫码</h3>
+          <div class="callout warn"><strong>以当前代码为准：</strong>收到机械臂 <code>RobAsc</code> 到位命令后，系统等待约 200 ms，触发机械臂扫码器并按码长/有效性回复 OK 或 NG。当前流程<strong>没有调用 MES 报站、没有新增扫码记录，也没有完整更新右侧机械臂状态字段</strong>。因此“最新报站结果”不可作为 MES 过站证明。</div>
+          <h3>6.6 生产中禁止事项</h3>
+          <ul>
+            <li>不得在设备运动或流程执行中拔插 PLC、扫码器、机械臂或网络线。</li>
+            <li>不得修改 PLC 地址、扫码规则、MES URL、站点参数或用户角色。</li>
+            <li>不得删除绑定关系、手工伪造 OK、清除计数后继续使用未保养治具。</li>
+            <li>不得用“跳过初始化”或关闭 SFC 来恢复生产。</li>
+            <li>不得仅凭界面颜色放行；必须核对结果文字、条码和实际工件。</li>
+          </ul>
+        </section>
+
+        <section id="exception">
+          <h2>7. 异常、报警与恢复</h2>
+          <div class="callout danger"><strong>统一处置原则：停止继续上料 → 确保人机安全 → 隔离当前及可疑工件 → 记录时间/治具/条码/画面 → 通知班组长或维护 → 经确认后恢复。</strong></div>
+          <h3>7.1 人身或设备危险</h3>
+          <ol>
+            <li>立即使用实体急停或整机规定的安全停止手段。</li>
+            <li>不得进入机械臂区域、跨越安全门或用软件按钮代替能量隔离。</li>
+            <li>由具备资格的人员按整机/机器人 SOP 排除危险并复位。</li>
+            <li>恢复前检查在制品位置、PLC 信号、扫码记录和机械臂状态，防止重复动作。</li>
+          </ol>
+          <h3>7.2 软件 NG 或记录异常</h3>
+          <div class="grid two">
+            <div class="card"><h4>扫码失败/空码</h4><p>隔离工件；安全停机后检查条码清晰度、位置和镜头；记录原始码与重试次数。不得手输或复制上一件条码。</p></div>
+            <div class="card"><h4>底板与导向板比对失败</h4><p>隔离当前工件并核对实体配对；由质量/工艺确认绑定关系。禁止现场直接改数据库使其通过。</p></div>
+            <div class="card"><h4>MES NG/超时/断网</h4><p>停止放行并隔离从最后一次确认成功之后的在制品；保留主板码、时间和日志。不得关闭 SFC。</p></div>
+            <div class="card"><h4>记录缺失或与实物不符</h4><p>按未验证处理；不要重复触发造成重复报站/重复计数。由维护根据数据库和日志确认。</p></div>
+          </div>
+          <h3>7.3 连接异常</h3>
+          <ul>
+            <li><strong>PLC 未连接：</strong>停止生产；确认 PLC 上电和网络，由维护检查 IP、端口和通信。不要反复点击启动。</li>
+            <li><strong>扫码器未连接：</strong>记录具体是①上、①下、②上、②下还是 Epson；安全停机后由维护检查供电、网络、触发指令和镜头。</li>
+            <li><strong>机械臂未连接：</strong>不要进入运动区或自行重启控制器；按机器人厂家规程处理。</li>
+            <li><strong>D110 心跳异常：</strong>停止继续上料并同时检查 PLC/上位机双方；仅凭“刷新状态”恢复不代表故障已解除。</li>
+          </ul>
+          <h3>7.4 软件卡死、崩溃、停电或电脑重启</h3>
+          <ol class="step-list">
+            <li>先按整机规则保证机构与人员安全，标记在制品位置和状态。</li>
+            <li>记录故障时间、最后一条成功记录、当前条码和 PLC/机器人状态。</li>
+            <li>重启软件后必须重新登录、重新初始化并核对所有连接。</li>
+            <li>查询数据管理和磁盘日志，确认故障前动作是否已写入；不确定时按 NG/待判处理。</li>
+            <li>由质量/工艺决定返工、重扫或报废，不得直接从中断步骤盲目续跑。</li>
+          </ol>
+        </section>
+
+        <section id="shutdown">
+          <h2>8. 停机与交接班</h2>
+          <h3>8.1 正常软件停机</h3>
+          <ol class="step-list">
+            <li>停止上料，等待当前工件循环完成；确认没有正在扫码/MES查询/机械臂响应。</li>
+            <li>核对最后一件的条码、结果和备注，处理全部 NG 与待判品。</li>
+            <li>确认机械机构处于整机规定的安全停机位置。</li>
+            <li>点击“停止设备”，确认日志记录停止信息，按钮变回“启动设备”。</li>
+            <li>需要关闭程序时再关闭窗口；硬件断电顺序严格按整机电气和机器人手册执行，禁止带电拔线。</li>
+          </ol>
+          <h3>8.2 交接班清单</h3>
+          <ul class="checklist">
+            <li>当前账号已退出或切换，未把管理员账号留给下一班。</li>
+            <li>产品/工单/批次、治具 1/2 当前次数已记录。</li>
+            <li>本班 NG、重试、MES 超时和断线次数已说明。</li>
+            <li>所有隔离品均有条码、时间、原因和责任人标识。</li>
+            <li>未关闭故障、临时措施和待维护项目已书面交接。</li>
+            <li>关键日志/截图已保存，程序目录剩余空间正常。</li>
+          </ul>
+        </section>
+
+        <section id="trace">
+          <h2>9. 数据、日志与追溯</h2>
+          <h3>9.1 扫码记录怎么读</h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>字段</th><th>含义</th><th>检查要点</th></tr></thead>
+            <tbody>
+              <tr><td>时间</td><td>记录创建时间</td><td>应与当前工件操作时间一致</td></tr>
+              <tr><td>治具</td><td>治具1、治具2或其他流程来源</td><td>必须与实物位置一致</td></tr>
+              <tr><td>类型</td><td>底部+顶部扫码、焊接结果扫码、清零等</td><td>确认没有把不同流程混淆</td></tr>
+              <tr><td>底板/导向板/主板</td><td>本次识别出的码值</td><td>空值、重复、错位均要隔离</td></tr>
+              <tr><td>结果</td><td>0=未测试、1=OK、2=NG</td><td>PLC完成信号与业务结果不是同一概念</td></tr>
+              <tr><td>备注</td><td>比对成功、重试耗尽、MES OK/NG、系统异常等</td><td>排查时优先查看</td></tr>
+            </tbody>
+          </table></div>
+          <h3>9.2 三种信息不要混淆</h3>
+          <ul>
+            <li><strong>页面运行日志：</strong>用于当班快速观察，可被“清空日志”或定时逻辑清空。</li>
+            <li><strong>磁盘日志：</strong>位于程序安装/运行目录下的 <code>logs/info</code>、<code>logs/error</code>、<code>logs/debug</code>、<code>logs/trace</code>；按日期和大小归档。</li>
+            <li><strong>数据库/数据管理：</strong>保存绑定和业务数据；界面“最大记录数”只限制运行页显示条数，不等于数据保存周期。</li>
+          </ul>
+          <div class="callout"><strong>报修时不要只发一句“软件坏了”。</strong>至少提供发生时间、治具、工件码、界面截图、错误弹窗全文和同一时间段的 info/error 日志。</div>
+        </section>
+
+        <section id="settings">
+          <h2>10. 设置与维护员操作</h2>
+          <div class="callout danger"><strong>普通操作员到此停止。</strong>本章所有修改均应在安全停机、参数已备份、变更有审批并安排首件验证的前提下进行。</div>
+          <h3>10.1 配置与日志实际位置</h3>
+          <ul>
+            <li>系统配置保存在程序当前运行目录下的 <code>Config</code> 文件夹，不是原手册所写的“我的文档\FZK\Config”。</li>
+            <li>NLog 日志保存在程序目录下的 <code>logs</code> 文件夹，不是“我的文档\FZK\Logs”。</li>
+            <li>备份时应完整复制 Config 文件夹并记录软件版本、日期和设备编号；禁止直接删除配置文件。</li>
+          </ul>
+          <h3>10.2 设置页分类</h3>
+          <div class="table-wrap"><table>
+            <thead><tr><th>分类</th><th>主要内容</th><th>修改风险</th></tr></thead>
+            <tbody>
+              <tr><td>IP/软件设置</td><td>MES测试URL、工位上报URL、工位编码、设备IP、SFC、制程/工站校验、运行间隔</td><td>关闭SFC会绕过MES；URL或站点错误会造成质量追溯错误</td></tr>
+              <tr><td>PLC设置</td><td>IP、端口、超时、重连、指令间隔、队列、寄存器地址、心跳</td><td>地址错位可把扫码结果写成焊接结果</td></tr>
+              <tr><td>扫码设置</td><td>五个扫码器的IP/端口、方向、延迟、触发指令、重连、编码、分隔符、SN长度</td><td>码长或分隔符错误会造成空码/误解析</td></tr>
+              <tr><td>Robot设置</td><td>IP/端口、超时、重连、心跳指令/响应、指令重发</td><td>错误参数会导致误判断线或重复指令</td></tr>
+              <tr><td>用户设置</td><td>用户名、密码、角色</td><td>当前角色控制不完整，必须结合现场权限制度</td></tr>
+            </tbody>
+          </table></div>
+          <p>保存配置时，程序会把治具 1 上扫码器的部分通用参数（延迟、触发指令、重连次数和延迟）同步到其他扫码器。修改后应关闭并重新启动软件，使构造时读取的配置全部生效，并完成连接测试、扫码测试和首件确认。</p>
+          <h3>10.3 数据管理</h3>
+          <ul>
+            <li><strong>底板绑定：</strong>维护底板与导向板绑定，可新增、编辑、删除、刷新和筛选。</li>
+            <li><strong>主板绑定：</strong>维护底板/导向板/主板数据，可能包含批量删除及 Excel/CSV 导出。</li>
+            <li><strong>用户管理：</strong>维护用户名、密码和角色。</li>
+          </ul>
+          <p>删除和批量删除属于不可逆高风险操作。执行前导出备份，记录筛选条件、记录数、执行账号和审批单号；完成后用已知样本复核查询与生产扫码。</p>
+        </section>
+
+        <section id="plc">
+          <h2>11. PLC 地址附录（维护员）</h2>
+          <div class="callout warn"><strong>必须现场核对：</strong>下表是当前源代码的默认映射。根目录现有“PLC与上位机交互地址.png”中，D104/D105 与 D106/D107 的“扫码结果/焊接结果”含义和代码默认值相反。投产前必须由 PLC、上位机和工艺负责人三方签字确认，不能只看截图或只看代码。</div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>地址</th><th>代码默认含义</th><th>方向/典型值</th><th>操作说明</th></tr></thead>
+            <tbody>
+              <tr><td>D0</td><td>治具1扫码触发</td><td>PLC→上位机；0→1触发</td><td rowspan="6">触发位只在上升沿执行一次；持续为1不会重复触发，回到0后再次变1才是新动作。</td></tr>
+              <tr><td>D1</td><td>治具1焊接结果触发</td><td>PLC→上位机</td></tr>
+              <tr><td>D2</td><td>治具1清零触发</td><td>PLC→上位机</td></tr>
+              <tr><td>D3</td><td>治具2扫码触发</td><td>PLC→上位机</td></tr>
+              <tr><td>D4</td><td>治具2焊接结果触发</td><td>PLC→上位机</td></tr>
+              <tr><td>D5</td><td>治具2清零触发</td><td>PLC→上位机</td></tr>
+              <tr><td>D100</td><td>治具1扫码完成</td><td>上位机→PLC；完成=1</td><td>完成握手，不代表业务一定OK</td></tr>
+              <tr><td>D101</td><td>治具1焊接扫码完成</td><td>上位机→PLC；完成=1</td><td>完成握手</td></tr>
+              <tr><td>D102</td><td>治具2扫码完成</td><td>上位机→PLC；完成=1</td><td>完成握手</td></tr>
+              <tr><td>D103</td><td>治具2焊接扫码完成</td><td>上位机→PLC；完成=1</td><td>完成握手</td></tr>
+              <tr><td>D104</td><td>治具1焊接结果</td><td>上位机→PLC；OK=1，NG=2</td><td>与现场截图标注存在对调风险</td></tr>
+              <tr><td>D105</td><td>治具1扫码比对结果</td><td>上位机→PLC；OK=1，NG=2</td><td>与现场截图标注存在对调风险</td></tr>
+              <tr><td>D106</td><td>治具2焊接结果</td><td>上位机→PLC；OK=1，NG=2</td><td>与现场截图标注存在对调风险</td></tr>
+              <tr><td>D107</td><td>治具2扫码比对结果</td><td>上位机→PLC；OK=1，NG=2</td><td>与现场截图标注存在对调风险</td></tr>
+              <tr><td>D108</td><td>治具1焊接使用次数</td><td>双向显示/写入</td><td>清零必须有保养/换治具记录</td></tr>
+              <tr><td>D109</td><td>治具2焊接使用次数</td><td>双向显示/写入</td><td>清零必须有保养/换治具记录</td></tr>
+              <tr><td>D110</td><td>心跳监控</td><td>PLC→上位机</td><td>当前“刷新状态”路径的D110读取还需现场验证，不能单点依赖</td></tr>
+            </tbody>
+          </table></div>
+        </section>
+
+        <section id="images">
+          <h2>12. 现场参考图片</h2>
+          <figure>
+            <img src="PLC与上位机交互地址.png" alt="PLC设置页与上位机交互地址示例">
+            <figcaption>图1：现有 PLC 设置截图。注意其中 D104-D107 的结果含义与代码默认映射存在对调，必须以最终签字版地址表为准。</figcaption>
+          </figure>
+          <figure>
+            <img src="一工位下方扫码器.png" alt="一工位下方扫码器识别底板码与主板码示例">
+            <figcaption>图2：一工位下方扫码器样例。一个视野内识别多个码时，应核对码类型、数量和ROI位置。</figcaption>
+          </figure>
+          <figure>
+            <img src="二工位下方扫码器.png" alt="二工位下方扫码器识别底板码与主板码示例">
+            <figcaption>图3：二工位下方扫码器样例。亮度、反光、倾斜和ROI漂移都会影响识别稳定性。</figcaption>
+          </figure>
+          <p class="muted small">方位说明必须由现场补充：文档中的“①上/①下、②上/②下”应与设备铭牌和维护标签一致，避免从不同观察方向理解成“左/右”而接错扫码器。</p>
+        </section>
+
+        <section id="faq">
+          <h2>13. 故障快速索引</h2>
+          <details class="issue" open><summary>双击程序无反应或启动后退出</summary><div><p><strong>操作员：</strong>记录时间和弹窗，不要删除配置或关闭杀毒软件；尝试一次正常重启。</p><p><strong>维护员：</strong>检查程序目录 <code>logs/error</code>、.NET Framework 4.7.2 运行环境、文件完整性和系统事件；安全软件白名单由IT审核配置。</p></div></details>
+          <details class="issue"><summary>初始化失败，出现“重试/跳过”</summary><div><p>确认硬件上电和网络后点“重试”。普通生产禁止点“跳过”；“跳过”不会模拟硬件。连续失败时停机并保存提示截图。</p></div></details>
+          <details class="issue"><summary>PLC 或某个扫码器显示“未连接”</summary><div><p>停止上料并记录具体设备；维护员在安全停机后检查供电、IP/端口、网线、交换机和配置。恢复“已连接”后必须做首件验证。</p></div></details>
+          <details class="issue"><summary>扫码重试耗尽、空码或条码无法解析</summary><div><p>隔离工件；检查条码是否脏污、反光、破损、偏离ROI；检查码长、编码、分隔符和触发命令。不得复制上一件条码。</p></div></details>
+          <details class="issue"><summary>底板码与导向板码比对失败</summary><div><p>按错配风险隔离，核对实物组合和数据库绑定；只有质量/工艺确认后，管理员才可修订绑定关系。</p></div></details>
+          <details class="issue"><summary>MES 超时、网络异常或结果 NG</summary><div><p>停止放行、隔离在制品并记录主板码。检查网络和MES服务；不得关闭 SFC 来换取OK。恢复后防止同一工件重复查询/重复过站。</p></div></details>
+          <details class="issue"><summary>界面机械臂状态不更新</summary><div><p>当前代码的机械臂流程未完整更新右侧状态字段，也不做MES报站。以机器人控制器、实体状态和通信日志为主，由软件工程师确认，不得仅凭该卡片放行。</p></div></details>
+          <details class="issue"><summary>治具次数达到 40 或需要清零</summary><div><p>停止使用对应治具，按保养/更换流程处理。清零由PLC流程触发且会修改数据库；记录清零前值、底板码、原因、执行人和批准人。</p></div></details>
+          <details class="issue"><summary>刷新状态后 D110 不合理</summary><div><p>同时查看PLC监控值、定时刷新值和通信日志。当前刷新逻辑的D110取值路径需要软件验证，不能因一次刷新为0就擅自改地址。</p></div></details>
+        </section>
+
+        <section id="support">
+          <h2>14. 报修资料包</h2>
+          <h3>14.1 联系信息（由使用单位填写）</h3>
+          <div class="table-wrap"><table>
+            <tbody>
+              <tr><th>设备/产线编号</th><td>由使用单位填写</td><th>软件版本</th><td>由使用单位填写</td></tr>
+              <tr><th>班组长</th><td>由使用单位填写</td><th>设备维护</th><td>由使用单位填写</td></tr>
+              <tr><th>软件支持</th><td>由使用单位填写</td><th>MES/IT支持</th><td>由使用单位填写</td></tr>
+            </tbody>
+          </table></div>
+          <h3>14.2 一次报修必须带什么</h3>
+          <ul class="checklist">
+            <li>设备编号、软件版本、发生日期时间、班次和操作账号。</li>
+            <li>治具1/2、当前工单/产品、底板码、导向板码、主板码。</li>
+            <li>异常前最后一次成功记录和异常后的第一条记录。</li>
+            <li>完整界面截图（不要只截一小块）及错误弹窗全文。</li>
+            <li>对应时间段的 <code>logs/info</code> 与 <code>logs/error</code> 文件；必要时带 debug/trace。</li>
+            <li>PLC D0-D110 关键值、硬件连接状态和网络/MES状态。</li>
+            <li>已采取的操作、重启次数、被隔离工件数量和当前安全状态。</li>
+          </ul>
+        </section>
+
+        <section id="training">
+          <h2>15. 上岗确认清单</h2>
+          <p>新操作员应在带教人员监督下完成以下项目，全部通过后方可独立操作：</p>
+          <ul class="checklist">
+            <li>能说明软件停止与物理急停的区别，并指出实体急停和安全门位置。</li>
+            <li>能使用分配账号登录、处理初始化失败并正确切换用户。</li>
+            <li>能指出开始页三个按钮及 PLC信号、次数、扫码记录、日志、硬件状态区域。</li>
+            <li>能独立完成班前检查、启动、首件确认、正常停机和交接。</li>
+            <li>能根据扫码记录区分未测试、OK、NG，并核对三个码值。</li>
+            <li>能正确隔离扫码失败、比对失败、MES失败和记录缺失工件。</li>
+            <li>知道生产中不能关闭 SFC、跳过初始化、修改地址或清计数。</li>
+            <li>能找到程序目录的 Config 和 logs，并能整理完整报修资料包。</li>
+          </ul>
+          <div class="table-wrap"><table>
+            <thead><tr><th>姓名</th><th>工号</th><th>理论确认</th><th>实操确认</th><th>带教人</th><th>日期</th></tr></thead>
+            <tbody><tr><td style="height:54px"></td><td></td><td>□通过 □补训</td><td>□通过 □补训</td><td></td><td></td></tr></tbody>
+          </table></div>
+          <div class="callout"><strong>发布前审核：</strong>本 2.0 版已按当前项目源代码和现有图片纠正界面与流程描述。正式用于生产前，仍应由设备、电气/PLC、软件、工艺、质量和安全负责人核对现场差异并签字发布。</div>
+          <a class="top-link" href="#top">返回顶部 ↑</a>
+        </section>
+      </main>
+    </div>
+    <footer class="footer">《镀金片焊接设备软件用户手册》2.0 · 离线单文件版 · UTF-8</footer>
+  </div>
+</body>
+</html>

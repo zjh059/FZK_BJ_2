@@ -164,6 +164,27 @@
                                   ColumnHeaderStyle="{StaticResource DataGrid.Main.DataGridColumnHeaderStyle}"                                 
                                   ColumnWidth="Auto"
                                   CanUserResizeColumns="True">
+
+
+                            
+                            <!-- 从这里开始是新增内容 -->
+                            <!-- NG记录整行警示：Result 的原始值“2”代表NG -->
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Result}" Value="2">
+                                            <!-- NG行文字变红，并增加很浅的红色背景 -->
+                                            <Setter Property="Foreground" Value="#D71920"/>
+                                            <Setter Property="Background" Value="#FFF0F0"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                            <!-- 新增内容到这里结束 -->
+                            
+                            
+
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="{DynamicResource 时间}" Binding="{Binding CreateTime, StringFormat=yyyy-MM-dd HH:mm:ss}" Width="150"/>
                                 <DataGridTextColumn Header="{DynamicResource 治具编号}" Binding="{Binding JigNo}" Width="80"/>

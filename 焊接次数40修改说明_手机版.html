@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>焊接次数 /40 修改说明</title>
+  <style>
+    :root{--bg:#f2f6fb;--card:#fff;--text:#172033;--muted:#5c6b80;--line:#d8e2ee;--blue:#1769d2;--green:#087b54;--amber:#9a5b00;--code:#101828}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.72 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;-webkit-text-size-adjust:100%}
+    main{width:min(820px,100%);margin:auto;padding:14px 12px 48px}.hero{padding:24px 20px;border-radius:18px;background:linear-gradient(135deg,#0b4ba2,#1976d2 62%,#008d69);color:#fff}.hero h1{margin:0 0 8px;font-size:clamp(26px,7vw,40px);line-height:1.2}.hero p{margin:4px 0;opacity:.95}
+    section{margin-top:14px;padding:18px;border:1px solid var(--line);border-radius:15px;background:var(--card)}h2{margin:0 0 10px;font-size:21px}h3{margin:18px 0 6px;font-size:17px}p{margin:7px 0}ul,ol{margin:7px 0;padding-left:23px}li{margin:6px 0}
+    .answer,.warn{padding:12px 14px;border-left:5px solid;border-radius:9px;margin:10px 0}.answer{border-color:var(--green);background:#e9f8f1}.warn{border-color:#e5a32c;background:#fff7e5}.path{display:block;padding:9px 11px;border:1px dashed #9eb0c6;border-radius:9px;background:#f8fbff;font:13px/1.55 Consolas,monospace;overflow-wrap:anywhere}
+    pre{margin:9px 0;padding:13px;border-radius:11px;background:var(--code);color:#e6edf7;overflow:auto;font:13px/1.65 Consolas,monospace;-webkit-overflow-scrolling:touch}code{font-family:Consolas,monospace;background:#eef2f6;padding:2px 5px;border-radius:5px;overflow-wrap:anywhere}pre code{background:none;padding:0;color:inherit}.good{color:#8de8b8}.note{color:#7dd3fc}
+    table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:9px 8px;border:1px solid var(--line);text-align:left;vertical-align:top}th{background:#edf3fa}.small{color:var(--muted);font-size:14px}footer{text-align:center;color:var(--muted);padding:20px 8px;font-size:13px}
+    @media(max-width:600px){main{padding:9px 9px 38px}.hero{padding:20px 16px;border-radius:14px}section{padding:15px;border-radius:12px}pre{font-size:12px}table{display:block;overflow-x:auto;white-space:nowrap}}
+    @media(prefers-color-scheme:dark){:root{--bg:#0b1220;--card:#111b2e;--text:#e8edf5;--muted:#aab7c9;--line:#2b3a53;--code:#070c14}.answer{background:#0d3027}.warn{background:#33250b}.path{background:#142038}code{background:#25344b}th{background:#1a2941}}
+  </style>
+</head>
+<body><main>
+  <header class="hero">
+    <h1>焊接次数“/40”修改说明</h1>
+    <p>镀金片焊接上位机｜手机离线版</p>
+  </header>
+
+  <section>
+    <h2>直接答案</h2>
+    <div class="answer"><strong>界面上的“/40”写在语言资源文件中。</strong>如果要改成“/50”，需要把资源内容从 <code>/40</code> 改为 <code>/50</code>。</div>
+    <p>当前上位机有简体中文、繁体中文、英文三个语言文件。为避免切换语言后又变回 <code>/40</code>，建议三个文件一起修改。</p>
+  </section>
+
+  <section>
+    <h2>需要修改的文件</h2>
+    <table>
+      <thead><tr><th>语言</th><th>文件</th><th>位置</th></tr></thead>
+      <tbody>
+        <tr><td>简体中文</td><td>CNS.xaml</td><td>约第35行</td></tr>
+        <tr><td>繁体中文</td><td>CNT.xaml</td><td>约第35行</td></tr>
+        <tr><td>英文</td><td>English.xaml</td><td>约第35行</td></tr>
+      </tbody>
+    </table>
+
+    <h3>简体中文完整路径</h3>
+    <span class="path">FZK.Application.UI\Language\CNS.xaml</span>
+    <h3>繁体中文完整路径</h3>
+    <span class="path">FZK.Application.UI\Language\CNT.xaml</span>
+    <h3>英文完整路径</h3>
+    <span class="path">FZK.Application.UI\Language\English.xaml</span>
+  </section>
+
+  <section>
+    <h2>怎样快速定位</h2>
+    <ol>
+      <li>打开上述语言文件。</li>
+      <li>按 <code>Ctrl + F</code>。</li>
+      <li>搜索：<code>次数上限</code></li>
+      <li>找到下面这行代码。</li>
+    </ol>
+    <pre><code>&lt;system:String x:Key="次数上限"&gt;/40&lt;/system:String&gt;</code></pre>
+
+    <h3>例如改成50次</h3>
+    <pre><code>&lt;system:String x:Key="次数上限"&gt;<span class="good">/50</span>&lt;/system:String&gt;</code></pre>
+    <p class="small">三个语言文件中的这一行都改成相同数字即可。</p>
+  </section>
+
+  <section>
+    <h2>界面在哪里使用这个“/40”</h2>
+    <span class="path">FZK.Application.Run\Views\RunView.xaml</span>
+    <ul>
+      <li>视图名称：<code>RunView</code></li>
+      <li>位置：焊接次数显示卡片区域</li>
+      <li>约第132行和第141行</li>
+      <li>快速搜索：<code>DynamicResource 次数上限</code></li>
+    </ul>
+    <pre><code>&lt;TextBlock Text="{DynamicResource 次数上限}" ... /&gt;</code></pre>
+    <p>这里不直接写数字，它会自动读取语言文件里 <code>x:Key="次数上限"</code> 对应的文字。</p>
+  </section>
+
+  <section>
+    <h2>另一个容易混淆的40</h2>
+    <span class="path">FZK.Application.Share\Run\JigConfig.cs</span>
+    <ul>
+      <li>类名：<code>JigConfig</code></li>
+      <li>位置：类的属性区域，约第26行</li>
+    </ul>
+    <pre><code>public int ClearCounts { get; set; } = 40;</code></pre>
+    <div class="warn"><strong>注意：</strong>经过代码检索，<code>ClearCounts</code> 当前没有被实际业务代码使用。只修改这里不会改变界面上的“/40”，也不会形成真正的40次限制。</div>
+  </section>
+
+  <section>
+    <h2>最后必须分清</h2>
+    <ul>
+      <li><strong>只想把界面 /40 改成 /50：</strong>修改三个语言文件。</li>
+      <li><strong>想让设备达到50次后自动停止：</strong>不能只改界面文字，还需要检查 PLC 梯形图和上位机是否有次数到限判断。</li>
+      <li><strong>当前上位机代码：</strong>没有发现有效的“达到40次禁止焊接”判断。</li>
+    </ul>
+  </section>
+  <footer>生成日期：2026-07-15｜单文件离线 HTML</footer>
+</main></body></html>

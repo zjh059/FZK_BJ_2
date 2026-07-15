@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <title>镀金片焊接设备软件用户手册 2.0</title>
+  <style>
+    :root{--blue:#155eef;--navy:#172b4d;--ink:#202939;--muted:#5d6b7d;--line:#d9e2ec;--soft:#f4f7fb;--good:#087a55;--goodbg:#e9f9f1;--warn:#9a5b00;--warnbg:#fff7df;--danger:#c51d34;--dangerbg:#fff0f1;--shadow:0 8px 28px rgba(19,39,74,.10)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:74px}body{margin:0;color:var(--ink);font:16px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC",Arial,sans-serif;background:#edf2f7}a{color:var(--blue)}button{font:inherit}img{max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line);background:#fff}.topbar{position:sticky;top:0;z-index:20;height:62px;padding:0 max(16px,env(safe-area-inset-left));display:flex;align-items:center;gap:12px;color:#fff;background:linear-gradient(120deg,#0c2f6b,#155eef);box-shadow:0 2px 14px rgba(0,0,0,.2)}.topbar strong{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.iconbtn{border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.12);color:#fff;border-radius:8px;padding:7px 11px;cursor:pointer}.layout{max-width:1280px;margin:auto;display:grid;grid-template-columns:270px minmax(0,1fr);gap:22px;padding:22px}.toc{position:sticky;top:84px;align-self:start;max-height:calc(100vh - 106px);overflow:auto;background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:18px}.toc h2{font-size:17px;margin:0 0 10px}.toc a{display:block;text-decoration:none;color:#33445d;border-left:3px solid transparent;padding:6px 9px;margin:1px 0;font-size:14px}.toc a:hover{color:var(--blue);border-color:var(--blue);background:#f4f7ff}.page{min-width:0;background:#fff;box-shadow:var(--shadow);border-radius:14px;overflow:hidden}.cover{min-height:430px;color:#fff;padding:64px 7%;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(135deg,rgba(5,30,69,.97),rgba(21,94,239,.90)),repeating-linear-gradient(45deg,transparent 0 20px,rgba(255,255,255,.08) 20px 22px)}.cover .eyebrow{letter-spacing:.2em;color:#bcd2ff}.cover h1{font-size:clamp(34px,6vw,58px);line-height:1.18;margin:18px 0 10px}.cover .sub{font-size:clamp(18px,2.5vw,25px);margin:0 0 38px}.meta{display:flex;gap:10px;flex-wrap:wrap}.pill{display:inline-block;padding:4px 11px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);font-size:14px}.content{padding:34px clamp(18px,5vw,62px) 70px}.chapter{padding-top:12px;margin-top:24px;border-top:1px solid var(--line)}.chapter:first-child{border-top:0}.chapter>h2{color:var(--navy);font-size:29px;line-height:1.35;margin:18px 0 14px}.chapter h3{font-size:21px;color:#203d70;margin:26px 0 8px}.chapter h4{font-size:17px;margin:18px 0 5px}.lead{font-size:18px;color:#43546c}.callout{margin:16px 0;padding:14px 16px;border-radius:10px;border-left:5px solid}.callout strong:first-child{display:block;margin-bottom:4px}.info{background:#edf5ff;border-color:var(--blue)}.good{background:var(--goodbg);border-color:var(--good);color:#125c45}.warn{background:var(--warnbg);border-color:#e09a22;color:#714500}.danger{background:var(--dangerbg);border-color:var(--danger);color:#7e1223}.danger.major{border:2px solid var(--danger);border-left-width:8px;padding:20px;box-shadow:0 0 0 4px rgba(197,29,52,.07)}.danger.major .flag{display:inline-block;color:#fff;background:var(--danger);padding:2px 9px;border-radius:4px;margin-bottom:8px;font-weight:800}.steps{counter-reset:s;margin:16px 0;padding:0;list-style:none}.steps>li{counter-increment:s;position:relative;margin:12px 0;padding:12px 14px 12px 54px;background:#f7f9fc;border:1px solid #e0e6ef;border-radius:10px}.steps>li:before{content:counter(s);position:absolute;left:14px;top:12px;width:27px;height:27px;display:grid;place-items:center;border-radius:50%;background:var(--blue);color:#fff;font-weight:700}.checklist{list-style:none;padding:0}.checklist li{position:relative;padding:7px 8px 7px 34px;border-bottom:1px dashed #dce3eb}.checklist li:before{content:"□";position:absolute;left:8px;top:5px;color:var(--blue);font-size:20px}.grid2,.grid3{display:grid;gap:14px}.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}.card{border:1px solid var(--line);border-radius:11px;padding:15px;background:#fff}.card h3,.card h4{margin-top:0}.role{border-top:4px solid var(--blue)}table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}th,td{border:1px solid #cfd8e3;padding:9px 10px;vertical-align:top;text-align:left}th{background:#eaf1fb;color:#203d70}tr:nth-child(even) td{background:#fafbfd}.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}.flow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin:15px 0}.flow span{flex:1 1 120px;min-width:110px;background:#edf5ff;border:1px solid #c5d8f5;border-radius:8px;padding:9px;text-align:center;position:relative}.flow span:not(:last-child):after{content:"→";position:absolute;right:-10px;top:50%;transform:translateY(-50%);z-index:2;color:var(--blue);font-weight:800}.tag{display:inline-block;border-radius:4px;padding:1px 6px;font-size:13px;font-weight:700}.tag.red{background:#ffe1e5;color:#9d1025}.tag.green{background:#dff6ea;color:#096a4b}.tag.gray{background:#e9edf2;color:#46566b}.figure{margin:18px 0;padding:12px;border:1px solid var(--line);border-radius:12px;background:#f8fafc}.figure figcaption{font-size:14px;color:var(--muted);margin-top:8px}.failure{border-left:5px solid #e09a22}.failure ol{padding-left:21px}.record{background:#fffdf5}.sign td{height:46px}.small{font-size:14px;color:var(--muted)}.footer{padding:28px;text-align:center;background:#eff4fa;color:#52647a}.backtop{position:fixed;right:15px;bottom:max(15px,env(safe-area-inset-bottom));z-index:11;border:0;border-radius:50%;width:44px;height:44px;color:#fff;background:var(--blue);box-shadow:0 5px 18px rgba(0,0,0,.25);cursor:pointer}.print-only{display:none}
+    @media(max-width:860px){.layout{display:block;padding:0}.page{border-radius:0}.toc{display:none;position:fixed;z-index:30;top:62px;left:0;right:0;bottom:0;max-height:none;border-radius:0;padding:22px;overflow:auto}.toc.open{display:block}.cover{min-height:390px;padding:50px 22px}.content{padding:25px 16px 55px}.grid2,.grid3{grid-template-columns:1fr}.chapter>h2{font-size:25px}table{font-size:14px}.topbar .print{display:none}.flow{display:block}.flow span{display:block;margin:0 0 18px}.flow span:not(:last-child):after{content:"↓";right:50%;top:auto;bottom:-21px;transform:translateX(50%)}}
+    @media print{body{background:#fff;font-size:10.5pt}.topbar,.toc,.backtop{display:none!important}.layout{display:block;max-width:none;padding:0}.page{box-shadow:none}.cover{min-height:240mm;page-break-after:always;-webkit-print-color-adjust:exact;print-color-adjust:exact}.content{padding:12mm}.chapter{break-before:page}.chapter:first-child{break-before:auto}.callout,.card,tr,img{break-inside:avoid}.print-only{display:block}a{color:inherit;text-decoration:none}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><button class="iconbtn" id="menuBtn" aria-label="打开目录">☰ 目录</button><strong>镀金片焊接设备软件用户手册 2.0</strong><button class="iconbtn print" onclick="window.print()">打印 / 转 PDF</button></header>
+  <div class="layout">
+    <nav class="toc" id="toc" aria-label="手册目录">
+      <h2>目录</h2>
+      <a href="#read-first">0. 先看这页</a><a href="#quick">1. 十分钟快速上手</a><a href="#safety">2. 安全与权限</a><a href="#login">3. 登录与初始化</a><a href="#ui">4. 界面说明</a><a href="#precheck">5. 班前检查</a><a href="#production">6. 标准生产</a><a href="#process">7. 业务流程</a><a href="#abnormal">8. 异常隔离</a><a href="#shutdown">9. 停机与交接</a><a href="#data">10. 数据与日志</a><a href="#settings">11. 设置与维护</a><a href="#plc">12. PLC 地址附录</a><a href="#cards">13. 故障处理卡</a><a href="#repair">14. 报修资料包</a><a href="#training">15. 培训确认</a>
+    </nav>
+    <main class="page">
+      <section class="cover">
+        <div class="eyebrow">EQUIPMENT SOFTWARE MANUAL</div>
+        <h1>镀金片焊接设备<br>软件用户手册</h1>
+        <p class="sub">2.0 · 操作、质量与异常处理指南</p>
+        <div class="meta"><span class="pill">适用：操作员 / 班组长 / 设备维护</span><span class="pill">文档状态：投产前核对版</span><span class="pill">发布日期：2026-07-14</span></div>
+      </section>
+      <div class="content">
+        <section class="chapter" id="read-first">
+          <h2>0. 先看这页：三个不能弄错的事实</h2>
+          <p class="lead">本手册按“新操作员可独立上手”的方式编写。第一次操作前，请先由已授权人员完成现场培训，并逐项确认下面三点。</p>
+          <div class="callout danger major"><span class="flag">最高质量风险</span><strong>SFC 关闭时，软件会跳过 MES 校验并按“通过”继续。</strong>这不代表产品真实合格，也不代表 MES 已收到数据。正常量产必须确认 SFC 已开启且 MES 通讯正常。因维护确需关闭时，必须取得现场质量/生产授权，隔离在制品，采用人工追溯并在恢复后复核；未经授权不得生产。</div>
+          <div class="callout danger"><strong>软件“停止设备”不等于急停。</strong>运行页面没有独立“急停、暂停、复位、安全门、报警复位”软件按钮。遇到人身、夹伤、碰撞、冒烟、异味或失控风险，立即使用设备实体急停和现场安全装置，按工厂安全规程处置，不要等待软件响应。</div>
+          <div class="callout danger"><strong>PLC 图片与程序默认含义存在相反之处。</strong>程序默认：D104=一工位焊接结果、D105=一工位扫码结果、D106=二工位焊接结果、D107=二工位扫码结果；根目录《PLC与上位机交互地址.png》对这两组地址的标注顺序相反。投产前必须由 PLC 与上位机负责人联机逐点核对并签字，严禁只凭图片改地址。</div>
+          <div class="callout info"><strong>本手册边界</strong>本软件当前导航为“开始 / 设置 / 数据管理 / 切换用户”。运行页只有“启动设备、停止设备、刷新状态、清空日志”。没有手动扫码、手动清零、模拟机械臂或寄存器编辑功能；“初始化时跳过”也不等于进入模拟模式。</div>
+        </section>
+
+        <section class="chapter" id="quick">
+          <h2>1. 十分钟快速上手</h2>
+          <h3>1.1 新手第一次开机</h3>
+          <ol class="steps">
+            <li><strong>先看现场安全状态：</strong>防护门、急停、气源、电源、治具及机器人工作区均符合现场规程；人员和工具离开危险区域。</li>
+            <li><strong>确认生产条件：</strong>当班工单、料号、产品流向、首件要求明确；待加工品、不良品、已加工品容器已区分并标识。</li>
+            <li><strong>登录软件：</strong>使用本人获授权的用户名。注意：输入系统未知用户名可能被自动注册，因此不得试输、共用或编造账号。</li>
+            <li><strong>完成初始化：</strong>观察 PLC、扫码器、机器人、MES/SFC 等项目状态。失败时先检查连接再点“重试”；未经班组长或维护人员同意不要“跳过”。</li>
+            <li><strong>进入“设置”核对关键配置：</strong>重点确认当前工单要求、设备连接和 SFC 开关。量产时 SFC 必须开启。</li>
+            <li><strong>回到“开始”页：</strong>点击“刷新状态”，确认关键设备在线、没有未处置异常。</li>
+            <li><strong>按现场首件制度上料：</strong>点击“启动设备”，观察第一件的扫码、焊接及 OK/NG 走向，核对实物、界面状态和现场信号一致。</li>
+            <li><strong>首件确认后量产：</strong>操作员持续巡视，不因软件显示“运行”而离岗。</li>
+          </ol>
+          <h3>1.2 牢记四句话</h3>
+          <div class="grid2"><div class="card"><strong>启动前：</strong>人、机、料、法、环境与追溯条件都要确认。</div><div class="card"><strong>运行中：</strong>软件状态、实物位置、PLC/机器人动作三者必须一致。</div><div class="card"><strong>有异常：</strong>先安全停机，再隔离产品，最后查原因。</div><div class="card"><strong>要离岗：</strong>停止、清点、记录、交接，不能只关界面。</div></div>
+        </section>
+
+        <section class="chapter" id="safety">
+          <h2>2. 安全、质量与账号权限</h2>
+          <h3>2.1 人员职责</h3>
+          <div class="grid3"><div class="card role"><h3>操作员</h3><p>班前确认、启动与停止、运行巡视、首件核对、异常上报、产品隔离、交接记录。不得改 PLC 地址或绕过质量校验。</p></div><div class="card role"><h3>班组长 / 质量</h3><p>审核首件、判定异常品处置、批准特殊生产、确认 SFC/MES 旁路期间的隔离与追溯方案。</p></div><div class="card role"><h3>设备 / 软件维护</h3><p>备份后修改配置，核对 PLC 点位、通讯和日志，验证修复结果并记录变更。未经授权不改生产数据。</p></div></div>
+          <h3>2.2 必须实体急停的情况</h3>
+          <ul><li>有人进入危险区域，或有夹伤、碰撞风险；</li><li>机器人、治具或运动机构失控、运动方向异常；</li><li>冒烟、异味、异常火花、气路/电气异常；</li><li>防护门或安全装置失效；</li><li>软件“停止设备”后危险运动仍未停止。</li></ul>
+          <div class="callout warn"><strong>急停后的原则</strong>不要自行伸手取件或直接复位。保留现场，由已授权人员按设备安全规程排查；确认人员、设备和产品均安全后才能复位。实体急停、门锁复位的具体方法以设备制造商和使用单位安全文件为准。</div>
+          <h3>2.3 账号红线</h3>
+          <ul class="checklist"><li>一人一号，不借用、不共用，不使用“admin/test/123”等试探性用户名。</li><li>离岗时切换用户或按现场规定退出，避免他人以本人身份操作。</li><li>发现陌生账号立即停止使用并报管理员核查。</li><li>账号、权限、密码规则及停用流程：由使用单位填写并发布。</li></ul>
+        </section>
+
+        <section class="chapter" id="login">
+          <h2>3. 登录与系统初始化</h2>
+          <h3>3.1 登录</h3>
+          <ol class="steps"><li>核对当前设备和班次，进入登录界面。</li><li>输入本人被授权的用户名及所需凭据。</li><li>确认显示的当前用户确实是本人；不一致时使用“切换用户”。</li><li>若账号不存在、权限不清或出现陌生账号，不要反复尝试，联系使用单位管理员。</li></ol>
+          <div class="callout danger"><strong>特别提示：未知用户名可能自动注册。</strong>这意味着“随便输入一个名字看看”可能会新增账号。账号治理必须由使用单位落实：建立批准名单、定期审计、及时停用离职/转岗账号，并限制设置与维护权限。</div>
+          <h3>3.2 初始化结果怎么处理</h3>
+          <div class="table-wrap"><table><thead><tr><th>现象</th><th>操作员应做什么</th><th>不能怎么做</th></tr></thead><tbody><tr><td>全部成功</td><td>记录或目视确认，继续班前检查。</td><td>不能跳过首件核对。</td></tr><tr><td>某项失败，可重试</td><td>检查电源、网线、气源、设备状态和配置选择；确认后点“重试”。</td><td>不要连续盲点重试掩盖故障。</td></tr><tr><td>仍失败，需要跳过</td><td>停止量产准备，联系班组长/维护人员评估。获授权后才可跳过，并记录项目、原因、时间、批准人及补偿措施。</td><td>不能把“跳过”当作模拟运行或正常在线。</td></tr><tr><td>界面卡住或状态不确定</td><td>保存现场信息，按故障卡收集资料并报修。</td><td>不要反复强关、重启后直接生产。</td></tr></tbody></table></div>
+          <p><strong>跳过的真实含义：</strong>只是不再阻塞本次初始化流程；它不会把真实硬件替换成模拟设备，也不能证明后续流程安全可用。跳过任何关键设备后，原则上不得正常量产，除非已有经批准的降级作业指导书。</p>
+        </section>
+
+        <section class="chapter" id="ui">
+          <h2>4. 软件界面与按钮说明</h2>
+          <h3>4.1 主导航</h3>
+          <div class="table-wrap"><table><thead><tr><th>导航</th><th>用途</th><th>操作提醒</th></tr></thead><tbody><tr><td><strong>开始</strong></td><td>查看运行状态、启动/停止设备、刷新状态、查看或清空当前日志显示。</td><td>量产主要页面；状态刷新不能替代现场巡视。</td></tr><tr><td><strong>设置</strong></td><td>维护设备连接、业务开关等配置（具体项目以现场版本为准）。</td><td>只允许授权人员修改；改前备份，改后验证并记录。</td></tr><tr><td><strong>数据管理</strong></td><td>查看软件提供的数据功能。</td><td>先确认筛选条件；不要把界面查询结果等同于完整 MES 追溯。</td></tr><tr><td><strong>切换用户</strong></td><td>交班或换人时更换当前账号。</td><td>交接后立即切换，禁止沿用前一人的登录身份。</td></tr></tbody></table></div>
+          <h3>4.2 “开始”页四个操作</h3>
+          <div class="grid2"><div class="card"><h4>启动设备</h4><p>在班前检查、初始化、首件条件满足后启动自动流程。点击后要观察设备是否按预期进入运行。</p></div><div class="card"><h4>停止设备</h4><p>请求软件停止运行流程。点击后必须现场确认运动和流程状态；它不是实体急停。</p></div><div class="card"><h4>刷新状态</h4><p>重新获取/显示当前状态。用于状态可能滞后时复核，但不能修复通讯故障。</p></div><div class="card"><h4>清空日志</h4><p>只用于清理当前界面可见日志。异常未取证前不要点；清空界面不应被当作删除磁盘 logs 文件。</p></div></div>
+          <div class="callout info"><strong>界面没有的功能</strong>没有“手动扫码、清零、模拟机械臂、PLC 寄存器编辑、独立暂停、复位、报警复位、急停、安全门控制”等按钮。需要这些操作时，必须转到获批准的设备/PLC维护流程，不要在软件里寻找不存在的入口。</div>
+        </section>
+
+        <section class="chapter" id="precheck">
+          <h2>5. 班前检查清单</h2>
+          <p>建议打印本节，每班由操作员逐项勾选。任何关键项不满足，先上报，不能“带病开机”。</p>
+          <div class="grid2"><div class="card"><h3>人员与现场</h3><ul class="checklist"><li>本人已培训并获授权，劳保用品符合要求。</li><li>危险区域无人、无工具和散落物。</li><li>防护门、实体急停及安全装置外观正常。</li><li>OK、NG、待检、隔离品容器清晰标识。</li></ul></div><div class="card"><h3>设备与物料</h3><ul class="checklist"><li>电源、气源、网线及设备状态正常。</li><li>治具清洁、定位可靠，无残件或异物。</li><li>扫码器镜头清洁，安装位置未松动。</li><li>料号、工单、产品版本、首件要求一致。</li></ul></div><div class="card"><h3>软件与通讯</h3><ul class="checklist"><li>当前用户正确，无陌生登录账号。</li><li>初始化项目均成功；若有跳过，已有书面授权。</li><li>PLC、机器人、扫码器状态与现场一致。</li><li>SFC 已开启，MES 可用并完成测试校验。</li></ul></div><div class="card"><h3>质量与追溯</h3><ul class="checklist"><li>前一班异常、尾件和在制品已交接清楚。</li><li>首件样本、判定标准和隔离区域就绪。</li><li>系统时间正确，磁盘空间满足日志保存。</li><li>班前点检表已填写，异常项已闭环。</li></ul></div></div>
+          <div class="callout danger"><strong>放行条件</strong>必须完成首件：扫码值与实物一致、焊接结果符合工艺/质量标准、OK/NG 流向正确、SFC/MES 行为符合预期。任一项不一致，停止并隔离从“最后一件确认合格品之后”产生的全部产品。</div>
+        </section>
+
+        <section class="chapter" id="production">
+          <h2>6. 标准生产操作</h2>
+          <h3>6.1 启动</h3>
+          <ol class="steps"><li>完成第 5 章班前检查，确认上一班没有未结异常。</li><li>在“开始”页点击“刷新状态”，把界面状态与 PLC、机器人、扫码器和现场指示进行对照。</li><li>再次确认 SFC 开启。若关闭，停止启动流程并通知班组长/质量。</li><li>按作业指导书正确放料，手和工具退出危险区，关闭防护设施。</li><li>点击“启动设备”。观察第一循环动作、扫码校验、焊接结果及产品流向。</li><li>首件确认合格并记录后，才进入连续生产。</li></ol>
+          <h3>6.2 运行中看什么</h3>
+          <div class="table-wrap"><table><thead><tr><th>观察对象</th><th>正常关注点</th><th>异常信号</th></tr></thead><tbody><tr><td>界面状态 / 日志</td><td>状态稳定更新，流程顺序合理，无连续报错。</td><td>长时间无刷新、重复同一错误、状态与现场不一致。</td></tr><tr><td>扫码</td><td>条码清晰，产品与扫码值对应，OK/NG 逻辑正确。</td><td>空码、错码、重复码、读到邻近产品、连续 NG。</td></tr><tr><td>焊接</td><td>设备动作与工艺要求一致，结果判定稳定。</td><td>虚焊、偏焊、外观异常、连续 NG、结果地址疑似串位。</td></tr><tr><td>产品流向</td><td>OK/NG/待检分区明确，数量可对账。</td><td>混料、漏件、数量突变、现场结果与计数不一致。</td></tr><tr><td>通讯</td><td>PLC/机器人/扫码器/MES 连接稳定。</td><td>超时、掉线、重连频繁、心跳异常。</td></tr></tbody></table></div>
+          <h3>6.3 正常停止</h3>
+          <ol class="steps"><li>停止继续上料，等待当前产品到达可安全停机位置；若已出现安全风险则直接按现场急停规程。</li><li>点击“停止设备”，现场观察设备是否停止自动循环。</li><li>清点在制品，标明其状态；不能判断的全部放入待检/隔离区。</li><li>记录末件、数量、异常和停止原因，再进行清洁或交班。</li></ol>
+        </section>
+
+        <section class="chapter" id="process">
+          <h2>7. 扫码、焊接、清零与机器人流程</h2>
+          <h3>7.1 总体理解</h3>
+          <div class="flow"><span>PLC 触发</span><span>上位机接收</span><span>扫码或业务校验</span><span>焊接结果处理</span><span>写回完成/结果</span><span>PLC 继续流程</span></div>
+          <p>这是便于操作员理解的逻辑示意，不替代 PLC 程序或电气图纸。现场顺序必须以验证后的程序、配置和作业指导书为准。</p>
+          <h3>7.2 扫码流程</h3>
+          <ol class="steps"><li>PLC 发出相应触发信号，上位机调用对应工位扫码器。</li><li>扫码器读取条码，上位机判断是否读到有效内容，并按当前业务规则校验。</li><li>SFC 开启时，应走 MES/SFC 校验；SFC 关闭时会跳过 MES 并按通过，这是高风险旁路。</li><li>上位机将完成状态和扫码结果写回 PLC，PLC 决定后续动作。</li><li>操作员核对实物与结果流向；连续读码失败应先停机清洁镜头、检查位置和条码质量，不能反复放行。</li></ol>
+          <div class="callout warn"><strong>当前追溯边界</strong>机器人侧当前只在扫码校验后获得 OK/NG 回复，不执行 MES 报站，也不保存扫码记录。不要把机器人收到 OK 当作“MES 已报站”或“条码已落库”的证据。</div>
+          <h3>7.3 焊接结果</h3>
+          <p>焊接结果由约定的 PLC 地址交互。上位机、PLC 图片对 D104/D105 和 D106/D107 的标注冲突会造成“焊接与扫码结果串位”的严重风险。上线验证至少要分别制造一组可控的扫码 OK/NG、焊接 OK/NG 组合，逐点监视地址变化，确认四个结果字的真实含义。</p>
+          <h3>7.4 清零</h3>
+          <p>当前运行页没有手动“清零”按钮。需要计数清零时，只能按经批准的 PLC/HMI 或维护流程执行。清零前必须：</p>
+          <ul class="checklist"><li>记录当前 D108、D109 及现场实物数量；</li><li>确认在制品已清点并隔离，完成交班或工单结算；</li><li>取得有权限人员批准，说明清零原因；</li><li>清零后用小批量测试核对新计数，不得用改寄存器方式掩盖数量差异。</li></ul>
+          <h3>7.5 机器人交互</h3>
+          <p>当前机器人交互只承担“发起/参与扫码校验并接收 OK 或 NG”的有限职责。机器人不负责 MES 报站，也不形成扫码历史记录。排查机器人扫码问题时，要同时查看机器人请求、扫码器读取、上位机判定和 PLC 结果，不能只看机器人最终收到的 OK/NG。</p>
+          <figure class="figure"><img src="../一工位下方扫码器.png" alt="一工位下方扫码器现场图片" loading="lazy"><figcaption>图 7-1　一工位下方扫码器。维护时重点检查镜头清洁、支架松动、焦距/视野及邻近条码干扰；具体参数以现场批准配置为准。</figcaption></figure>
+          <figure class="figure"><img src="../二工位下方扫码器.png" alt="二工位下方扫码器现场图片" loading="lazy"><figcaption>图 7-2　二工位下方扫码器。调整位置后必须重新做 OK/NG、不同条码和连续生产验证。</figcaption></figure>
+        </section>
+
+        <section class="chapter" id="abnormal">
+          <h2>8. 异常隔离与恢复生产</h2>
+          <h3>8.1 通用“四步法”</h3>
+          <div class="flow"><span><strong>1 安全停机</strong><br>消除人员风险</span><span><strong>2 隔离产品</strong><br>锁定影响范围</span><span><strong>3 保存证据</strong><br>时间/画面/日志</span><span><strong>4 授权恢复</strong><br>验证首件</span></div>
+          <ol><li><strong>安全停机：</strong>一般流程异常用“停止设备”；存在人身或失控风险立即实体急停。</li><li><strong>隔离产品：</strong>从最后一件确认合格品之后开始，所有已加工、在制、待加工但可能受影响的产品分别标识，禁止混回正常品。</li><li><strong>保存证据：</strong>不要先点“清空日志”。记录精确到分钟的时间、工位、条码、数量、当前用户、错误原文和现场状态；截图并复制 logs。</li><li><strong>恢复验证：</strong>故障原因已明确、措施完成、设备安全、通讯正常、SFC 开启；由规定人员批准，重新做首件并记录。</li></ol>
+          <h3>8.2 影响范围怎么圈定</h3>
+          <div class="callout info"><strong>默认保守原则</strong>若无法证明异常开始时间，就从“最后一件有完整记录且确认合格的产品”之后全部隔离；若没有可靠追溯记录，则扩大到本班、本工单或上次点检后的全部相关产品，由质量人员判定。</div>
+          <div class="table-wrap"><table><thead><tr><th>异常</th><th>先做什么</th><th>产品处理</th><th>恢复条件</th></tr></thead><tbody><tr><td>SFC 被关闭 / MES 跳过</td><td>立即停止正常量产，通知班组长和质量。</td><td>隔离旁路期间全部产品，建立人工条码与结果清单。</td><td>SFC 开启、MES 验证成功、数据补偿方案获批、首件通过。</td></tr><tr><td>扫码器连续 NG / 空码</td><td>停止上料，清洁镜头，检查条码和安装。</td><td>隔离最后一次确认正常扫码之后的产品。</td><td>多件不同条码连续读取正确，无串码。</td></tr><tr><td>焊接与扫码结果疑似串位</td><td>停止设备，禁止修改地址试错。</td><td>扩大隔离至地址变更/最后确认点之后产品。</td><td>PLC 与上位机逐点联调、四地址签字确认、首件通过。</td></tr><tr><td>软件状态与现场不一致</td><td>停止设备，必要时急停；记录双方状态。</td><td>在制品全部待检。</td><td>通讯与状态同步验证完成。</td></tr><tr><td>软件卡死 / 闪退</td><td>先确保设备处于安全状态，再截屏、收日志。</td><td>隔离异常时在制品，核对最后记录。</td><td>重启后初始化全通过，状态一致，首件通过。</td></tr><tr><td>数量对不上</td><td>停止清零和继续生产，盘点实物与 D108/D109。</td><td>相关批次暂缓流转。</td><td>差异原因与产品去向明确，质量批准。</td></tr></tbody></table></div>
+        </section>
+
+        <section class="chapter" id="shutdown">
+          <h2>9. 停机、换班与交接</h2>
+          <h3>9.1 正常停机</h3>
+          <ol class="steps"><li>停止上料，让当前循环到安全节点。</li><li>点击“停止设备”，现场确认自动动作停止。</li><li>清理、清点并标识治具内和设备内所有在制品。</li><li>记录 OK、NG、待检、在制数量及软件/现场计数。</li><li>保存异常信息；确认无需取证后才可清空界面日志。</li><li>按设备规程关闭外围设备、电源或气源；本手册不替代电气停机/上锁挂牌程序。</li></ol>
+          <h3>9.2 交接班最少信息</h3>
+          <div class="card record"><ul class="checklist"><li>日期、班次、交班人、接班人、当前登录用户。</li><li>工单/料号、首件状态、OK/NG/待检/在制数量。</li><li>SFC 是否全程开启；如曾关闭，起止时间和产品隔离范围。</li><li>当班异常、临时措施、未完成维修和禁止操作事项。</li><li>配置是否变更、变更人、备份位置、验证结果。</li><li>最后一件确认合格品标识或条码。</li></ul></div>
+          <p>接班人必须现场核对后签字；“口头说没问题”不能替代交接记录。</p>
+        </section>
+
+        <section class="chapter" id="data">
+          <h2>10. 数据、配置与日志位置</h2>
+          <h3>10.1 文件位置</h3>
+          <div class="table-wrap"><table><thead><tr><th>内容</th><th>默认位置</th><th>用途与注意</th></tr></thead><tbody><tr><td>配置</td><td><code>程序目录\Config</code></td><td>保存软件配置。修改前复制备份；不要在软件运行中随意编辑。</td></tr><tr><td>日志</td><td><code>程序目录\logs</code></td><td>用于故障定位和追溯。报修时复制相关时间段，保留原文件。</td></tr></tbody></table></div>
+          <p><strong>“程序目录”怎么找：</strong>指实际运行程序所在文件夹，不一定是本手册所在目录。可由维护人员通过快捷方式“打开文件所在位置”或部署记录确认。不要凭相似文件夹名猜测。</p>
+          <h3>10.2 日志取证规范</h3>
+          <ol class="steps"><li>记录异常发生时间（精确到分钟）、工位、条码和操作动作。</li><li>在界面清空日志前截图，保持错误原文完整。</li><li>退出或按维护规程复制 <code>logs</code> 中覆盖异常前后至少一段时间的文件。</li><li>把配置备份、软件版本、PLC/机器人状态照片与日志放入同一报修资料包。</li><li>复制而不是剪切；不要为了“清空间”删除唯一日志。保留期限由使用单位填写。</li></ol>
+          <div class="callout warn"><strong>追溯提醒</strong>当前机器人不保存扫码记录，数据管理页面也不能自动证明所有 MES 报站完成。质量追溯应结合 MES 记录、上位机日志、PLC/设备记录、现场流转单和产品实物共同判断。</div>
+        </section>
+
+        <section class="chapter" id="settings">
+          <h2>11. 设置与维护变更</h2>
+          <p>设置页及 <code>Config</code> 文件属于受控区域。操作员只负责核对，不应自行修改通讯地址、端口、SFC 开关、PLC 点位或工艺相关配置。</p>
+          <h3>11.1 标准变更流程</h3>
+          <ol class="steps"><li><strong>提出：</strong>写明问题、目标、影响设备和预计风险。</li><li><strong>备份：</strong>复制整个 Config 文件夹，名称包含日期时间和变更人。</li><li><strong>批准：</strong>由使用单位规定的设备/软件/质量负责人批准。</li><li><strong>修改：</strong>一次只改必要项，记录旧值、新值和原因。</li><li><strong>验证：</strong>空运行或安全测试后，覆盖扫码 OK/NG、焊接 OK/NG、通讯中断恢复、SFC/MES、计数和两工位。</li><li><strong>首件：</strong>恢复量产前重新做首件，确认实物、软件、PLC、MES 一致。</li><li><strong>归档：</strong>保存变更单、备份、日志、测试结果和签字；失败时使用已验证备份回退。</li></ol>
+          <h3>11.2 禁止事项</h3>
+          <ul><li>不备份直接改 Config；</li><li>为了“先跑起来”关闭 SFC；</li><li>依据未核对的 PLC 图片交换 D104～D107；</li><li>在量产中直接改 PLC 寄存器、清零或反复重启；</li><li>使用未知用户名试探权限；</li><li>异常未取证先清空日志。</li></ul>
+        </section>
+
+        <section class="chapter" id="plc">
+          <h2>12. PLC 交互地址附录</h2>
+          <div class="callout danger major"><span class="flag">投产前必须核对</span><strong>D104/D105、D106/D107 在代码默认值与现场 PNG 标注之间相反。</strong>以下“程序默认含义”来自当前确认信息，不能代替现场逐点测试。核对完成前，不得据此直接修改 PLC 或 Config。</div>
+          <div class="table-wrap"><table><thead><tr><th>地址</th><th>程序默认含义</th><th>投产核对要求</th></tr></thead><tbody><tr><td>D0～D5</td><td>PLC → 上位机：触发区（6 个触发地址）</td><td>逐个触发，记录工位、业务动作、置位/复位规则和防重复机制。</td></tr><tr><td>D100～D103</td><td>上位机 → PLC：完成状态区（4 个完成地址）</td><td>分别验证对应请求、写入时机、保持时间及 PLC 确认后的清除逻辑。</td></tr><tr><td><strong>D104</strong></td><td><strong>一工位焊接结果</strong></td><td rowspan="4"><span class="tag red">高风险冲突</span> 根目录 PNG 将同工位“焊接/扫码”顺序标成相反。需制造可区分的 OK/NG 组合，在线监控四地址并由 PLC、上位机、质量三方确认。</td></tr><tr><td><strong>D105</strong></td><td><strong>一工位扫码结果</strong></td></tr><tr><td><strong>D106</strong></td><td><strong>二工位焊接结果</strong></td></tr><tr><td><strong>D107</strong></td><td><strong>二工位扫码结果</strong></td></tr><tr><td>D108、D109</td><td>计数</td><td>核对各自对应对象、加一条件、掉电保持和清零规则；与实物盘点一致。</td></tr><tr><td>D110</td><td>心跳</td><td>核对方向、周期、超时阈值及断线后的安全处理。</td></tr></tbody></table></div>
+          <figure class="figure"><img src="../PLC与上位机交互地址.png" alt="PLC与上位机交互地址现场截图" loading="lazy"><figcaption>图 12-1　根目录 PLC 交互地址截图，仅供联调核对。<strong style="color:#c51d34">截图中 D104/105、D106/107 的扫码与焊接含义和程序默认相反，禁止未经验证直接采用。</strong></figcaption></figure>
+          <h3>12.1 推荐逐点验证记录</h3>
+          <div class="table-wrap"><table class="sign"><thead><tr><th>测试项</th><th>预期地址/值</th><th>PLC 实测</th><th>上位机实测</th><th>产品流向</th><th>确认人/日期</th></tr></thead><tbody><tr><td>一工位扫码 OK / NG</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>一工位焊接 OK / NG</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>二工位扫码 OK / NG</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>二工位焊接 OK / NG</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>计数与清零</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>心跳中断与恢复</td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table></div>
+        </section>
+
+        <section class="chapter" id="cards">
+          <h2>13. 现场故障处理卡</h2>
+          <div class="grid2">
+            <div class="card failure"><h3>卡 A：点“启动”后不运行</h3><ol><li>确认没有人员危险；不要连续点击。</li><li>刷新状态，核对初始化、PLC/机器人/扫码器连接。</li><li>确认实体安全条件、防护和设备状态。</li><li>检查是否有未处置异常及 SFC/MES 问题。</li><li>仍不运行：截图、记时间、复制 logs，报修。</li></ol></div>
+            <div class="card failure"><h3>卡 B：点“停止”后仍有动作</h3><ol><li>如有危险，立即实体急停。</li><li>禁止进入设备或伸手取件。</li><li>记录软件状态、PLC/机器人状态和最后动作。</li><li>通知维护人员；安全确认前不得复位。</li></ol></div>
+            <div class="card failure"><h3>卡 C：扫码连续失败</h3><ol><li>停止上料并隔离受影响产品。</li><li>检查条码质量、方向、遮挡与重复码。</li><li>清洁镜头，检查扫码器支架和线缆。</li><li>不同条码连续测试，防止串码。</li><li>失败仍持续：保留日志和失败样品，报修。</li></ol></div>
+            <div class="card failure"><h3>卡 D：MES / SFC 异常</h3><ol><li>确认 SFC 开关；若关闭，立即停止正常量产。</li><li>记录旁路起止时间并隔离全部相关产品。</li><li>检查网络与 MES 状态，由授权人员恢复。</li><li>验证真实报站/校验成功后做首件。</li><li>质量批准后才可解除隔离。</li></ol></div>
+            <div class="card failure"><h3>卡 E：结果或计数对不上</h3><ol><li>停止生产，不要清零、改寄存器。</li><li>盘点实物，记录 D104～D110 当前值。</li><li>核对最后合格品、日志和产品流向。</li><li>特别核查 D104/105、D106/107 冲突。</li><li>联调确认并经质量处置后恢复。</li></ol></div>
+            <div class="card failure"><h3>卡 F：软件卡死 / 闪退</h3><ol><li>先确认设备是否安全停止；必要时急停。</li><li>记录时间和闪退前最后操作，截屏/拍照。</li><li>复制 logs 和 Config 备份。</li><li>获授权后重启，不能跳过失败项直接量产。</li><li>初始化全通过、首件合格后恢复。</li></ol></div>
+          </div>
+        </section>
+
+        <section class="chapter" id="repair">
+          <h2>14. 报修资料包</h2>
+          <p>资料越完整，定位越快。建议以“设备_日期时间_工位_简短现象”命名文件夹。</p>
+          <ul class="checklist"><li>设备名称/编号、软件版本、日期时间、班次、当前用户。</li><li>故障原文截图或照片，禁止只写“报错了”。</li><li>发生前最后 3～5 个操作步骤、是否可复现、复现概率。</li><li>工单、料号、工位、相关条码、受影响数量和隔离位置。</li><li>程序目录 <code>logs</code> 中异常前后日志。</li><li>当时使用的 <code>Config</code> 备份及近期配置变更记录。</li><li>PLC 的 D0～D5、D100～D110 监控值或趋势截图。</li><li>PLC、机器人、扫码器、MES/SFC 的连接/状态信息。</li><li>现场全景、产品位置、扫码器安装和异常样品照片。</li><li>已采取措施及结果；是否急停、重启、跳过初始化或关闭 SFC。</li></ul>
+          <div class="card record"><h3>联系信息（由使用单位填写）</h3><p>班组长：________________　质量负责人：________________</p><p>设备维护：________________　软件支持：________________</p><p>安全/EHS：________________　紧急电话：________________</p><p>日志保留期限：________________　报修平台/群：________________</p></div>
+        </section>
+
+        <section class="chapter" id="training">
+          <h2>15. 培训与上岗确认</h2>
+          <h3>15.1 操作员应能独立完成</h3>
+          <ul class="checklist"><li>说出软件“停止”与实体急停的区别，并能指出实体急停位置。</li><li>使用本人账号登录/切换用户，解释未知用户名自动注册的风险。</li><li>处理初始化失败：会重试，知道跳过不等于模拟。</li><li>完成班前检查、启动、首件、运行巡视和正常停止。</li><li>解释 SFC 关闭会跳过 MES 并按通过的最高质量风险。</li><li>识别并隔离扫码、焊接、计数、通讯异常产品。</li><li>说明机器人当前不做 MES 报站、不保存扫码记录。</li><li>找到程序目录 Config 和 logs，能按要求打包报修资料。</li><li>指出 D104～D107 的文档冲突，知道不得擅自改地址。</li></ul>
+          <h3>15.2 培训确认表</h3>
+          <div class="table-wrap"><table class="sign"><thead><tr><th>培训项目</th><th>演示合格</th><th>口试合格</th><th>备注</th></tr></thead><tbody><tr><td>安全停机与实体急停</td><td></td><td></td><td></td></tr><tr><td>登录、初始化与界面</td><td></td><td></td><td></td></tr><tr><td>班前检查、首件和标准生产</td><td></td><td></td><td></td></tr><tr><td>SFC/MES 风险与异常隔离</td><td></td><td></td><td></td></tr><tr><td>扫码、焊接、机器人和计数</td><td></td><td></td><td></td></tr><tr><td>日志取证与报修资料</td><td></td><td></td><td></td></tr></tbody></table></div>
+          <p>受训人：________________　培训人：________________　考核人：________________　日期：________________</p>
+          <h3>15.3 文档发布前确认</h3>
+          <ul class="checklist"><li>使用单位名称、设备编号、软件版本已填写。</li><li>三张现场图片在手机和电脑上均能正常显示。</li><li>D104～D107 已完成逐点核对，并更新最终签字版地址表。</li><li>SFC/MES 旁路授权、人工追溯和补报流程已由质量批准。</li><li>实体急停、安全门、复位等现场安全规程已作为配套文件发布。</li><li>联系人、日志保留期限、报修渠道已填写。</li></ul>
+          <div class="callout good"><strong>上岗判定</strong>只有完成培训、实操和风险口试，并由使用单位授权后，操作员才能独立操作设备。本手册未覆盖或与现场不一致之处，应先停下确认，以现场已批准的安全规程、工艺文件和最终联调记录为准。</div>
+        </section>
+      </div>
+      <footer class="footer">《镀金片焊接设备软件用户手册》2.0 · 使用单位受控文件编号：由使用单位填写<br><span class="small">建议离线保存本 HTML 与三张 PNG 在相对位置不变的同一资料目录中。</span></footer>
+    </main>
+  </div>
+  <button class="backtop" id="backTop" title="返回顶部" aria-label="返回顶部">↑</button>
+  <script>
+    (function(){
+      const menu=document.getElementById('menuBtn'),toc=document.getElementById('toc');
+      menu.addEventListener('click',()=>toc.classList.toggle('open'));
+      toc.addEventListener('click',e=>{if(e.target.tagName==='A')toc.classList.remove('open')});
+      document.getElementById('backTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+    })();
+  </script>
+</body>
+</html>
