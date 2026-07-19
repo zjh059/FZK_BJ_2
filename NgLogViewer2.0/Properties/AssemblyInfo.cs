@@ -1,0 +1,10 @@
+using System.Reflection;
+using System.Runtime.InteropServices;
+[assembly: AssemblyTitle("NG日志查询工具")]
+[assembly: AssemblyDescription("镀金片焊接机台日志只读查询工具")]
+[assembly: AssemblyCompany("FZK")]
+[assembly: AssemblyProduct("NG日志查询工具")]
+[assembly: ComVisible(false)]
+[assembly: Guid("7e24d9b6-5768-4aa5-b897-975a567b0c0e")]
+[assembly: AssemblyVersion("1.3.1.0")]
+[assembly: AssemblyFileVersion("1.3.1.0")]

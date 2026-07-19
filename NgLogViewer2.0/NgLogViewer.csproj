@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6F1B480B-3E5F-4A60-A881-B77E5A04E26D}</ProjectGuid>
+    <OutputType>WinExe</OutputType><RootNamespace>NgLogViewer</RootNamespace><AssemblyName>NG日志查询工具</AssemblyName><StartupObject>NgLogViewer.Program</StartupObject>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion><FileAlignment>512</FileAlignment><AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <ApplicationIcon>Assets\FI-app-icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' "><PlatformTarget>AnyCPU</PlatformTarget><DebugSymbols>true</DebugSymbols><DebugType>full</DebugType><Optimize>false</Optimize><OutputPath>bin\Debug\</OutputPath><DefineConstants>DEBUG;TRACE</DefineConstants><ErrorReport>prompt</ErrorReport><Prefer32Bit>false</Prefer32Bit><WarningLevel>4</WarningLevel></PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' "><PlatformTarget>AnyCPU</PlatformTarget><DebugType>pdbonly</DebugType><Optimize>true</Optimize><OutputPath>bin\Release\</OutputPath><DefineConstants>TRACE</DefineConstants><ErrorReport>prompt</ErrorReport><WarningLevel>4</WarningLevel></PropertyGroup>
+  <ItemGroup><Reference Include="System"/><Reference Include="System.Core"/><Reference Include="System.Data"/><Reference Include="System.Drawing"/><Reference Include="System.Windows.Forms"/><Reference Include="System.Xml"/></ItemGroup>
+  <ItemGroup><Compile Include="Program.cs"/><Compile Include="LogModels.cs"/><Compile Include="LogParser.cs"/><Compile Include="LogQueryService.cs"/><Compile Include="RunStatisticsModels.cs"/><Compile Include="RunStatisticsService.cs"/><Compile Include="AppSettings.cs"/><Compile Include="MainForm.cs"><SubType>Form</SubType></Compile><Compile Include="MainForm.Designer.cs"><DependentUpon>MainForm.cs</DependentUpon></Compile><Compile Include="LogDetailForm.cs"><SubType>Form</SubType></Compile><Compile Include="LogDetailForm.Designer.cs"><DependentUpon>LogDetailForm.cs</DependentUpon></Compile><Compile Include="StatisticsForm.cs"><SubType>Form</SubType></Compile><Compile Include="StatisticsForm.Designer.cs"><DependentUpon>StatisticsForm.cs</DependentUpon></Compile><Compile Include="NgSummaryForm.cs"><SubType>Form</SubType></Compile><Compile Include="NgSummaryForm.Designer.cs"><DependentUpon>NgSummaryForm.cs</DependentUpon></Compile><Compile Include="Properties\AssemblyInfo.cs"/></ItemGroup>
+  <ItemGroup><None Include="App.config"/><EmbeddedResource Include="MainForm.resx"><DependentUpon>MainForm.cs</DependentUpon></EmbeddedResource><EmbeddedResource Include="LogDetailForm.resx"><DependentUpon>LogDetailForm.cs</DependentUpon></EmbeddedResource><EmbeddedResource Include="StatisticsForm.resx"><DependentUpon>StatisticsForm.cs</DependentUpon></EmbeddedResource><EmbeddedResource Include="NgSummaryForm.resx"><DependentUpon>NgSummaryForm.cs</DependentUpon></EmbeddedResource></ItemGroup>
+  <ItemGroup><EmbeddedResource Include="Assets\FI-app-icon.ico"><LogicalName>NgLogViewer.FI-app-icon.ico</LogicalName></EmbeddedResource><Content Include="Assets\FI-app-icon.png"/></ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

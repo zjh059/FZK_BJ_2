@@ -256,7 +256,7 @@ namespace FZK.Application.Run.Service
                     await WritePlcWithTraceAsync(_config.WeldResultAddr, weldResult == 1 ? _config.OKFlag : _config.NGFlag, "焊接结果");
                     _currentBottomCode = bottomCode;
                     mesWatch.Stop();
-                    Logs.LogInfo($"{_config.JigName} MES校验结束，耗时: {mesWatch.ElapsedMilliseconds}ms，结果: {(mesOk ? "OK" : "NG")}，SP码: {spCode}");
+                    Logs.LogInfo($"{_config.JigName} MES校验结束，耗时: {mesWatch.ElapsedMilliseconds}ms，结果: {(mesOk ? "OK" : "NG")}，SP码: {spCode}，底板码：{bottomCode}");
                     _onLogged?.Invoke($"{_config.JigName} 焊接完成，底板码 {bottomCode}，MES={(mesOk ? "OK" : "NG")}，使用次数={newCount}");
 
                     _onRecordAdded?.Invoke(new ScanRecord
